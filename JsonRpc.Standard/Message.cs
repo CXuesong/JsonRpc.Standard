@@ -214,7 +214,7 @@ namespace JsonRpc.Standard
             Debug.Assert(request != null);
             if (error == null && ex != null)
             {
-                error = new ResponseError(ErrorCode.UnhandledClrException, ex.GetType() + ": " + ex.Message);
+                error = new ResponseError(JsonRpcErrorCode.UnhandledClrException, ex.GetType() + ": " + ex.Message);
 #if DEBUG
                 error.SetData(new {StackTrace = ex.StackTrace});
 #endif
