@@ -117,16 +117,13 @@ namespace JsonRpc.Standard.Server
             }
         }
 
-        private void ReaderEntryPoint(CancellationToken ct)
+        private async Task ReaderEntryPoint(CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
             while (true)
             {
-                // Note that if ct is cancelled while Reader.Read is blocking
-                // (E.g. Input from console is always blocking, even if you're using Stream.ReadAsync),
-                // we will have to wait until Reader.Read returns, then just discard the newest message.
                 ct.ThrowIfCancellationRequested();
-                var message = Reader.Read();
+                var message = await Reader.ReadAsync(ct);
                 try
                 {
                     ct.ThrowIfCancellationRequested();
@@ -153,13 +150,15 @@ namespace JsonRpc.Standard.Server
                             responseQueue.AddLast(responseSlot);
                         }
                     }
+#pragma warning disable 4014
                     Task.Factory.StartNew(RpcMethodEntryPoint, new RpcMethodEntryPointState(context, responseSlot),
                         context.CancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+#pragma warning restore 4014
                 }
             }
         }
 
-        private void WriterEntryPoint(CancellationToken ct)
+        private async Task WriterEntryPoint(CancellationToken ct)
         {
             var waitHandles = new[] {responseQueueEvent, ct.WaitHandle};
             var preserveOrder = (Options & JsonRpcServiceHostOptions.ConsistentResponseSequence) ==
@@ -200,7 +199,7 @@ namespace JsonRpc.Standard.Server
                         responseQueue.Remove(node);
                     }
                     // This operation might block the thread.
-                    Writer.Write(response);
+                    await Writer.WriteAsync(response, ct);
                     try
                     {
                         ct.ThrowIfCancellationRequested();

@@ -1,4 +1,7 @@
-﻿namespace JsonRpc.Standard
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace JsonRpc.Standard
 {
     /// <summary>
     /// Represents a JSON RPC message reader.
@@ -6,12 +9,12 @@
     public abstract class MessageReader
     {
         /// <summary>
-        /// Reads the next message.
+        /// Asynchronously reads the next message.
         /// </summary>
+        /// <param name="cancellationToken">A token that cancels the operation.</param>
         /// <returns>
         /// The next JSON RPC message, or <c>null</c> if no more messages exist.
         /// </returns>
-        /// <remarks>This method might block the caller thread until the next message is available.</remarks>
-        public abstract Message Read();
+        public abstract Task<Message> ReadAsync(CancellationToken cancellationToken);
     }
 }

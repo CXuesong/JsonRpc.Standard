@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace JsonRpc.Standard
 {
@@ -43,16 +45,21 @@ namespace JsonRpc.Standard
 
         public Encoding Encoding { get; }
 
-        public override Message Read()
+        // Used to store the exceeded content during last read.
+        private readonly List<byte> headerBuffer = new List<byte>(headerBufferSize);
+
+        /// <inheritdoc />
+        public override async Task<Message> ReadAsync(CancellationToken cancellationToken)
         {
-            var headerBuffer = new List<byte>(headerBufferSize);
             int termination;
             int contentLength;
             {
-                var headerSubBuffer = new byte[headerBufferSize];
                 while ((termination = headerBuffer.IndexOf(headerTerminationSequence)) < 0)
                 {
-                    var readLength = BaseStream.Read(headerSubBuffer, 0, headerBufferSize);
+                    // Read until \r\n\r\n is found.
+                    var headerSubBuffer = new byte[headerBufferSize];
+                    var readLength =
+                        await BaseStream.ReadAsync(headerSubBuffer, 0, headerBufferSize, cancellationToken);
                     if (readLength == 0)
                     {
                         if (headerBuffer.Count == 0)
@@ -62,7 +69,7 @@ namespace JsonRpc.Standard
                     }
                     headerBuffer.AddRange(headerSubBuffer.Take(readLength));
                 }
-                // Read header.
+                // Parse headers.
                 var headerBytes = new byte[termination];
                 headerBuffer.CopyTo(0, headerBytes, 0, termination);
                 var header = Encoding.GetString(headerBytes, 0, termination);
@@ -87,13 +94,25 @@ namespace JsonRpc.Standard
             // Concatenate and read the rest of the content.
             var contentBuffer = new byte[contentLength];
             var contentOffset = termination + headerTerminationSequence.Length;
-            headerBuffer.CopyTo(contentOffset, contentBuffer, 0, headerBuffer.Count - contentOffset);
-            var pos = headerBuffer.Count - contentOffset; // The position to put the next character.
-            while (pos < contentLength)
+
+            if (headerBuffer.Count > contentOffset + contentLength)
             {
-                var length = BaseStream.Read(contentBuffer, pos, Math.Min(contentLength - pos, contentBufferSize));
-                if (length == 0) throw new JsonRpcException("Unexpected EOF when reading content.");
-                pos += length;
+                // We have read too more bytes than contentLength specified
+                headerBuffer.CopyTo(contentOffset, contentBuffer, 0, contentLength);
+                // Trim excess
+                headerBuffer.RemoveRange(0, contentOffset + contentLength);
+            }
+            else
+            {
+                // We need to read more bytes…
+                headerBuffer.CopyTo(contentOffset, contentBuffer, 0, headerBuffer.Count - contentOffset);
+                var pos = headerBuffer.Count - contentOffset; // The position to put the next character.
+                while (pos < contentLength)
+                {
+                    var length = BaseStream.Read(contentBuffer, pos, Math.Min(contentLength - pos, contentBufferSize));
+                    if (length == 0) throw new JsonRpcException("Unexpected EOF when reading content.");
+                    pos += length;
+                }
             }
             // Deserialization
             using (var ms = new MemoryStream(contentBuffer))

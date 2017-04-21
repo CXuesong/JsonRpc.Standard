@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace JsonRpc.Standard
 {
@@ -8,10 +10,11 @@ namespace JsonRpc.Standard
     public abstract class MessageWriter
     {
         /// <summary>
-        /// Writes a message.
+        /// Asynchronously writes a message.
         /// </summary>
         /// <param name="message">The meesage to write.</param>
+        /// <param name="cancellationToken">A token that cancels the operation.</param>
         /// <exception cref="ArgumentNullException"><paramref name="message"/> is <c>null</c>.</exception>
-        public abstract void Write(Message message);
+        public abstract Task WriteAsync(Message message, CancellationToken cancellationToken);
     }
 }

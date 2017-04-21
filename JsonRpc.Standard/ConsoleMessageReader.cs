@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace JsonRpc.Standard
 {
@@ -11,7 +13,7 @@ namespace JsonRpc.Standard
     public class ConsoleMessageReader : MessageReader
     {
         /// <inheritdoc />
-        public override Message Read()
+        public override async Task<Message> ReadAsync(CancellationToken cancellationToken)
         {
             var sb = new StringBuilder();
             string line;

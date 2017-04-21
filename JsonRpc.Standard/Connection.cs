@@ -75,7 +75,7 @@ namespace JsonRpc.Standard
                 {
                     try
                     {
-                        var message = _MessageReader.Read();
+                        var message = _MessageReader.ReadAsync(TODO);
                         var e = new MessageReceivedEventArgs(message);
                         Exception handlerException = null;
                         try
@@ -88,7 +88,7 @@ namespace JsonRpc.Standard
                         }
                         if (e.Message is RequestMessage)
                         {
-                            _MessageWriter.Write(e.CreateResponseMessage(handlerException));
+                            _MessageWriter.WriteAsync(e.CreateResponseMessage(handlerException), TODO);
                         }
                     }
                     catch (TaskCanceledException)
