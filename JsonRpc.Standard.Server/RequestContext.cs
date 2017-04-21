@@ -6,6 +6,9 @@ using System.Threading;
 
 namespace JsonRpc.Standard.Server
 {
+    /// <summary>
+    /// Provides the context per JSON RPC request.
+    /// </summary>
     public class RequestContext
     {
         public RequestContext(ServiceContext serviceContext, ISession session, GeneralRequestMessage request, CancellationToken cancellationToken)

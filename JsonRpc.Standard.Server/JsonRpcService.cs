@@ -10,13 +10,23 @@ namespace JsonRpc.Standard.Server
         public ISession Context;
     }
 
+    /// <summary>
+    /// Indicates the method is exposed for JSON RPC invocation.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
     sealed class JsonRpcMethodAttribute : Attribute
     {
+        /// <summary>
+        /// Creates a default attribute instance.
+        /// </summary>
         public JsonRpcMethodAttribute() : this(null)
         {
         }
 
+        /// <summary>
+        /// Creates an attribute instance.
+        /// </summary>
+        /// <param name="methodName">The name of the method.</param>
         public JsonRpcMethodAttribute(string methodName)
         {
             MethodName = methodName;

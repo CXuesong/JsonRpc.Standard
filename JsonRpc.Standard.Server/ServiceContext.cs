@@ -6,6 +6,9 @@ using Newtonsoft.Json.Serialization;
 
 namespace JsonRpc.Standard.Server
 {
+    /// <summary>
+    /// Provides the context per <see cref="JsonRpcService"/>.
+    /// </summary>
     public class ServiceContext
     {
         private static readonly JsonSerializer defaultSerializer = new JsonSerializer
