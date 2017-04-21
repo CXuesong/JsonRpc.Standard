@@ -14,7 +14,7 @@ namespace JsonRpc.Standard
         /// <summary>
         /// Creates a new <see cref="Message" /> instance.
         /// </summary>
-        public Message()
+        internal Message()
         {
             Version = Constants.JsonRpc.SupportedVersion;
         }
@@ -31,17 +31,17 @@ namespace JsonRpc.Standard
 
     public abstract class GeneralRequestMessage : Message
     {
-        public GeneralRequestMessage() : this(null, null)
+        internal GeneralRequestMessage() : this(null, null)
         {
             
         }
 
-        public GeneralRequestMessage(string method) : this(method, null)
+        internal GeneralRequestMessage(string method) : this(method, null)
         {
             
         }
 
-        public GeneralRequestMessage(string method, object paramsValue)
+        internal GeneralRequestMessage(string method, object paramsValue)
         {
             Method = method;
             SetParams(paramsValue);
@@ -78,7 +78,7 @@ namespace JsonRpc.Standard
     /// <summary>
     /// An <see cref="Message" /> implementation representing a JSON-RPC request.
     /// </summary>
-    public class RequestMessage : GeneralRequestMessage
+    public sealed class RequestMessage : GeneralRequestMessage
     {
         public RequestMessage() : this(0, null, null)
         {
@@ -107,7 +107,7 @@ namespace JsonRpc.Standard
     /// <summary>
     /// An <see cref="Message" /> implementation representing a JSON-RPC notification.
     /// </summary>
-    public class NotificationMessage : GeneralRequestMessage
+    public sealed class NotificationMessage : GeneralRequestMessage
     {
         public NotificationMessage() : this(null, null)
         {
@@ -127,7 +127,7 @@ namespace JsonRpc.Standard
     /// An <see cref="Message" /> implementation representing a JSON-RPC response.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    public class ResponseMessage : Message
+    public sealed class ResponseMessage : Message
     {
         /// <summary>
         /// Creates a new <see cref="ResponseMessage" /> instance.
