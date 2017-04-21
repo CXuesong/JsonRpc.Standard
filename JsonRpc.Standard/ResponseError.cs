@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -7,7 +8,8 @@ namespace JsonRpc.Standard
     /// <summary>
     /// Error codes, including those who are defined by the JSON-RPC 2.0 specification.
     /// </summary>
-    public enum ErrorCode
+    /// <remarks>Error codes in the range -32000~-32029 are reserved for JsonRpc.Standard.</remarks>
+    public enum JsonRpcErrorCode
     {
         /// <summary>
         /// Internal JSON-RPC error. (JSON-RPC)
@@ -35,32 +37,51 @@ namespace JsonRpc.Standard
         ParseError = -32700,
 
         /// <summary>
-        /// Defined by the protocol. The request has been cancelled. (JSON-RPC)
+        /// There is unhandled CLR exception occurred during the process of request. (JsonRpc.Standard)
         /// </summary>
-        RequestCancelled = -32800,
-
-        /// <summary>
-        /// There is unhandled CLR exception occurred during the process of request.
-        /// </summary>
-        UnhandledClrException = 1000,
+        UnhandledClrException = -32010,
     }
 
     [JsonObject(MemberSerialization.OptIn)]
     public class ResponseError
     {
-        public ResponseError(ErrorCode code, string message) : this(code, message, null)
+        public ResponseError(int code, string message) : this(code, message, null)
         {
         }
 
-        public ResponseError(ErrorCode code, string message, object data)
+        public ResponseError(int code, string message, object data)
         {
             Code = code;
             Message = message;
             SetData(data);
         }
 
+        public ResponseError(JsonRpcErrorCode code, string message)
+            : this(code, message, null)
+        {
+        }
+
+        public ResponseError(JsonRpcErrorCode code, string message, object data)
+            : this((int) code, message, data)
+        {
+
+        }
+
+        public static ResponseError FromException(Exception ex)
+        {
+            if (ex is JsonRpcException re) return FromException(re);
+            return new ResponseError(JsonRpcErrorCode.UnhandledClrException, $"{ex.GetType()}: {ex.Message}",
+                UnhandledClrExceptionData.FromException(ex));
+        }
+
+        public static ResponseError FromException(JsonRpcException ex)
+        {
+            if (ex == null) throw new ArgumentNullException(nameof(ex));
+            return new ResponseError(ex.Code, ex.Message, ex.RpcData);
+        }
+
         [JsonProperty]
-        public ErrorCode Code { get; set; }
+        public int Code { get; set; }
 
         [JsonProperty]
         public string Message { get; set; }
@@ -71,9 +92,9 @@ namespace JsonRpc.Standard
         [JsonProperty]
         public JToken Data { get; set; }
 
-        public object GetData(Type DataType)
+        public object GetData(Type dataType)
         {
-            return Data?.ToObject(DataType, RpcSerializer.Serializer);
+            return Data?.ToObject(dataType, RpcSerializer.Serializer);
         }
 
         public T GetData<T>()
@@ -85,5 +106,39 @@ namespace JsonRpc.Standard
         {
             Data = newData == null ? null : JToken.FromObject(newData, RpcSerializer.Serializer);
         }
+    }
+
+    /// <summary>
+    /// This class is for internal use.
+    /// </summary>
+    internal class UnhandledClrExceptionData
+    {
+        public static UnhandledClrExceptionData FromException(Exception ex)
+        {
+            if (ex == null) throw new ArgumentNullException(nameof(ex));
+            return new UnhandledClrExceptionData
+            {
+                ExceptionType = ex.GetType().AssemblyQualifiedName,
+                Data = ex.Data,
+                HResult = ex.HResult,
+                HelpLink = ex.HelpLink,
+                StackTrace = null,
+                InnerException = ex.InnerException == null ? null : FromException(ex.InnerException)
+            };
+        }
+
+        public string ExceptionType { get; set; }
+
+        public string Message { get; set; }
+
+        public int HResult { get; set; }
+
+        public IDictionary Data { get; set; }
+
+        public string HelpLink { get; set; }
+
+        public string StackTrace { get; set; }
+
+        public UnhandledClrExceptionData InnerException { get; set; }
     }
 }
