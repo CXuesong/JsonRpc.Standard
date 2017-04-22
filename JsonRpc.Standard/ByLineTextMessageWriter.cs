@@ -7,12 +7,15 @@ using System.Threading.Tasks;
 
 namespace JsonRpc.Standard
 {
+    /// <summary>
+    /// Represents a message writer that writes the message line-by-line to <see cref="TextWriter"/>.
+    /// </summary>
     public class ByLineTextMessageWriter : MessageWriter
     {
         private readonly SemaphoreSlim writerSemaphore = new SemaphoreSlim(1, 1);
 
         /// <summary>
-        /// Initialize a line-by-line message writer from <see cref="TextWriter" />.
+        /// Initialize a line-by-line message writer to <see cref="TextWriter" />.
         /// </summary>
         /// <param name="writer">The underlying text writer.</param>
         public ByLineTextMessageWriter(TextWriter writer) : this(writer, null)
@@ -20,7 +23,7 @@ namespace JsonRpc.Standard
         }
 
         /// <summary>
-        /// Initialize a message writer from <see cref="TextWriter" />.
+        /// Initialize a message writer to <see cref="TextWriter" />.
         /// </summary>
         /// <param name="writer">The underlying text writer.</param>
         /// <param name="delimiter">

@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 namespace JsonRpc.Standard
 {
     /// <summary>
-    /// Represents a line-by-line message reader from.
+    /// Represents a message reader that parses the message line-by-line from <see cref="TextReader"/>.
     /// </summary>
     public class ByLineTextMessageReader : MessageReader
     {
