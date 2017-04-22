@@ -94,7 +94,12 @@ namespace JsonRpc.Standard.Server
                 using (cancellationToken.Register(state => ((TaskCompletionSource<bool>) state).SetResult(true),
                     cancellationTcs))
                 {
-                    await cancellationTcs.Task;
+                    var finished = await Task.WhenAny(readerTask, cancellationTcs.Task);
+                    if (finished == readerTask)
+                    {
+                        // Reader has reached EOF. Stop the server.
+                        this.Stop();
+                    }
                 }
                 // Wait some time for the writer task to finish.
                 // await Task.WhenAny(writerTask.ContinueWith(_ => { }), Task.Delay(2000));
@@ -124,6 +129,7 @@ namespace JsonRpc.Standard.Server
             {
                 ct.ThrowIfCancellationRequested();
                 var message = await Reader.ReadAsync(ct);
+                if (message == null) return;        // EOF reached.
                 try
                 {
                     ct.ThrowIfCancellationRequested();
@@ -195,16 +201,16 @@ namespace JsonRpc.Standard.Server
                     }
                     // This operation might simply block the thread, rather than async.
                     await Writer.WriteAsync(response, ct);
-                    try
-                    {
-                        ct.ThrowIfCancellationRequested();
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                        return;
-                    }
                 }
                 WAIT:;
+                try
+                {
+                    ct.ThrowIfCancellationRequested();
+                }
+                catch (ObjectDisposedException)
+                {
+                    return;
+                }
             }
         }
 

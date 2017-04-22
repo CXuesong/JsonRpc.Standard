@@ -7,14 +7,17 @@ namespace JsonRpc.Standard.Server
     /// </summary>
     public class JsonRpcService
     {
-        public ISession Context;
+        /// <summary>
+        /// Gets or sets the <see cref="RequestContext"/> of current request.
+        /// </summary>
+        public RequestContext RequestContext { get; set; }
     }
 
     /// <summary>
     /// Indicates the method is exposed for JSON RPC invocation.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
-    sealed class JsonRpcMethodAttribute : Attribute
+    public sealed class JsonRpcMethodAttribute : Attribute
     {
         /// <summary>
         /// Creates a default attribute instance.

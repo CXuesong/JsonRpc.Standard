@@ -46,7 +46,8 @@ namespace JsonRpc.Standard.Server
         {
             if (method == null) throw new ArgumentNullException(nameof(method));
             if (context == null) throw new ArgumentNullException(nameof(context));
-            if (method.Parameters.Count != args.Count) throw new InvalidOperationException($"Attempt to invoke a method that is not {methodInfo}.");
+            if (method.Parameters.Count != args.Count)
+                throw new InvalidOperationException($"Attempt to invoke a method that is not {methodInfo}.");
             var argv = new object[method.Parameters.Count];
             for (int i = 0; i < method.Parameters.Count; i++)
             {
@@ -85,8 +86,12 @@ namespace JsonRpc.Standard.Server
                 }
             }
             var inst = OnGetService(method, context);
+            inst.RequestContext = context;
             var result = methodInfo.Invoke(inst, argv);
-            return await ToResponseMessageAsync(result, context);
+            var response = await ToResponseMessageAsync(result, context);
+            // Some cleanup
+            inst.RequestContext = null;
+            return response;
         }
 
         /// <summary>

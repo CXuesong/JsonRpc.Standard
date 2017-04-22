@@ -16,7 +16,7 @@ namespace JsonRpc.Standard
         /// </summary>
         internal Message()
         {
-            Version = Constants.JsonRpc.SupportedVersion;
+            Version = "2.0";
         }
 
         /// <summary>

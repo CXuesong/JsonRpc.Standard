@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonRpc.Standard", "JsonRpc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonRpc.Standard.Server", "JsonRpc.Standard.Server\JsonRpc.Standard.Server.csproj", "{BF2576CE-FAF4-4EC7-94F5-00CF7EDE3CBD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{4001216A-ED6F-415A-83C8-F13328A9141C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{BF2576CE-FAF4-4EC7-94F5-00CF7EDE3CBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF2576CE-FAF4-4EC7-94F5-00CF7EDE3CBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF2576CE-FAF4-4EC7-94F5-00CF7EDE3CBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4001216A-ED6F-415A-83C8-F13328A9141C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4001216A-ED6F-415A-83C8-F13328A9141C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4001216A-ED6F-415A-83C8-F13328A9141C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4001216A-ED6F-415A-83C8-F13328A9141C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
