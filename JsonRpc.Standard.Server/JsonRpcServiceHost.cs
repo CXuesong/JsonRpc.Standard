@@ -90,19 +90,27 @@ namespace JsonRpc.Standard.Server
                     linked.Token, linked.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
                 var writerTask = Task.Factory.StartNew(state => WriterEntryPoint((CancellationToken) state),
                     linked.Token, linked.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                // Tasks that we can safely await
+                var readerTask1 = readerTask.ContinueWith(_ => { });
+                var writerTask1 = readerTask.ContinueWith(_ => { });
                 // Wait for Stop() or user cancellation.
                 using (cancellationToken.Register(state => ((TaskCompletionSource<bool>) state).SetResult(true),
                     cancellationTcs))
                 {
-                    var finished = await Task.WhenAny(readerTask, cancellationTcs.Task);
-                    if (finished == readerTask)
+                    var finished = await Task.WhenAny(readerTask1, cancellationTcs.Task);
+                    if (finished == readerTask1 && readerTask.IsCompleted)
                     {
-                        // Reader has reached EOF. Stop the server.
+                        // Reader has reached EOF. Wait for the writer to finish, then stop the server.
+                        while (true)
+                        {
+                            int queueSize;
+                            lock (responseQueue) queueSize = responseQueue.Count;
+                            if (queueSize == 0) break;
+                            await Task.WhenAny(writerTask1, Task.Delay(1000, linked.Token));
+                        }
                         this.Stop();
                     }
                 }
-                // Wait some time for the writer task to finish.
-                // await Task.WhenAny(writerTask.ContinueWith(_ => { }), Task.Delay(2000));
                 // Cleanup.
                 lock (responseQueue) responseQueue.Clear();
             }
