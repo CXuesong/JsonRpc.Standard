@@ -19,17 +19,19 @@ namespace JsonRpc.Standard
                 return DeserializeMessage(reader);
         }
 
+        // Suppose the reader has an underlying stream of type MemoryStream, so we do
+        // no need async methods.
         internal static Message DeserializeMessage(TextReader reader)
         {
             Message message;
             JObject json;
             using (var jreader = new JsonTextReader(reader)) json = JObject.Load(jreader);
-            if (json.GetValue("jsonrpc", StringComparison.OrdinalIgnoreCase) == null)
+            if (json["jsonrpc"] == null)
                 throw new ArgumentException("Content is not a valid JSON-RPC message.", nameof(reader));
             {
-                if (json.GetValue("id", StringComparison.OrdinalIgnoreCase) == null)
+                if (json["id"] == null)
                     message = json.ToObject<NotificationMessage>(Serializer);
-                else if (json.GetValue("method", StringComparison.OrdinalIgnoreCase) == null)
+                else if (json["method"] == null)
                     message = json.ToObject<ResponseMessage>(Serializer);
                 else
                     message = json.ToObject<RequestMessage>(Serializer);
