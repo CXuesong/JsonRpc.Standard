@@ -20,6 +20,8 @@ namespace JsonRpc.Standard
 
         private static readonly byte[] headerTerminationSequence = {0x0d, 0x0a, 0x0d, 0x0a};
 
+        private readonly SemaphoreSlim streamSemaphore = new SemaphoreSlim(1, 1);
+
         public PartwiseStreamMessageReader(Stream stream) : this(stream, Encoding.UTF8, null)
         {
 
@@ -52,9 +54,13 @@ namespace JsonRpc.Standard
         /// <inheritdoc />
         public override async Task<Message> ReadAsync(CancellationToken cancellationToken)
         {
-            int termination;
-            int contentLength;
+            cancellationToken.ThrowIfCancellationRequested();
+            await streamSemaphore.WaitAsync(cancellationToken);
+            byte[] contentBuffer;
+            try
             {
+                int termination;
+                int contentLength;
                 while ((termination = headerBuffer.IndexOf(headerTerminationSequence)) < 0)
                 {
                     // Read until \r\n\r\n is found.
@@ -91,29 +97,33 @@ namespace JsonRpc.Standard
                 }
                 if (contentLength <= 0)
                     throw new JsonRpcException("Invalid JSON RPC header. Content-Length is invalid.");
-            }
-            // Concatenate and read the rest of the content.
-            var contentBuffer = new byte[contentLength];
-            var contentOffset = termination + headerTerminationSequence.Length;
-
-            if (headerBuffer.Count > contentOffset + contentLength)
-            {
-                // We have read too more bytes than contentLength specified
-                headerBuffer.CopyTo(contentOffset, contentBuffer, 0, contentLength);
-                // Trim excess
-                headerBuffer.RemoveRange(0, contentOffset + contentLength);
-            }
-            else
-            {
-                // We need to read more bytes…
-                headerBuffer.CopyTo(contentOffset, contentBuffer, 0, headerBuffer.Count - contentOffset);
-                var pos = headerBuffer.Count - contentOffset; // The position to put the next character.
-                while (pos < contentLength)
+                // Concatenate and read the rest of the content.
+                contentBuffer = new byte[contentLength];
+                var contentOffset = termination + headerTerminationSequence.Length;
+                if (headerBuffer.Count > contentOffset + contentLength)
                 {
-                    var length = BaseStream.Read(contentBuffer, pos, Math.Min(contentLength - pos, contentBufferSize));
-                    if (length == 0) throw new JsonRpcException("Unexpected EOF when reading content.");
-                    pos += length;
+                    // We have read too more bytes than contentLength specified
+                    headerBuffer.CopyTo(contentOffset, contentBuffer, 0, contentLength);
+                    // Trim excess
+                    headerBuffer.RemoveRange(0, contentOffset + contentLength);
                 }
+                else
+                {
+                    // We need to read more bytes…
+                    headerBuffer.CopyTo(contentOffset, contentBuffer, 0, headerBuffer.Count - contentOffset);
+                    var pos = headerBuffer.Count - contentOffset; // The position to put the next character.
+                    while (pos < contentLength)
+                    {
+                        var length = BaseStream.Read(contentBuffer, pos,
+                            Math.Min(contentLength - pos, contentBufferSize));
+                        if (length == 0) throw new JsonRpcException("Unexpected EOF when reading content.");
+                        pos += length;
+                    }
+                }
+            }
+            finally
+            {
+                streamSemaphore.Release();      // Release the semaphore ASAP.
             }
             // Deserialization
             using (var ms = new MemoryStream(contentBuffer))

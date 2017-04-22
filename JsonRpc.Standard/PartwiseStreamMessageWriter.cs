@@ -15,6 +15,8 @@ namespace JsonRpc.Standard
     {
         private static readonly UTF8Encoding UTF8NoBom = new UTF8Encoding(false, true);
 
+        private readonly SemaphoreSlim streamSemaphore = new SemaphoreSlim(1, 1);
+
         public PartwiseStreamMessageWriter(Stream stream)
             : this(stream, UTF8NoBom, null)
         {
@@ -37,11 +39,14 @@ namespace JsonRpc.Standard
 
         public Encoding Encoding { get; }
 
+        public string ContentType { get; set; }
+
         public IStreamMessageLogger MessageLogger { get; }
 
         /// <inheritdoc />
         public override async Task WriteAsync(Message message, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             using (var ms = new MemoryStream())
             {
                 using (var writer = new StreamWriter(ms, Encoding, 4096, true))
@@ -57,15 +62,27 @@ namespace JsonRpc.Standard
                         writer.Write(content);
                     }
                 }
-                using (var writer = new StreamWriter(BaseStream, Encoding, 4096, true))
+                cancellationToken.ThrowIfCancellationRequested();
+                await streamSemaphore.WaitAsync(cancellationToken);
+                try
                 {
-                    writer.Write("Content-Length: ");
-                    writer.Write(ms.Length);
-                    writer.Write("\r\nContent-Type: application/vscode-jsonrpc; charset=utf8\r\n\r\n");
-                    await writer.FlushAsync();
+                    using (var writer = new StreamWriter(BaseStream, Encoding, 4096, true))
+                    {
+                        await writer.WriteAsync("Content-Length: ");
+                        await writer.WriteAsync(ms.Length.ToString());
+                        await writer.WriteAsync("\r\n");
+                        await writer.WriteAsync("Content-Type: ");
+                        await writer.WriteAsync(ContentType);
+                        await writer.WriteAsync("\r\n\r\n");
+                        await writer.FlushAsync();
+                    }
+                    ms.Seek(0, SeekOrigin.Begin);
+                    await ms.CopyToAsync(BaseStream, 81920, cancellationToken);
                 }
-                ms.Seek(0, SeekOrigin.Begin);
-                await ms.CopyToAsync(BaseStream, 81920, cancellationToken);
+                finally
+                {
+                    streamSemaphore.Release();
+                }
             }
         }
     }
