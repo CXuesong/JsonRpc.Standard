@@ -162,7 +162,7 @@ namespace JsonRpc.Standard.Server
                             methods = new List<JsonRpcMethod>();
                             methodDict.Add(m.MethodName, methods);
                         }
-                        
+                        methods.Add(m);
                     }
                     catch (ArgumentException)
                     {
