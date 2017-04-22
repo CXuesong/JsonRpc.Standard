@@ -47,7 +47,7 @@ namespace JsonRpc.Standard.Server
     {
         private volatile CancellationTokenSource cts = null;
         private int isRunning = 0;
-        private volatile AutoResetEvent responseQueueEvent = null;
+        private volatile SemaphoreSlim responseQueueSemaphore = null;
         private readonly LinkedList<ResponseSlot> responseQueue = new LinkedList<ResponseSlot>();
 
         public JsonRpcServiceHost(MessageReader reader, MessageWriter writer,
@@ -81,7 +81,7 @@ namespace JsonRpc.Standard.Server
         {
             var localRunning = Interlocked.Exchange(ref isRunning, 1);
             if (localRunning != 0) throw new InvalidOperationException("The service host is already running.");
-            using (responseQueueEvent = new AutoResetEvent(false))
+            using (responseQueueSemaphore = new SemaphoreSlim(0))
             using (cts = new CancellationTokenSource())
             using (var linked = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, cancellationToken))
             {
@@ -160,7 +160,6 @@ namespace JsonRpc.Standard.Server
 
         private async Task WriterEntryPoint(CancellationToken ct)
         {
-            var waitHandles = new[] {responseQueueEvent, ct.WaitHandle};
             var preserveOrder = (Options & JsonRpcServiceHostOptions.ConsistentResponseSequence) ==
                                 JsonRpcServiceHostOptions.ConsistentResponseSequence;
             while (true)
@@ -168,11 +167,7 @@ namespace JsonRpc.Standard.Server
                 // Wait for incoming response, or cancellation.
                 try
                 {
-                    if (WaitHandle.WaitAny(waitHandles) == 1)
-                    {
-                        ct.ThrowIfCancellationRequested();
-                        return; // Will never execute
-                    }
+                    await responseQueueSemaphore.WaitAsync(ct);
                 }
                 catch (ObjectDisposedException)
                 {
@@ -183,7 +178,6 @@ namespace JsonRpc.Standard.Server
                     ResponseMessage response;
                     lock (responseQueue)
                     {
-
                         var node = responseQueue.First;
                         if (!preserveOrder)
                         {
@@ -194,11 +188,12 @@ namespace JsonRpc.Standard.Server
                             }
                         }
                         response = node?.Value.Response;
+                        // If the response is not ready, then we simply wait for the next "response ready" event.
                         if (response == null) goto WAIT;
                         // Pick out the node
                         responseQueue.Remove(node);
                     }
-                    // This operation might block the thread.
+                    // This operation might simply block the thread, rather than async.
                     await Writer.WriteAsync(response, ct);
                     try
                     {
@@ -254,7 +249,7 @@ namespace JsonRpc.Standard.Server
             try
             {
                 state.Context.CancellationToken.ThrowIfCancellationRequested();
-                responseQueueEvent.Set();
+                responseQueueSemaphore.Release();
             }
             catch (ObjectDisposedException)
             {
