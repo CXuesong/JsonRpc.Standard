@@ -9,28 +9,29 @@ using System.Threading.Tasks;
 namespace JsonRpc.Standard
 {
     /// <summary>
-    /// Reads JSON RPC messages from a Stream.
+    /// Reads JSON RPC messages from a <see cref="Stream"/>,
+    /// in the format specified in Microsoft Language Server Protocol
+    /// (https://github.com/Microsoft/language-server-protocol/blob/master/protocol.md).
     /// </summary>
-    public class StreamMessageReader : MessageReader
+    public class PartwiseStreamMessageReader : MessageReader
     {
         private const int headerBufferSize = 1024;
         private const int contentBufferSize = 4 * 1024;
 
         private static readonly byte[] headerTerminationSequence = {0x0d, 0x0a, 0x0d, 0x0a};
 
-
-        public StreamMessageReader(Stream stream) : this(stream, Encoding.UTF8, null)
+        public PartwiseStreamMessageReader(Stream stream) : this(stream, Encoding.UTF8, null)
         {
 
         }
 
-        public StreamMessageReader(Stream stream, IStreamMessageLogger messageLogger) : this(stream, Encoding.UTF8,
+        public PartwiseStreamMessageReader(Stream stream, IStreamMessageLogger messageLogger) : this(stream, Encoding.UTF8,
             messageLogger)
         {
 
         }
 
-        public StreamMessageReader(Stream stream, Encoding encoding, IStreamMessageLogger messageLogger)
+        public PartwiseStreamMessageReader(Stream stream, Encoding encoding, IStreamMessageLogger messageLogger)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
             if (encoding == null) throw new ArgumentNullException(nameof(encoding));

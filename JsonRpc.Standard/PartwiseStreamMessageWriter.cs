@@ -6,20 +6,25 @@ using System.Threading.Tasks;
 
 namespace JsonRpc.Standard
 {
-    public class StreamMessageWriter : MessageWriter
+    /// <summary>
+    /// Writes JSON RPC messages to a <see cref="Stream"/>,
+    /// in the format specified in Microsoft Language Server Protocol
+    /// (https://github.com/Microsoft/language-server-protocol/blob/master/protocol.md).
+    /// </summary>
+    public class PartwiseStreamMessageWriter : MessageWriter
     {
         private static readonly UTF8Encoding UTF8NoBom = new UTF8Encoding(false, true);
 
-        public StreamMessageWriter(Stream stream)
+        public PartwiseStreamMessageWriter(Stream stream)
             : this(stream, UTF8NoBom, null)
         {
         }
 
-        public StreamMessageWriter(Stream stream, IStreamMessageLogger messageLogger) : this(stream, UTF8NoBom, messageLogger)
+        public PartwiseStreamMessageWriter(Stream stream, IStreamMessageLogger messageLogger) : this(stream, UTF8NoBom, messageLogger)
         {
         }
 
-        public StreamMessageWriter(Stream stream, Encoding encoding, IStreamMessageLogger messageLogger)
+        public PartwiseStreamMessageWriter(Stream stream, Encoding encoding, IStreamMessageLogger messageLogger)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
             if (encoding == null) throw new ArgumentNullException(nameof(encoding));
