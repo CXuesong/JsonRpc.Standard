@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace JsonRpc.Standard.Server
 {
@@ -12,14 +14,49 @@ namespace JsonRpc.Standard.Server
     /// </summary>
     public class JsonRpcParameter
     {
+        private static readonly JsonSerializer defaultSerializer = new JsonSerializer
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver()
+        };
+
+        private JsonSerializer _Serializer = defaultSerializer;
+
+        /// <summary>
+        /// The parameter name used in JSON.
+        /// </summary>
         public string ParameterName { get; set; }
 
+        /// <summary>
+        /// Whether the parameter is optional.
+        /// </summary>
         public bool IsOptional { get; set; }
+
+        /// <summary>
+        /// The type of the parameter.
+        /// </summary>
+        public Type ParameterType { get; set; }
+
+        /// <summary>
+        /// The serializer used to convert the parameter.
+        /// </summary>
+        public JsonSerializer Serializer
+        {
+            get { return _Serializer; }
+            set { _Serializer = value ?? defaultSerializer; }
+        }
+
+        /// <inheritdoc />
+        public override string ToString() => ParameterType + " " + ParameterName;
 
         internal static JsonRpcParameter FromParameter(ParameterInfo parameter)
         {
             if (parameter == null) throw new ArgumentNullException(nameof(parameter));
-            var inst = new JsonRpcParameter {ParameterName = parameter.Name, IsOptional = parameter.IsOptional};
+            var inst = new JsonRpcParameter
+            {
+                ParameterName = parameter.Name,
+                IsOptional = parameter.IsOptional,
+                ParameterType = parameter.ParameterType
+            };
             return inst;
         }
     }
@@ -56,7 +93,7 @@ namespace JsonRpc.Standard.Server
                     inst.MethodName = char.ToLowerInvariant(inst.MethodName[0]) + inst.MethodName.Substring(1);
             }
             inst.Parameters = method.GetParameters().Select(JsonRpcParameter.FromParameter).ToList();
-            inst.Invoker = new RpcMethodInvoker();
+            inst.Invoker = new ReflectionRpcMethodInvoker(method);
             return inst;
         }
     }
@@ -74,6 +111,9 @@ namespace JsonRpc.Standard.Server
         JsonRpcMethod TryResolve(RequestContext context);
     }
 
+    /// <summary>
+    /// A lookup-table based <see cref="IRpcMethodResolver"/> implementation.
+    /// </summary>
     public class RpcMethodResolver : IRpcMethodResolver
     {
         private readonly IDictionary<string, ICollection<JsonRpcMethod>> methodDict =

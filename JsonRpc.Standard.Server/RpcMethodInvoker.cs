@@ -29,32 +29,42 @@ namespace JsonRpc.Standard.Server
     /// <summary>
     /// The default implementation of <see cref="IRpcMethodInvoker"/>.
     /// </summary>
-    public class RpcMethodInvoker : IRpcMethodInvoker
+    internal class ReflectionRpcMethodInvoker : IRpcMethodInvoker
     {
+        private readonly MethodInfo methodInfo;
+        private readonly IList<ParameterInfo> args;
+
+        public ReflectionRpcMethodInvoker(MethodInfo methodInfo)
+        {
+            if (methodInfo == null) throw new ArgumentNullException(nameof(methodInfo));
+            this.methodInfo = methodInfo;
+            args = methodInfo.GetParameters();
+        }
+
         /// <inheritdoc />
         public async Task<ResponseMessage> InvokeAsync(JsonRpcMethod method, RequestContext context)
         {
             if (method == null) throw new ArgumentNullException(nameof(method));
             if (context == null) throw new ArgumentNullException(nameof(context));
-            var args = method.ServiceMethod.GetParameters();
-            var argv = new object[args.Length];
-            for (int i = 0; i < args.Length; i++)
+            if (method.Parameters.Count != args.Count) throw new InvalidOperationException($"Attempt to invoke a method that is not {methodInfo}.");
+            var argv = new object[method.Parameters.Count];
+            for (int i = 0; i < method.Parameters.Count; i++)
             {
                 // Resolve cancellation token
-                if (args[i].ParameterType == typeof(CancellationToken))
+                if (method.Parameters[i].ParameterType == typeof(CancellationToken))
                 {
                     argv[i] = context.CancellationToken;
                     continue;
                 }
                 // Resolve other parameters, considering the optional
-                var jarg = context.Request.Params?[args[i].Name];
+                var jarg = context.Request.Params?[method.Parameters[i].ParameterName];
                 if (jarg == null)
                 {
-                    if (args[i].IsOptional)
+                    if (method.Parameters[i].IsOptional)
                         argv[i] = Type.Missing;
                     else if (context.Request is RequestMessage request)
                         return new ResponseMessage(request.Id, null, new ResponseError(JsonRpcErrorCode.InvalidParams,
-                            $"Required parameter \"{args[i]}\" is missing for \"{method.MethodName}\"."));
+                            $"Required parameter \"{method.Parameters[i].ParameterName}\" is missing for \"{method.MethodName}\"."));
                     else
                     {
                         // TODO Logging: Argument missing, but the client do not need a response, so we just ignore the error.
@@ -64,18 +74,18 @@ namespace JsonRpc.Standard.Server
                 {
                     try
                     {
-                        argv[i] = jarg.ToObject(args[i].ParameterType, context.ServiceContext.JsonSerializer);
+                        argv[i] = jarg.ToObject(method.Parameters[i].ParameterType, method.Parameters[i].Serializer);
                     }
                     catch (JsonException ex)
                     {
                         if (context.Request is RequestMessage request)
                             return new ResponseMessage(request.Id, null, new ResponseError(JsonRpcErrorCode.ParseError,
-                                $"JSON error when parsing argument \"{args[i]}\" in \"{method.MethodName}\": {ex.Message}"));
+                                $"JSON error when parsing argument \"{method.Parameters[i].ParameterName}\" in \"{method.MethodName}\": {ex.Message}"));
                     }
                 }
             }
             var inst = OnGetService(method, context);
-            var result = method.ServiceMethod.Invoke(inst, argv);
+            var result = methodInfo.Invoke(inst, argv);
             return await ToResponseMessageAsync(result, context);
         }
 
