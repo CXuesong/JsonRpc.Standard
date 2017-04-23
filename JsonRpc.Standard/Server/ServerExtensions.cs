@@ -1,8 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using JsonRpc.Standard.Server;
 
-namespace JsonRpc.Standard.Contracts
+namespace JsonRpc.Standard.Server
 {
     /// <summary>
     /// Extension methods.
