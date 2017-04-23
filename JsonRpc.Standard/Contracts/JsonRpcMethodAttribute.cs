@@ -28,5 +28,10 @@ namespace JsonRpc.Standard.Contracts
         /// The name of the method. <c>null</c> to use the applied method name.
         /// </summary>
         public string MethodName { get; }
+
+        /// <summary>
+        /// Indicates whether the method is a notification request.
+        /// </summary>
+        public bool IsNotification { get; set; }
     }
 }

@@ -31,7 +31,12 @@ namespace JsonRpc.Standard.Contracts
         public bool IsOptional { get; set; }
 
         /// <summary>
-        /// The type of the parameter.
+        /// Whether the parameter is a Task or Task&lt;ParameterType&gt; instead of ParameterType itself.
+        /// </summary>
+        public bool IsTask { get; set; }
+
+        /// <summary>
+        /// The bare type of the parameter.
         /// </summary>
         public Type ParameterType { get; set; }
 
@@ -56,6 +61,12 @@ namespace JsonRpc.Standard.Contracts
                 IsOptional = parameter.IsOptional,
                 ParameterType = parameter.ParameterType
             };
+            var taskResultType = Utility.GetTaskResultType(parameter.ParameterType);
+            if (taskResultType != null)
+            {
+                inst.ParameterType = taskResultType;
+                inst.IsTask = true;
+            }
             return inst;
         }
     }
@@ -74,7 +85,11 @@ namespace JsonRpc.Standard.Contracts
 
         public string MethodName { get; set; }
 
+        public bool IsNotification { get; set; }
+
         public IList<JsonRpcParameter> Parameters { get; set; }
+
+        public JsonRpcParameter ReturnParameter { get; set; }
 
         public IRpcMethodHandler Handler { get; set; }
 
@@ -91,6 +106,8 @@ namespace JsonRpc.Standard.Contracts
                 if (camelCase)
                     inst.MethodName = char.ToLowerInvariant(inst.MethodName[0]) + inst.MethodName.Substring(1);
             }
+            inst.IsNotification = attr?.IsNotification ?? false;
+            inst.ReturnParameter = JsonRpcParameter.FromParameter(method.ReturnParameter);
             inst.Parameters = method.GetParameters().Select(JsonRpcParameter.FromParameter).ToList();
             inst.Handler = new ReflectionRpcMethodHandler(method);
             return inst;
