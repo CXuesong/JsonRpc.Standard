@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +15,9 @@ namespace JsonRpc.Standard.Client
     /// </summary>
     public class JsonRpcClient
     {
+        private readonly string requestIdPrefix;
+        private int requestIdCounter = 0;
+
         /// <summary>
         /// Initializes a JSON RPC client.
         /// </summary>
@@ -24,6 +28,7 @@ namespace JsonRpc.Standard.Client
             if (writer == null) throw new ArgumentNullException(nameof(writer));
             Reader = reader;
             Writer = writer;
+            requestIdPrefix = RuntimeHelpers.GetHashCode(this) + "#";
         }
 
         /// <summary>
@@ -35,6 +40,15 @@ namespace JsonRpc.Standard.Client
         /// The <see cref="MessageWriter"/> used to send requests.
         /// </summary>
         public MessageWriter Writer { get; }
+
+        /// <summary>
+        /// Gets the next unique value that can be used as <see cref="RequestMessage.Id"/>.
+        /// </summary>
+        public object NextRequestId()
+        {
+            var ct = Interlocked.Increment(ref requestIdCounter);
+            return requestIdPrefix + ct;
+        }
 
         /// <summary>
         /// Asynchronously send the request message.
@@ -55,7 +69,8 @@ namespace JsonRpc.Standard.Client
             await Writer.WriteAsync(request, cancellationToken);
             if (Reader == null) return null;
             var id = request.Id;
-            var response = await Reader.ReadAsync(m => m is ResponseMessage resp && resp.Id == id, cancellationToken);
+            var response = await Reader.ReadAsync(m => m is ResponseMessage resp && Equals(resp.Id, id),
+                cancellationToken);
             return (ResponseMessage)response;
         }
 

@@ -31,6 +31,22 @@ namespace JsonRpc.Standard
             return -1;
         }
 
+        public static bool ValidateRequestId(object id)
+        {
+            return id == null || id is string
+                   || id is byte || id is short || id is int || id is long
+                   || id is sbyte || id is ushort || id is uint || id is ulong;
+        }
+
+        public static Type GetTaskResultType(Type taskType)
+        {
+            if (taskType == null) throw new ArgumentNullException(nameof(taskType));
+            if (taskType == typeof(Task)) return typeof(void);
+            if (taskType.IsConstructedGenericType && taskType.GetGenericTypeDefinition() == typeof(Task<>))
+                return taskType.GenericTypeArguments[0];
+            return null;
+        }
+
         private struct SemaphoreReleaser : IDisposable
         {
             private readonly SemaphoreSlim _S;

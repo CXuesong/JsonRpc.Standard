@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 namespace JsonRpc.Standard
 {
     /// <summary>
-    /// Indicates an error in JSON RPC.
+    /// Indicates an general JSON RPC compatible exception.
     /// </summary>
     public class JsonRpcException : Exception
     {

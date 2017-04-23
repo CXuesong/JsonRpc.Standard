@@ -80,19 +80,21 @@ namespace JsonRpc.Standard
     /// </summary>
     public sealed class RequestMessage : GeneralRequestMessage
     {
+        private object _Id;
+
         public RequestMessage() : this(0, null, null)
         {
         }
 
-        public RequestMessage(int id) : this(id, null, null)
+        public RequestMessage(object id) : this(id, null, null)
         {
         }
 
-        public RequestMessage(int id, string method) : this(id, method, null)
+        public RequestMessage(object id, string method) : this(id, method, null)
         {
         }
 
-        public RequestMessage(int id, string method, object paramsValue) : base(method, paramsValue)
+        public RequestMessage(object id, string method, object paramsValue) : base(method, paramsValue)
         {
             Id = id;
         }
@@ -101,7 +103,16 @@ namespace JsonRpc.Standard
         /// A unique ID given to the request/response session. The request creator is responsible for assigning this value.
         /// </summary>
         [JsonProperty]
-        public int Id { get; set; }
+        public object Id
+        {
+            get { return _Id; }
+            set
+            {
+                if (!Utility.ValidateRequestId(value))
+                    throw new ArgumentException("Id should be either null, string, or int.", nameof(value));
+                _Id = value;
+            }
+        }
     }
 
     /// <summary>
@@ -129,6 +140,8 @@ namespace JsonRpc.Standard
     [JsonObject(MemberSerialization.OptIn)]
     public sealed class ResponseMessage : Message
     {
+        private object _Id;
+
         /// <summary>
         /// Creates a new <see cref="ResponseMessage" /> instance.
         /// </summary>
@@ -140,14 +153,14 @@ namespace JsonRpc.Standard
         /// <summary>
         /// Creates a new <see cref="ResponseMessage" /> instance.
         /// </summary>
-        public ResponseMessage(int id, object result) : this(id, result, null)
+        public ResponseMessage(object id, object result) : this(id, result, null)
         {
         }
 
         /// <summary>
         /// Creates a new <see cref="ResponseMessage" /> instance.
         /// </summary>
-        public ResponseMessage(int id, object result, ResponseError error)
+        public ResponseMessage(object id, object result, ResponseError error)
         {
             Id = id;
             SetResult(result);
@@ -158,7 +171,16 @@ namespace JsonRpc.Standard
         /// A unique ID assigned to the request/response session. The request creator is responsible for this value.
         /// </summary>
         [JsonProperty]
-        public int Id { get; set; }
+        public object Id
+        {
+            get { return _Id; }
+            set
+            {
+                if (!Utility.ValidateRequestId(value))
+                    throw new ArgumentException("Id should be either null, string, or int.", nameof(value));
+                _Id = value;
+            }
+        }
 
         // TODO a response should EITHER contain result or error node, not BOTH.
 
