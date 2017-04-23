@@ -11,7 +11,7 @@ namespace JsonRpc.Standard
     /// <summary>
     /// Represents a message reader that parses the message line-by-line from <see cref="TextReader"/>.
     /// </summary>
-    public class ByLineTextMessageReader : MessageReader
+    public class ByLineTextMessageReader : QueuedMessageReader
     {
         private readonly SemaphoreSlim readerSemaphore = new SemaphoreSlim(1, 1);
 
@@ -56,7 +56,7 @@ namespace JsonRpc.Standard
         public string Delimiter { get; }
 
         /// <inheritdoc />
-        public override async Task<Message> ReadAsync(CancellationToken cancellationToken)
+        protected override async Task<Message> ReadDirectAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             await readerSemaphore.WaitAsync(cancellationToken);

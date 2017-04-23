@@ -13,7 +13,7 @@ namespace JsonRpc.Standard
     /// in the format specified in Microsoft Language Server Protocol
     /// (https://github.com/Microsoft/language-server-protocol/blob/master/protocol.md).
     /// </summary>
-    public class PartwiseStreamMessageReader : MessageReader
+    public class PartwiseStreamMessageReader : QueuedMessageReader
     {
         private const int headerBufferSize = 1024;
         private const int contentBufferSize = 4 * 1024;
@@ -52,12 +52,11 @@ namespace JsonRpc.Standard
         private readonly List<byte> headerBuffer = new List<byte>(headerBufferSize);
 
         /// <inheritdoc />
-        public override async Task<Message> ReadAsync(CancellationToken cancellationToken)
+        protected override async Task<Message> ReadDirectAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await streamSemaphore.WaitAsync(cancellationToken);
             byte[] contentBuffer;
-            try
+            using (await streamSemaphore.LockAsync(cancellationToken))
             {
                 int termination;
                 int contentLength;
@@ -122,10 +121,7 @@ namespace JsonRpc.Standard
                     }
                 }
             }
-            finally
-            {
-                streamSemaphore.Release();      // Release the semaphore ASAP.
-            }
+            // Release the semaphore ASAP.
             // Deserialization
             using (var ms = new MemoryStream(contentBuffer))
             {
