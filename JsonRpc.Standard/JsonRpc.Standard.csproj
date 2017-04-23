@@ -7,12 +7,13 @@
     <Authors>CXuesong</Authors>
     <Company />
     <PackageId>CXuesong.JsonRpc.Standard</PackageId>
-    <Description>An asynchronous JSON RPC common library.</Description>
+    <Description>An asynchronous JSON RPC server &amp; client library.</Description>
     <PackageTags>json rpc</PackageTags>
     <PackageProjectUrl>https://github.com/CXuesong/JsonRpc.Standard</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CXuesong/JsonRpc.Standard</RepositoryUrl>
     <NeutralLanguage>en-us</NeutralLanguage>
     <PackageReleaseNotes>See https://github.com/CXuesong/JsonRpc.Standard/releases .</PackageReleaseNotes>
+    <Copyright>Copyright 2017 CXuesong</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
