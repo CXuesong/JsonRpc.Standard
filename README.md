@@ -54,7 +54,7 @@ public class TestJsonRpcService : JsonRpcService
 }
 ```
 
-You may host your service in a console application like this: (Based on [another project](https://github.com/CXuesong/MwLanguageServer/blob/master/MwLanguageServer/Program.cs) I'm currently working on.)
+You may host your service in a console application like this: (Based on [another project](https://github.com/CXuesong/LanguageServer.NET/blob/master/DemoLanguageServer/Program.cs) I'm currently working on.)
 
 ```c#
 static void Main(string[] args)
