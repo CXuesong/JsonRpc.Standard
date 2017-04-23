@@ -67,9 +67,9 @@ namespace JsonRpc.Standard.Server
             using (var linked = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, cancellationToken))
             {
                 var cancellationTcs = new TaskCompletionSource<bool>();
-                var writerTask = Task.Factory.StartNew(state => WriterEntryPoint((CancellationToken) state).Wait(),
+                var writerTask = Task.Factory.StartNew(state => WriterEntryPoint((CancellationToken) state).GetAwaiter().GetResult(),
                     linked.Token, linked.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-                var readerTask = Task.Factory.StartNew(state => ReaderEntryPoint((CancellationToken) state).Wait(),
+                var readerTask = Task.Factory.StartNew(state => ReaderEntryPoint((CancellationToken) state).GetAwaiter().GetResult(),
                     linked.Token, linked.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
                 // Tasks that we can safely await
                 var readerTask1 = readerTask.ContinueWith(_ => { });
@@ -117,8 +117,8 @@ namespace JsonRpc.Standard.Server
             while (true)
             {
                 ct.ThrowIfCancellationRequested();
-                var message = await Reader.ReadAsync(ct);
-                if (message == null) return;        // EOF reached.
+                var request = (GeneralRequestMessage) await Reader.ReadAsync(m => m is GeneralRequestMessage, ct);
+                if (request == null) return; // EOF reached.
                 try
                 {
                     ct.ThrowIfCancellationRequested();
@@ -127,29 +127,21 @@ namespace JsonRpc.Standard.Server
                 {
                     return;
                 }
-                var request = message as GeneralRequestMessage;
-                if (request == null)
+                // TODO provides a way to cancel the request from inside JsonRpcService.
+                var context = new RequestContext(this, Session, request, ct);
+                ResponseSlot responseSlot = null;
+                if (context.Request is RequestMessage)
                 {
-                    // TODO log the error
-                }
-                else
-                {
-                    // TODO provides a way to cancel the request from inside JsonRpcService.
-                    var context = new RequestContext(this, Session, request, ct);
-                    ResponseSlot responseSlot = null;
-                    if (context.Request is RequestMessage)
+                    responseSlot = new ResponseSlot();
+                    lock (responseQueue)
                     {
-                        responseSlot = new ResponseSlot();
-                        lock (responseQueue)
-                        {
-                            responseQueue.AddLast(responseSlot);
-                        }
+                        responseQueue.AddLast(responseSlot);
                     }
-#pragma warning disable 4014
-                    Task.Factory.StartNew(RpcMethodEntryPoint, new RpcMethodEntryPointState(context, responseSlot),
-                        context.CancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-#pragma warning restore 4014
                 }
+#pragma warning disable 4014
+                Task.Factory.StartNew(RpcMethodEntryPoint, new RpcMethodEntryPointState(context, responseSlot),
+                    context.CancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+#pragma warning restore 4014
             }
         }
 

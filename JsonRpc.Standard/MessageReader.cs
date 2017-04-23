@@ -96,6 +96,7 @@ namespace JsonRpc.Standard
                     try
                     {
                         var next = await ReadDirectAsync(cancellationToken);
+                        if (next == null) return null;  // EOF reached.
                         if (filter(next)) return next; // We're lucky.
                         // We still need to put the next item into the queue
                         // ReSharper disable once MethodSupportsCancellation
