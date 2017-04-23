@@ -17,6 +17,7 @@ namespace JsonRpc.Standard
         /// <returns>
         /// The next JSON RPC message, or <c>null</c> if no more messages exist.
         /// </returns>
+        /// <remarks>This method should be thread-safe.</remarks>
         /// <exception cref="OperationCanceledException">The operation has been canceled.</exception>
         public abstract Task<Message> ReadAsync(CancellationToken cancellationToken);
 
@@ -28,6 +29,7 @@ namespace JsonRpc.Standard
         /// <returns>
         /// The next JSON RPC message, or <c>null</c> if no more messages exist.
         /// </returns>
+        /// <remarks>This method should be thread-safe.</remarks>
         /// <exception cref="ArgumentNullException"><paramref name="filter"/> is <c>null</c>.</exception>
         /// <exception cref="OperationCanceledException">The operation has been canceled.</exception>
         public abstract Task<Message> ReadAsync(Predicate<Message> filter, CancellationToken cancellationToken);

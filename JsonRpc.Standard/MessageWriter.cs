@@ -14,6 +14,7 @@ namespace JsonRpc.Standard
         /// </summary>
         /// <param name="message">The meesage to write.</param>
         /// <param name="cancellationToken">A token that cancels the operation.</param>
+        /// <remarks>This method should be thread-safe.</remarks>
         /// <exception cref="ArgumentNullException"><paramref name="message"/> is <c>null</c>.</exception>
         public abstract Task WriteAsync(Message message, CancellationToken cancellationToken);
     }
