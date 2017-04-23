@@ -86,13 +86,13 @@ namespace JsonRpc.Standard.Server
             using (var linked = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, cancellationToken))
             {
                 var cancellationTcs = new TaskCompletionSource<bool>();
-                var readerTask = Task.Factory.StartNew(state => ReaderEntryPoint((CancellationToken) state),
+                var writerTask = Task.Factory.StartNew(state => WriterEntryPoint((CancellationToken) state).Wait(),
                     linked.Token, linked.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-                var writerTask = Task.Factory.StartNew(state => WriterEntryPoint((CancellationToken) state),
+                var readerTask = Task.Factory.StartNew(state => ReaderEntryPoint((CancellationToken) state).Wait(),
                     linked.Token, linked.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
                 // Tasks that we can safely await
                 var readerTask1 = readerTask.ContinueWith(_ => { });
-                var writerTask1 = readerTask.ContinueWith(_ => { });
+                var writerTask1 = writerTask.ContinueWith(_ => { });
                 // Wait for Stop() or user cancellation.
                 using (cancellationToken.Register(state => ((TaskCompletionSource<bool>) state).SetResult(true),
                     cancellationTcs))
@@ -256,9 +256,9 @@ namespace JsonRpc.Standard.Server
                     response = new ResponseMessage(request.Id, null);
                 }
             }
-            lock (responseQueue)
+            if (response != null)
             {
-                state.ResponseSlot.Response = response;
+                lock (responseQueue) state.ResponseSlot.Response = response;
             }
             try
             {
