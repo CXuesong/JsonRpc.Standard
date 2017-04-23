@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,15 @@ namespace UnitTestProject1
         public static IJsonRpcServiceHost CreateJsonRpcServiceHost(MessageReader reader, MessageWriter writer)
         {
             return new JsonRpcServiceHost(reader, writer, GetRpcMethodResolver(), JsonRpcServiceHostOptions.None);
+        }
+
+        public static (IJsonRpcServiceHost Host, MessageReader ClientReader, MessageWriter ClientWriter) CreateJsonRpcServiceHost()
+        {
+            var serverQueue = new ConcurrentQueue<Message>();
+            var clientQueue = new ConcurrentQueue<Message>();
+            var host = CreateJsonRpcServiceHost(new QueueMessageReader(clientQueue),
+                new QueueMessageWriter(serverQueue));
+            return (host, new QueueMessageReader(serverQueue), new QueueMessageWriter(clientQueue));
         }
     }
 }

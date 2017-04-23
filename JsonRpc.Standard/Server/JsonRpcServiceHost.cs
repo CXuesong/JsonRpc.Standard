@@ -206,7 +206,7 @@ namespace JsonRpc.Standard.Server
                 {
                     response = new ResponseMessage(request.Id, null,
                         new ResponseError(JsonRpcErrorCode.MethodNotFound,
-                            $"Cannot resolve method \"{request.Method}\""));
+                            $"Cannot resolve method \"{request.Method}\"."));
                 }
             }
             else

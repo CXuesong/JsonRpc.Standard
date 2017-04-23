@@ -140,5 +140,21 @@ namespace JsonRpc.Standard
         public string StackTrace { get; set; }
 
         public UnhandledClrExceptionData InnerException { get; set; }
+
+        public Exception ToException()
+        {
+            var inner = InnerException?.ToException();
+            var type = Type.GetType(ExceptionType);
+            if (type != null)
+            {
+                var inst = (Exception) Activator.CreateInstance(type, Message, inner);
+                inst.HelpLink = HelpLink;
+                return inst;
+            }
+            else
+            {
+                return new Exception($"[{ExceptionType}]: {Message}", inner);
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using JsonRpc.Standard.Server;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -67,6 +68,9 @@ namespace JsonRpc.Standard.Contracts
                 inst.ParameterType = taskResultType;
                 inst.IsTask = true;
             }
+            // This argument will always be injected by the invoker,
+            // so we don't want it to interfere with method resolution.
+            if (inst.ParameterType == typeof(CancellationToken)) inst.IsOptional = true;
             return inst;
         }
     }
@@ -207,7 +211,7 @@ namespace JsonRpc.Standard.Contracts
         {
             foreach (var m in candidates)
             {
-                if (m.Parameters.All(p => p.IsOptional || context.Request.Params[p.ParameterName] != null))
+                if (m.Parameters.All(p => p.IsOptional || context.Request.Params?[p.ParameterName] != null))
                     return m;
             }
             return null;
