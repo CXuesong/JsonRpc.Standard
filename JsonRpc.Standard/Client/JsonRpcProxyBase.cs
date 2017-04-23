@@ -1,35 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
 using Newtonsoft.Json.Linq;
+
+[assembly: InternalsVisibleTo(JsonRpcProxyBuilder.DynamicAssemblyName)]
 
 namespace JsonRpc.Standard.Client
 {
     internal class JsonRpcProxyBase
     {
 
-        public JsonRpcProxyBase(JsonRpcClient client)
+        protected JsonRpcProxyBase(JsonRpcClient client, IList<JsonRpcMethod> methodTable)
         {
             if (client == null) throw new ArgumentNullException(nameof(client));
+            if (methodTable == null) throw new ArgumentNullException(nameof(methodTable));
             Client = client;
+            MethodTable = methodTable;
         }
 
         public JsonRpcClient Client { get; }
 
-        protected TResult Send<TResult>(JsonRpcMethod method, IList<object> paramValues)
+        protected IList<JsonRpcMethod> MethodTable { get; }
+
+        protected TResult Send<TResult>(int methodIndex, IList<object> paramValues)
         {
-            return SendAsync<TResult>(method, paramValues).Result;
+            return SendAsync<TResult>(methodIndex, paramValues).GetAwaiter().GetResult();
         }
 
-        protected async Task<TResult> SendAsync<TResult>(JsonRpcMethod method, IList<object> paramValues)
+        protected async Task<TResult> SendAsync<TResult>(int methodIndex, IList<object> paramValues)
         {
+            var method = MethodTable[methodIndex];
             var response = await SendInternalAsync(method, paramValues);
+            if (response.Error != null)
+            {
+                if (response.Error.Code == (int) JsonRpcErrorCode.UnhandledClrException)
+                {
+                    var error = response.Error.Data.ToObject<UnhandledClrExceptionData>(RpcSerializer.Serializer);
+                    throw new TargetInvocationException(error.ToException());
+                }
+                else
+                {
+                    throw new TargetInvocationException(new JsonRpcException(response.Error.Code,
+                        response.Error.Message, response.Error.Data));
+                }
+            }
             if (method.ReturnParameter.ParameterType != typeof(void))
+            {
+                if (response.Result == null) throw new TargetInvocationException($"Expect \"{method.ReturnParameter.ParameterType}\" result, got void.", null);
                 return response.Result.ToObject<TResult>(method.ReturnParameter.Serializer);
+            }
             return default(TResult);
         }
 
@@ -67,28 +92,32 @@ namespace JsonRpc.Standard.Client
             }
             else
             {
-                return await Client.SendAsync(new RequestMessage(Client.NextRequestId(), method.MethodName), ct);
+                return await Client.SendAsync(new RequestMessage(Client.NextRequestId(), method.MethodName, jargs), ct);
             }
         }
-
     }
 
     internal interface IContractTest
     {
-        object M1(int a, string b, object c, int? d = 10);
+        object M1(int a, string b, object c, HashSet<int>.Enumerator d);
     }
 
     internal class JsonRpcProxyTest : JsonRpcProxyBase, IContractTest
     {
         /// <inheritdoc />
-        public JsonRpcProxyTest(JsonRpcClient client) : base(client)
+        public JsonRpcProxyTest(JsonRpcClient client, JsonRpcMethod[] methodTable) : base(client, methodTable)
         {
         }
 
         /// <inheritdoc />
-        object IContractTest.M1(int a, string b, object c, int? d)
+        object IContractTest.M1(int a, string b, object c, HashSet<int>.Enumerator d)
         {
-            return Send<object>(null, new object[] {a, b, c, d});
+            return Send<object>(1, new object[] {a, b, c, d});
+        }
+
+        void XXX()
+        {
+            Send<object>(1, null);
         }
     }
 }
