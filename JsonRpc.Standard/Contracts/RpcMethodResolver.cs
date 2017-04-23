@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using JsonRpc.Standard.Server;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 

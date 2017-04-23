@@ -1,4 +1,6 @@
-﻿namespace JsonRpc.Standard.Contracts
+﻿using JsonRpc.Standard.Contracts;
+
+namespace JsonRpc.Standard.Server
 {
     /// <summary>
     /// Base class for providing JSON RPC service.
