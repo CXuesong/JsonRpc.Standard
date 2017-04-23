@@ -41,10 +41,10 @@ namespace JsonRpc.Standard
             
         }
 
-        internal GeneralRequestMessage(string method, object paramsValue)
+        internal GeneralRequestMessage(string method, JToken paramsValue)
         {
             Method = method;
-            SetParams(paramsValue);
+            Params = paramsValue;
         }
 
         /// <summary>
@@ -56,23 +56,9 @@ namespace JsonRpc.Standard
         /// <summary>
         /// A <see cref="JObject" /> representing parameters for the method.
         /// </summary>
+        /// <remarks>This member MAY be omitted (null).</remarks>
         [JsonProperty]
         public JToken Params { get; set; }
-
-        public object GetParams(Type paramsType)
-        {
-            return Params?.ToObject(paramsType, RpcSerializer.Serializer);
-        }
-
-        public T GetParams<T>()
-        {
-            return Params == null ? default(T) : Params.ToObject<T>(RpcSerializer.Serializer);
-        }
-
-        public void SetParams(object newParams)
-        {
-            Params = newParams == null ? null : JToken.FromObject(newParams, RpcSerializer.Serializer);
-        }
     }
 
     /// <summary>
@@ -94,7 +80,7 @@ namespace JsonRpc.Standard
         {
         }
 
-        public RequestMessage(object id, string method, object paramsValue) : base(method, paramsValue)
+        public RequestMessage(object id, string method, JToken paramsValue) : base(method, paramsValue)
         {
             Id = id;
         }
@@ -128,7 +114,7 @@ namespace JsonRpc.Standard
         {
         }
 
-        public NotificationMessage(string method, object paramsValue) : base(method, paramsValue)
+        public NotificationMessage(string method, JToken paramsValue) : base(method, paramsValue)
         {
 
         }
