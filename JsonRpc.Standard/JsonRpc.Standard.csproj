@@ -3,11 +3,16 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.1.0-int0</Version>
+    <Version>0.1.0-int0a</Version>
     <Authors>CXuesong</Authors>
     <Company />
     <PackageId>CXuesong.JsonRpc.Standard</PackageId>
-    <Description />
+    <Description>An asynchronous JSON RPC common library.</Description>
+    <PackageTags>json rpc</PackageTags>
+    <PackageProjectUrl>https://github.com/CXuesong/JsonRpc.Standard</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/CXuesong/JsonRpc.Standard</RepositoryUrl>
+    <NeutralLanguage>en-us</NeutralLanguage>
+    <PackageReleaseNotes>See https://github.com/CXuesong/JsonRpc.Standard/releases .</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

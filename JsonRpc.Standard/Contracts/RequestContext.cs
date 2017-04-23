@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using System.Threading;
+using JsonRpc.Standard.Server;
 
-namespace JsonRpc.Standard.Server
+namespace JsonRpc.Standard.Contracts
 {
     /// <summary>
     /// Provides the context per JSON RPC request.

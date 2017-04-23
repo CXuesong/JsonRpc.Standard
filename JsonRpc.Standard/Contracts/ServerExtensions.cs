@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using JsonRpc.Standard.Server;
 
-namespace JsonRpc.Standard.Server
+namespace JsonRpc.Standard.Contracts
 {
     /// <summary>
     /// Extension methods.

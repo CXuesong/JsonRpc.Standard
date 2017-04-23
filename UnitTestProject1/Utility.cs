@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using JsonRpc.Standard;
+using JsonRpc.Standard.Contracts;
 using JsonRpc.Standard.Server;
 
 namespace UnitTestProject1

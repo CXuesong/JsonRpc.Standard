@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace JsonRpc.Standard.Server
+namespace JsonRpc.Standard.Contracts
 {
     /// <summary>
     /// Defines method to invoke the specified JSON RPC method.
     /// </summary>
-    public interface IRpcMethodInvoker
+    public interface IRpcMethodHandler
     {
         /// <summary>
         /// Invokes the specified JSON RPC method asynchronously, using the specified request context.
@@ -27,14 +25,14 @@ namespace JsonRpc.Standard.Server
     }
 
     /// <summary>
-    /// The default implementation of <see cref="IRpcMethodInvoker"/>.
+    /// The default implementation of <see cref="IRpcMethodHandler"/>.
     /// </summary>
-    internal class ReflectionRpcMethodInvoker : IRpcMethodInvoker
+    internal class ReflectionRpcMethodHandler : IRpcMethodHandler
     {
         private readonly MethodInfo methodInfo;
         private readonly IList<ParameterInfo> args;
 
-        public ReflectionRpcMethodInvoker(MethodInfo methodInfo)
+        public ReflectionRpcMethodHandler(MethodInfo methodInfo)
         {
             if (methodInfo == null) throw new ArgumentNullException(nameof(methodInfo));
             this.methodInfo = methodInfo;

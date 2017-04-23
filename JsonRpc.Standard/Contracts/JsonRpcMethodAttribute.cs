@@ -1,18 +1,7 @@
 ﻿using System;
 
-namespace JsonRpc.Standard.Server
+namespace JsonRpc.Standard.Contracts
 {
-    /// <summary>
-    /// Base class for providing JSON RPC service.
-    /// </summary>
-    public class JsonRpcService
-    {
-        /// <summary>
-        /// Gets or sets the <see cref="RequestContext"/> of current request.
-        /// </summary>
-        public RequestContext RequestContext { get; set; }
-    }
-
     /// <summary>
     /// Indicates the method is exposed for JSON RPC invocation.
     /// </summary>

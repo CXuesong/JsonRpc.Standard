@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace JsonRpc.Standard.Server
+namespace JsonRpc.Standard.Contracts
 {
     /// <summary>
     /// Provides information to map an argument in JSON RPC method to a CLR method argument.
@@ -77,7 +75,7 @@ namespace JsonRpc.Standard.Server
 
         public IList<JsonRpcParameter> Parameters { get; set; }
 
-        public IRpcMethodInvoker Invoker { get; set; }
+        public IRpcMethodHandler Handler { get; set; }
 
         internal static JsonRpcMethod FromMethod(Type type, MethodInfo method, bool camelCase)
         {
@@ -93,7 +91,7 @@ namespace JsonRpc.Standard.Server
                     inst.MethodName = char.ToLowerInvariant(inst.MethodName[0]) + inst.MethodName.Substring(1);
             }
             inst.Parameters = method.GetParameters().Select(JsonRpcParameter.FromParameter).ToList();
-            inst.Invoker = new ReflectionRpcMethodInvoker(method);
+            inst.Handler = new ReflectionRpcMethodHandler(method);
             return inst;
         }
     }

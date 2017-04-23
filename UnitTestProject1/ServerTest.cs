@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using JsonRpc.Standard;
-using JsonRpc.Standard.Server;
+using JsonRpc.Standard.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTestProject1

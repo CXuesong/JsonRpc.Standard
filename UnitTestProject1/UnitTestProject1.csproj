@@ -61,10 +61,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JsonRpc.Standard.Server\JsonRpc.Standard.Server.csproj">
-      <Project>{bf2576ce-faf4-4ec7-94f5-00cf7ede3cbd}</Project>
-      <Name>JsonRpc.Standard.Server</Name>
-    </ProjectReference>
     <ProjectReference Include="..\JsonRpc.Standard\JsonRpc.Standard.csproj">
       <Project>{f8154ef9-1cce-4d88-88c5-0f6be293482c}</Project>
       <Name>JsonRpc.Standard</Name>
