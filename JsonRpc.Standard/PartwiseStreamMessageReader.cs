@@ -112,6 +112,7 @@ namespace JsonRpc.Standard
                     // We need to read more bytes…
                     headerBuffer.CopyTo(contentOffset, contentBuffer, 0, headerBuffer.Count - contentOffset);
                     var pos = headerBuffer.Count - contentOffset; // The position to put the next character.
+                    headerBuffer.Clear();
                     while (pos < contentLength)
                     {
                         var length = BaseStream.Read(contentBuffer, pos,
