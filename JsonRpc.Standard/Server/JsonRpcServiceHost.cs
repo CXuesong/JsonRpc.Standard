@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,11 +15,14 @@ namespace JsonRpc.Standard.Server
     [Flags]
     public enum JsonRpcServiceHostOptions
     {
+        /// <summary>
+        /// No options.
+        /// </summary>
         None = 0,
         /// <summary>
         /// Makes the response sequence consistent with the request order.
         /// </summary>
-        ConsistentResponseSequence
+        ConsistentResponseSequence,
     }
 
     /// <summary>
@@ -74,24 +78,8 @@ namespace JsonRpc.Standard.Server
                 // Tasks that we can safely await
                 var readerTask1 = readerTask.ContinueWith(_ => { });
                 var writerTask1 = writerTask.ContinueWith(_ => { });
-                // Wait for Stop() or user cancellation.
-                using (cancellationToken.Register(state => ((TaskCompletionSource<bool>) state).SetResult(true),
-                    cancellationTcs))
-                {
-                    var finished = await Task.WhenAny(readerTask1, cancellationTcs.Task);
-                    if (finished == readerTask1 && readerTask.IsCompleted)
-                    {
-                        // Reader has reached EOF. Wait for the writer to finish, then stop the server.
-                        while (true)
-                        {
-                            int queueSize;
-                            lock (responseQueue) queueSize = responseQueue.Count;
-                            if (queueSize == 0) break;
-                            await Task.WhenAny(writerTask1, Task.Delay(1000, linked.Token));
-                        }
-                        this.Stop();
-                    }
-                }
+                // Wait for reader EOF, Stop(), or user cancellation.
+                await Task.WhenAny(readerTask1, cancellationTcs.Task);
                 // Cleanup.
                 lock (responseQueue) responseQueue.Clear();
             }
@@ -154,6 +142,7 @@ namespace JsonRpc.Standard.Server
                 // Wait for incoming response, or cancellation.
                 try
                 {
+                    ct.ThrowIfCancellationRequested();
                     await responseQueueSemaphore.WaitAsync(ct);
                 }
                 catch (ObjectDisposedException)
@@ -176,58 +165,47 @@ namespace JsonRpc.Standard.Server
                         }
                         response = node?.Value.Response;
                         // If the response is not ready, then we simply wait for the next "response ready" event.
-                        if (response == null) goto WAIT;
+                        if (response == null) goto NEXT;
                         // Pick out the node
                         responseQueue.Remove(node);
                     }
                     // This operation might simply block the thread, rather than async.
                     await Writer.WriteAsync(response, ct);
                 }
-                WAIT:;
-                try
-                {
-                    ct.ThrowIfCancellationRequested();
-                }
-                catch (ObjectDisposedException)
-                {
-                    return;
-                }
+                NEXT:;
             }
         }
 
         private async Task RpcMethodEntryPoint(object o)
         {
             var state = (RpcMethodEntryPointState) o;
-            var method = Resolver.TryResolve(state.Context);
+            var request = state.Context.Request as RequestMessage;
             ResponseMessage response = null;
-            if (method == null)
-            {
-                if (state.Context.Request is RequestMessage request)
-                {
-                    response = new ResponseMessage(request.Id, null,
-                        new ResponseError(JsonRpcErrorCode.MethodNotFound,
-                            $"Cannot resolve method \"{request.Method}\"."));
-                }
-            }
-            else
-            {
-                response = await method.Handler.InvokeAsync(method, state.Context);
-            }
+            JsonRpcMethod method;
             try
             {
-                state.Context.CancellationToken.ThrowIfCancellationRequested();
+                method = Resolver.TryResolve(state.Context);
             }
-            catch (ObjectDisposedException)
+            catch (AmbiguousMatchException)
             {
-                return;
+                if (request != null)
+                    response = new ResponseMessage(request.Id, null, new ResponseError(JsonRpcErrorCode.MethodNotFound,
+                        $"Invocation of method \"{request.Method}\" is ambiguous."));
+                goto FINAL;
             }
-            if (response == null)
+            if (method == null)
+            {
+                if (request != null)
+                    response = new ResponseMessage(request.Id, null, new ResponseError(JsonRpcErrorCode.MethodNotFound,
+                        $"Cannot resolve method \"{request.Method}\"."));
+                goto FINAL;
+            }
+            response = await method.Handler.InvokeAsync(method, state.Context);
+            FINAL:
+            if (request != null && response == null)
             {
                 // Provides a default response
-                if (state.Context.Request is RequestMessage request)
-                {
-                    response = new ResponseMessage(request.Id, null);
-                }
+                response = new ResponseMessage(request.Id, null);
             }
             if (response != null)
             {
@@ -235,7 +213,6 @@ namespace JsonRpc.Standard.Server
             }
             try
             {
-                state.Context.CancellationToken.ThrowIfCancellationRequested();
                 responseQueueSemaphore.Release();
             }
             catch (ObjectDisposedException)

@@ -13,7 +13,7 @@ namespace JsonRpc.Standard.Server
         /// Asynchronously starts the JSON RPC service host.
         /// </summary>
         /// <param name="cancellationToken">The token used to shut down the service host.</param>
-        /// <returns>A task that indicates the host state.</returns>
+        /// <returns>A task that finishes when the server has stopped.</returns>
         /// <exception cref="InvalidOperationException">The service host is already running.</exception>
         Task RunAsync(CancellationToken cancellationToken);
 

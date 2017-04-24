@@ -19,9 +19,15 @@ namespace JsonRpc.Standard.Contracts
         /// </summary>
         /// <param name="method">The method to be invoked.</param>
         /// <param name="context">The context of the invocation.</param>
-        /// <returns>A task that returns a <see cref="ResponseMessage"/> to indicate the response,
-        /// or that returns <c>null</c> for the default response.</returns>
-        /// <remarks>This method will usually called from a working thread.</remarks>
+        /// <returns>
+        /// A task that returns a <see cref="ResponseMessage"/> to indicate the response,
+        /// or that returns <c>null</c> for the default response.
+        /// </returns>
+        /// <remarks>
+        /// This method will usually called from a working thread.
+        /// If there is error or exception occurred during invocation,
+        /// it should be encapsulated in the <see cref="ResponseMessage"/>.
+        /// </remarks>
         /// <exception cref="ArgumentNullException">Either <paramref name="method"/> or <paramref name="context"/> is <c>null</c>.</exception>
         Task<ResponseMessage> InvokeAsync(JsonRpcMethod method, RequestContext context);
     }
