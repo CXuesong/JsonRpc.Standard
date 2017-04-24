@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using JsonRpc.Standard.Server;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
 namespace JsonRpc.Standard.Contracts
@@ -29,6 +31,10 @@ namespace JsonRpc.Standard.Contracts
         /// <summary>
         /// Whether the parameter is optional.
         /// </summary>
+        /// <remarks>
+        /// Parameters with certain types (e.g. <see cref="CancellationToken"/>)
+        /// are always treated as optional.
+        /// </remarks>
         public bool IsOptional { get; set; }
 
         /// <summary>
@@ -40,6 +46,41 @@ namespace JsonRpc.Standard.Contracts
         /// The bare type of the parameter.
         /// </summary>
         public Type ParameterType { get; set; }
+
+        internal bool MatchJTokenType(JTokenType type)
+        {
+            if (ParameterType == typeof(JToken)) return true;
+            var ti = ParameterType.GetTypeInfo();
+            switch (type)
+            {
+                case JTokenType.Object:
+                    return !(ti.IsPrimitive || ParameterType == typeof(string));
+                case JTokenType.Array:
+                    return typeof(IEnumerable).GetTypeInfo().IsAssignableFrom(ti);
+                case JTokenType.Boolean:
+                    return ParameterType == typeof(bool) || ParameterType == typeof(bool?);
+                case JTokenType.Integer:
+                case JTokenType.Float:
+                    return ParameterType == typeof(byte) || ParameterType == typeof(byte?)
+                           || ParameterType == typeof(short) || ParameterType == typeof(short?)
+                           || ParameterType == typeof(int) || ParameterType == typeof(int?)
+                           || ParameterType == typeof(long) || ParameterType == typeof(long?)
+                           || ParameterType == typeof(sbyte) || ParameterType == typeof(sbyte?)
+                           || ParameterType == typeof(ushort) || ParameterType == typeof(ushort?)
+                           || ParameterType == typeof(uint) || ParameterType == typeof(uint?)
+                           || ParameterType == typeof(ulong) || ParameterType == typeof(ulong?)
+                           || ParameterType == typeof(float) || ParameterType == typeof(float?)
+                           || ParameterType == typeof(double) || ParameterType == typeof(double?);
+                case JTokenType.String:
+                    return !ti.IsPrimitive || ParameterType == typeof(char) || ParameterType == typeof(char?);
+                case JTokenType.Null:
+                    return !ParameterType.GetTypeInfo().IsValueType
+                           || ParameterType.IsConstructedGenericType &&
+                           ParameterType.GetGenericTypeDefinition() == typeof(Nullable<>);
+                default:
+                    return false;
+            }
+        }
 
         /// <summary>
         /// The serializer used to convert the parameter.
@@ -56,6 +97,8 @@ namespace JsonRpc.Standard.Contracts
         internal static JsonRpcParameter FromParameter(ParameterInfo parameter)
         {
             if (parameter == null) throw new ArgumentNullException(nameof(parameter));
+            if (parameter.IsOut || parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer)
+                throw new NotSupportedException("Argument with out, ref, or of pointer type is not supported.");
             var inst = new JsonRpcParameter
             {
                 ParameterName = parameter.Name,
@@ -65,6 +108,8 @@ namespace JsonRpc.Standard.Contracts
             var taskResultType = Utility.GetTaskResultType(parameter.ParameterType);
             if (taskResultType != null)
             {
+                if (Utility.GetTaskResultType(taskResultType) != null)
+                    throw new NotSupportedException("Argument of nested Task type is not supported.");
                 inst.ParameterType = taskResultType;
                 inst.IsTask = true;
             }
@@ -91,6 +136,8 @@ namespace JsonRpc.Standard.Contracts
 
         public bool IsNotification { get; set; }
 
+        public bool AllowExtesionData { get; set; }
+
         public IList<JsonRpcParameter> Parameters { get; set; }
 
         public JsonRpcParameter ReturnParameter { get; set; }
@@ -111,6 +158,7 @@ namespace JsonRpc.Standard.Contracts
                     inst.MethodName = char.ToLowerInvariant(inst.MethodName[0]) + inst.MethodName.Substring(1);
             }
             inst.IsNotification = attr?.IsNotification ?? false;
+            inst.AllowExtesionData = attr?.AllowExtesionData ?? false;
             inst.ReturnParameter = JsonRpcParameter.FromParameter(method.ReturnParameter);
             inst.Parameters = method.GetParameters().Select(JsonRpcParameter.FromParameter).ToList();
             inst.Handler = new ReflectionRpcMethodHandler(method);
@@ -127,7 +175,8 @@ namespace JsonRpc.Standard.Contracts
         /// Resolves the target RPC method from the JSON RPC request.
         /// </summary>
         /// <param name="context">The request context.</param>
-        /// <returns>Target RPC method information, or <c>null</c> if no such method exists.</returns>
+        /// <returns>Target RPC method information, or <c>null</c> if no suitable method exists.</returns>
+        /// <exception cref="AmbiguousMatchException">More than one method is found with that suits the specified request.</exception>
         JsonRpcMethod TryResolve(RequestContext context);
     }
 
@@ -207,14 +256,43 @@ namespace JsonRpc.Standard.Contracts
             return null;
         }
 
+        /// <summary>
+        /// Try to resolve a method from a sequence of methods with the same method names.
+        /// </summary>
+        /// <returns>The methods will be resolved by matching the type of parameters.</returns>
         public virtual JsonRpcMethod TryResolve(RequestContext context, ICollection<JsonRpcMethod> candidates)
         {
+            //TODO Support array as params
+            if (context.Request.Params != null && context.Request.Params.Type == JTokenType.Array) return null;
+            JsonRpcMethod firstMatch = null;
+            Dictionary<string, JToken> requestProp = null;
             foreach (var m in candidates)
             {
-                if (m.Parameters.All(p => p.IsOptional || context.Request.Params?[p.ParameterName] != null))
-                    return m;
+                if (!m.AllowExtesionData && context.Request.Params != null)
+                {
+                    // Strict match
+                    requestProp = ((JObject) context.Request.Params).Properties()
+                        .ToDictionary(p => p.Name, p => p.Value);
+                }
+                foreach (var p in m.Parameters)
+                {
+                    var jp = context.Request.Params?[p.ParameterName];
+                    if (jp == null)
+                    {
+                        if (!p.IsOptional) goto NEXT;
+                        else continue;
+                    }
+                    if (!p.MatchJTokenType(jp.Type)) goto NEXT;
+                    requestProp?.Remove(p.ParameterName);
+                }
+                // Check whether we have extra parameters.
+                if (requestProp != null && requestProp.Count > 0) goto NEXT;
+                if (firstMatch != null) throw new AmbiguousMatchException();
+                firstMatch = m;
+                NEXT:
+                ;
             }
-            return null;
+            return firstMatch;
         }
 
         /// <summary>

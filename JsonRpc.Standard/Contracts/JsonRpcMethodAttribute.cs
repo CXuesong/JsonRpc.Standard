@@ -30,8 +30,13 @@ namespace JsonRpc.Standard.Contracts
         public string MethodName { get; }
 
         /// <summary>
-        /// Indicates whether the method is a notification request.
+        /// Used in the client stub. Indicates whether the method is a notification request.
         /// </summary>
         public bool IsNotification { get; set; }
+
+        /// <summary>
+        /// Used in the server. Whether allows extra parameters on this method when matching signature.
+        /// </summary>
+        public bool AllowExtesionData { get; set; }
     }
 }

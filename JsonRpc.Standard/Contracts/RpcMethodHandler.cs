@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,6 +41,10 @@ namespace JsonRpc.Standard.Contracts
             args = methodInfo.GetParameters();
         }
 
+        private static readonly MethodInfo Task_FromResult = typeof(Task).GetTypeInfo()
+            .GetDeclaredMethods("FromResult")
+            .First(m => m.IsGenericMethodDefinition && m.GetGenericArguments().Length == 1);
+
         /// <inheritdoc />
         public async Task<ResponseMessage> InvokeAsync(JsonRpcMethod method, RequestContext context)
         {
@@ -75,6 +80,12 @@ namespace JsonRpc.Standard.Contracts
                     try
                     {
                         argv[i] = jarg.ToObject(method.Parameters[i].ParameterType, method.Parameters[i].Serializer);
+                        if (method.Parameters[i].IsTask)
+                        {
+                            // This is a rare case, I suppose.
+                            argv[i] = Task_FromResult.MakeGenericMethod(method.Parameters[i].ParameterType)
+                                .Invoke(null, new[] {argv[i]});
+                        }
                     }
                     catch (JsonException ex)
                     {

@@ -22,8 +22,8 @@ namespace UnitTestProject1
             var client = new JsonRpcClient(reader, writer);
             var builder = new JsonRpcProxyBuilder();
             var proxy = builder.CreateProxy<ITestRpcContract>(client);
-            Assert.AreEqual(100, proxy.Sum(73, 27));
-            Assert.AreEqual("abcdef", proxy.Concat("ab", "cdef"));
+            Assert.AreEqual(100, proxy.Add(73, 27));
+            Assert.AreEqual("abcdef", proxy.Add("ab", "cdef"));
             Assert.AreEqual(new Complex(100, 200), proxy.MakeComplex(100, 200).Result);
             host.Stop();
         }

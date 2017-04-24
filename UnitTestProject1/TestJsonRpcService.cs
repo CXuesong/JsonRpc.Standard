@@ -14,10 +14,10 @@ namespace UnitTestProject1
     public interface ITestRpcContract
     {
         [JsonRpcMethod]
-        int Sum(int x, int y);
+        int Add(int x, int y);
 
         [JsonRpcMethod]
-        string Concat(string a, string b);
+        string Add(string a, string b);
 
         [JsonRpcMethod]
         Task<Complex> MakeComplex(double real, double imaginary);
@@ -26,15 +26,22 @@ namespace UnitTestProject1
 
     public class TestJsonRpcService : JsonRpcService
     {
+        // For backward compatibility
         [JsonRpcMethod]
-        public async Task<int> Sum(int x, int y, CancellationToken ct)
+        public Task<int> Sum(int x, int y, CancellationToken ct)
+        {
+            return Add(x, y, ct);
+        }
+
+        [JsonRpcMethod]
+        public async Task<int> Add(int x, int y, CancellationToken ct)
         {
             await Task.Delay(500, ct);
             return x + y;
         }
 
         [JsonRpcMethod]
-        public string Concat(string a, string b)
+        public string Add(string a, string b)
         {
             return a + b;
         }
