@@ -14,7 +14,7 @@ This package is based on .NET Standard 1.3. You may need .NET Framework 4.6 or .
 
 ## Server
 
-It's somewhat like the implementation of a Controller in ASP.NET. Inheirt from `JsonRpcService`, write your methods, and mark them either as a request or a notification with `JsonRpcMethodAttribute`.
+It's somewhat like the implementation of a Controller in ASP.NET. Derive from `JsonRpcService`, write your methods, and mark them either as a request or a notification with `JsonRpcMethodAttribute`.
 
 *   The default JSON RPC method name is the camel-case form of the CLR method name.
 
@@ -24,7 +24,7 @@ It's somewhat like the implementation of a Controller in ASP.NET. Inheirt from `
 
 *   Optional parameters are supported.
 
-*   A basic method-overload support by distingushing the methods with the same name but different parameter count is provided.
+*   Method-overloading is supported by distingushing the method parameter count and type (Number/String/Array/Object).
 
 *   You can report an error by returning a `ResponseError` object or throwing a `JsonRpcException` in your service implementation.
 
@@ -34,14 +34,14 @@ The example code given below is based on the current unit test cases.
 public class TestJsonRpcService : JsonRpcService
 {
     [JsonRpcMethod]
-    public async Task<int> Sum(int x, int y, CancellationToken ct)
+    public async Task<int> Add(int x, int y, CancellationToken ct)
     {
         await Task.Delay(500, ct);
         return x + y;
     }
 
     [JsonRpcMethod]
-    public string Concat(string a, string b)
+    public string Add(string a, string b)
     {
         return a + b;
     }
@@ -96,10 +96,10 @@ As is expatiated in `UnitTestProject1/ClientTest.cs`, you can create your stub i
 public interface ITestRpcContract
 {
     [JsonRpcMethod]
-    int Sum(int x, int y);
+    int Add(int x, int y);
 
     [JsonRpcMethod]
-    string Concat(string a, string b);
+    string Add(string a, string b);
 
     [JsonRpcMethod]
     Task<Complex> MakeComplex(double real, double imaginary);
