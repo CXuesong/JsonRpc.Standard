@@ -87,6 +87,12 @@ namespace JsonRpc.Standard
                     return RpcSerializer.DeserializeMessage(builder.ToString());
                 }
             }
+            catch (ObjectDisposedException)
+            {
+                // Throws OperationCanceledException if the cancellation has already been requested.
+                cancellationToken.ThrowIfCancellationRequested();
+                throw;
+            }
             finally
             {
                 readerSemaphore.Release();

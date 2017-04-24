@@ -22,7 +22,8 @@ namespace JsonRpc.Standard
         {
         }
 
-        public PartwiseStreamMessageWriter(Stream stream, IStreamMessageLogger messageLogger) : this(stream, UTF8NoBom, messageLogger)
+        public PartwiseStreamMessageWriter(Stream stream, IStreamMessageLogger messageLogger) : this(stream, UTF8NoBom,
+            messageLogger)
         {
         }
 
@@ -63,25 +64,29 @@ namespace JsonRpc.Standard
                     }
                 }
                 cancellationToken.ThrowIfCancellationRequested();
-                await streamSemaphore.WaitAsync(cancellationToken);
-                try
+                using (await streamSemaphore.LockAsync(cancellationToken))
                 {
-                    using (var writer = new StreamWriter(BaseStream, Encoding, 4096, true))
+                    try
                     {
-                        await writer.WriteAsync("Content-Length: ");
-                        await writer.WriteAsync(ms.Length.ToString());
-                        await writer.WriteAsync("\r\n");
-                        await writer.WriteAsync("Content-Type: ");
-                        await writer.WriteAsync(ContentType);
-                        await writer.WriteAsync("\r\n\r\n");
-                        await writer.FlushAsync();
+                        using (var writer = new StreamWriter(BaseStream, Encoding, 4096, true))
+                        {
+                            await writer.WriteAsync("Content-Length: ");
+                            await writer.WriteAsync(ms.Length.ToString());
+                            await writer.WriteAsync("\r\n");
+                            await writer.WriteAsync("Content-Type: ");
+                            await writer.WriteAsync(ContentType);
+                            await writer.WriteAsync("\r\n\r\n");
+                            await writer.FlushAsync();
+                        }
+                        ms.Seek(0, SeekOrigin.Begin);
+                        await ms.CopyToAsync(BaseStream, 81920, cancellationToken);
                     }
-                    ms.Seek(0, SeekOrigin.Begin);
-                    await ms.CopyToAsync(BaseStream, 81920, cancellationToken);
-                }
-                finally
-                {
-                    streamSemaphore.Release();
+                    catch (ObjectDisposedException)
+                    {
+                        // Throws OperationCanceledException if the cancellation has already been requested.
+                        cancellationToken.ThrowIfCancellationRequested();
+                        throw;
+                    }
                 }
             }
         }

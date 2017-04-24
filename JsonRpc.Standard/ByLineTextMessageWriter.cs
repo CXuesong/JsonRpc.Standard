@@ -59,12 +59,18 @@ namespace JsonRpc.Standard
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
             cancellationToken.ThrowIfCancellationRequested();
+            var content = RpcSerializer.SerializeMessage(message);
             await writerSemaphore.WaitAsync(cancellationToken);
             try
             {
-                var content = RpcSerializer.SerializeMessage(message);
                 await Writer.WriteLineAsync(content);
                 if (Delimiter != null) await Writer.WriteLineAsync();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Throws OperationCanceledException if the cancellation has already been requested.
+                cancellationToken.ThrowIfCancellationRequested();
+                throw;
             }
             finally
             {

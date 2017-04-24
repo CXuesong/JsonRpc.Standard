@@ -64,8 +64,17 @@ namespace JsonRpc.Standard
                 {
                     // Read until \r\n\r\n is found.
                     var headerSubBuffer = new byte[headerBufferSize];
-                    var readLength =
-                        await BaseStream.ReadAsync(headerSubBuffer, 0, headerBufferSize, cancellationToken);
+                    int readLength;
+                    try
+                    {
+                        readLength = await BaseStream.ReadAsync(headerSubBuffer, 0, headerBufferSize, cancellationToken);
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        // Throws OperationCanceledException if the cancellation has already been requested.
+                        cancellationToken.ThrowIfCancellationRequested();
+                        throw;
+                    }
                     if (readLength == 0)
                     {
                         if (headerBuffer.Count == 0)
@@ -112,12 +121,21 @@ namespace JsonRpc.Standard
                     headerBuffer.CopyTo(contentOffset, contentBuffer, 0, headerBuffer.Count - contentOffset);
                     var pos = headerBuffer.Count - contentOffset; // The position to put the next character.
                     headerBuffer.Clear();
-                    while (pos < contentLength)
+                    try
                     {
-                        var length = BaseStream.Read(contentBuffer, pos,
-                            Math.Min(contentLength - pos, contentBufferSize));
-                        if (length == 0) throw new JsonRpcException("Unexpected EOF when reading content.");
-                        pos += length;
+                        while (pos < contentLength)
+                        {
+                            var length = BaseStream.Read(contentBuffer, pos,
+                                Math.Min(contentLength - pos, contentBufferSize));
+                            if (length == 0) throw new JsonRpcException("Unexpected EOF when reading content.");
+                            pos += length;
+                        }
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        // Throws OperationCanceledException if the cancellation has already been requested.
+                        cancellationToken.ThrowIfCancellationRequested();
+                        throw;
                     }
                 }
             }
