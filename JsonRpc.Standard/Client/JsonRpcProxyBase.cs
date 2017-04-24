@@ -9,13 +9,13 @@ using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
 using Newtonsoft.Json.Linq;
 
-[assembly: InternalsVisibleTo(JsonRpcProxyBuilder.DynamicAssemblyName)]
-
 namespace JsonRpc.Standard.Client
 {
-    internal class JsonRpcProxyBase
+    /// <summary>
+    /// Infrastructure. Base class for client proxy implementation.
+    /// </summary>
+    public class JsonRpcProxyBase
     {
-
         protected JsonRpcProxyBase(JsonRpcClient client, IList<JsonRpcMethod> methodTable)
         {
             if (client == null) throw new ArgumentNullException(nameof(client));

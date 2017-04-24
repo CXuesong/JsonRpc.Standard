@@ -25,13 +25,23 @@ namespace JsonRpc.Standard.Client
         // Proxy Type --> Implementation Type
         private readonly Dictionary<Type, ProxyBuilderEntry> proxyTypeDict = new Dictionary<Type, ProxyBuilderEntry>();
 
-        internal const string DynamicAssemblyName = "JsonRpc.Standard.Client._$ProxyImpl";
+        internal const string DynamicAssemblyNamePrefix = "JsonRpc.Standard.Client._$ProxyImpl";
 
-        private static readonly Lazy<AssemblyBuilder> _AssemblyBuilder = new Lazy<AssemblyBuilder>(() =>
+        private readonly Lazy<AssemblyBuilder> _AssemblyBuilder;
+
+        private readonly Lazy<ModuleBuilder> _ModuleBuilder;
+
+
+        public JsonRpcProxyBuilder()
         {
-            var builder = AssemblyBuilder.DefineDynamicAssembly(
-                new AssemblyName(DynamicAssemblyName),
-                AssemblyBuilderAccess.RunAndCollect);
+            var ct = Interlocked.Increment(ref assemblyCounter);
+            ImplementedProxyAssemblyName = DynamicAssemblyNamePrefix + ct;
+            ImplementedProxyNamespace = ImplementedProxyAssemblyName;
+            _AssemblyBuilder = new Lazy<AssemblyBuilder>(() =>
+            {
+                var builder = AssemblyBuilder.DefineDynamicAssembly(
+                    new AssemblyName(ImplementedProxyAssemblyName),
+                    AssemblyBuilderAccess.RunAndCollect);
 #if DEBUG
             builder.SetCustomAttribute(new CustomAttributeBuilder(
                 typeof(DebuggableAttribute).GetTypeInfo()
@@ -42,19 +52,16 @@ namespace JsonRpc.Standard.Client
                     DebuggableAttribute.DebuggingModes.DisableOptimizations
                 }));
 #endif
-            return builder;
-        });
-
-        private readonly Lazy<ModuleBuilder> _ModuleBuilder;
-
-        protected readonly string implementedProxyNamespace;
-
-        public JsonRpcProxyBuilder()
-        {
-            var ct = Interlocked.Increment(ref assemblyCounter);
-            implementedProxyNamespace = DynamicAssemblyName + ".Builder" + ct;
-            _ModuleBuilder = new Lazy<ModuleBuilder>(() => AssemblyBuilder.DefineDynamicModule(implementedProxyNamespace));
+                return builder;
+            });
+            _ModuleBuilder = new Lazy<ModuleBuilder>(
+                () => AssemblyBuilder.DefineDynamicModule(ImplementedProxyNamespace + ".tmp"));
         }
+
+        protected string ImplementedProxyNamespace { get; }
+
+        protected string ImplementedProxyAssemblyName { get; }
+
 
         protected AssemblyBuilder AssemblyBuilder => _AssemblyBuilder.Value;
 
@@ -63,7 +70,7 @@ namespace JsonRpc.Standard.Client
         protected string NextProxyTypeName()
         {
             var ct = Interlocked.Increment(ref typeCounter);
-            return implementedProxyNamespace + "._Impl" + ct;
+            return ImplementedProxyNamespace + "._$Impl" + ct;
         }
 
         /// <summary>
