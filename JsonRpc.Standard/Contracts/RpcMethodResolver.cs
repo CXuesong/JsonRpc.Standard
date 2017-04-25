@@ -136,7 +136,7 @@ namespace JsonRpc.Standard.Contracts
 
         public bool IsNotification { get; set; }
 
-        public bool AllowExtesionData { get; set; }
+        public bool AllowExtensionData { get; set; }
 
         public IList<JsonRpcParameter> Parameters { get; set; }
 
@@ -158,7 +158,7 @@ namespace JsonRpc.Standard.Contracts
                     inst.MethodName = char.ToLowerInvariant(inst.MethodName[0]) + inst.MethodName.Substring(1);
             }
             inst.IsNotification = attr?.IsNotification ?? false;
-            inst.AllowExtesionData = attr?.AllowExtesionData ?? false;
+            inst.AllowExtensionData = attr?.AllowExtensionData ?? false;
             inst.ReturnParameter = JsonRpcParameter.FromParameter(method.ReturnParameter);
             inst.Parameters = method.GetParameters().Select(JsonRpcParameter.FromParameter).ToList();
             inst.Handler = new ReflectionRpcMethodHandler(method);
@@ -268,7 +268,7 @@ namespace JsonRpc.Standard.Contracts
             Dictionary<string, JToken> requestProp = null;
             foreach (var m in candidates)
             {
-                if (!m.AllowExtesionData && context.Request.Params != null)
+                if (!m.AllowExtensionData && context.Request.Params != null)
                 {
                     // Strict match
                     requestProp = ((JObject) context.Request.Params).Properties()

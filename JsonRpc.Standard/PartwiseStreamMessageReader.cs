@@ -158,6 +158,7 @@ namespace JsonRpc.Standard
     /// <summary>
     /// Provides logger of messages for diagnostic purpose.
     /// </summary>
+    [Obsolete("This type will be remvoed in the future.")]
     public interface IStreamMessageLogger
     {
         void NotifyMessageSent(string content);
@@ -165,6 +166,7 @@ namespace JsonRpc.Standard
         void NotifyMessageReceived(string content);
     }
 
+    [Obsolete("This type will be remvoed in the future.")]
     public class StreamMessageLogger : IStreamMessageLogger
     {
         private readonly Action<string> _NotifyMessageSent;

@@ -37,6 +37,6 @@ namespace JsonRpc.Standard.Contracts
         /// <summary>
         /// Used in the server. Whether allows extra parameters on this method when matching signature.
         /// </summary>
-        public bool AllowExtesionData { get; set; }
+        public bool AllowExtensionData { get; set; }
     }
 }
