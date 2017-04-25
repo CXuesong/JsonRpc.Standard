@@ -11,10 +11,8 @@ namespace JsonRpc.Standard
     /// <summary>
     /// Represents a message reader that parses the message line-by-line from <see cref="TextReader"/>.
     /// </summary>
-    public class ByLineTextMessageReader : QueuedMessageReader
+    public class ByLineTextMessageReader : BufferedMessageReader
     {
-        private readonly SemaphoreSlim readerSemaphore = new SemaphoreSlim(1, 1);
-
         /// <summary>
         /// Initialize a line-by-line message reader from <see cref="TextReader" />.
         /// </summary>
@@ -56,10 +54,9 @@ namespace JsonRpc.Standard
         public string Delimiter { get; }
 
         /// <inheritdoc />
-        protected override async Task<Message> ReadDirectAsync(CancellationToken cancellationToken)
+        protected override async Task<Message> ReadMessageAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await readerSemaphore.WaitAsync(cancellationToken);
             try
             {
                 if (Delimiter == null)
@@ -67,8 +64,7 @@ namespace JsonRpc.Standard
                     string line;
                     do
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
-                        line = await Reader.ReadLineAsync();
+                        line = await Reader.ReadLineAsync().ConfigureAwait(false);
                         if (line == null) return null;
                     } while (string.IsNullOrWhiteSpace(line));
                     return RpcSerializer.DeserializeMessage(line);
@@ -92,10 +88,6 @@ namespace JsonRpc.Standard
                 // Throws OperationCanceledException if the cancellation has already been requested.
                 cancellationToken.ThrowIfCancellationRequested();
                 throw;
-            }
-            finally
-            {
-                readerSemaphore.Release();
             }
         }
     }

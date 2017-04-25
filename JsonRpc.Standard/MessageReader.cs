@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 namespace JsonRpc.Standard
 {
@@ -11,119 +14,71 @@ namespace JsonRpc.Standard
     public abstract class MessageReader
     {
         /// <summary>
-        /// Asynchronously reads the next message.
+        /// The source block used to emit the messages.
         /// </summary>
-        /// <param name="cancellationToken">A token that cancels the operation.</param>
-        /// <returns>
-        /// The next JSON RPC message, or <c>null</c> if no more messages exist.
-        /// </returns>
-        /// <remarks>This method should be thread-safe.</remarks>
-        /// <exception cref="OperationCanceledException">The operation has been canceled.</exception>
-        public abstract Task<Message> ReadAsync(CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Asynchronously reads the next message that matches the 
-        /// </summary>
-        /// <param name="filter">The expected type of the message.</param>
-        /// <param name="cancellationToken">A token that cancels the operation.</param>
-        /// <returns>
-        /// The next JSON RPC message, or <c>null</c> if no more messages exist.
-        /// </returns>
-        /// <remarks>This method should be thread-safe.</remarks>
-        /// <exception cref="ArgumentNullException"><paramref name="filter"/> is <c>null</c>.</exception>
-        /// <exception cref="OperationCanceledException">The operation has been canceled.</exception>
-        public abstract Task<Message> ReadAsync(Predicate<Message> filter, CancellationToken cancellationToken);
+        public abstract ISourceBlock<Message> SourceBlock { get; }
     }
 
     /// <summary>
-    /// A JSON RPC message reader that implements selective read by buffering all the
-    /// received messages into a queue (or list) first.
+    /// Represents a JSON RPC message reader.
     /// </summary>
-    public abstract class QueuedMessageReader : MessageReader
+    public abstract class BufferedMessageReader : MessageReader
     {
-        private readonly LinkedList<Message> messages = new LinkedList<Message>();
-        private readonly SemaphoreSlim messagesLock = new SemaphoreSlim(1, 1);
-        private readonly SemaphoreSlim fetchMessagesLock = new SemaphoreSlim(1, 1);
+        private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
-        /// <summary>
-        /// Asynchronously reads the next message.
-        /// </summary>
-        /// <param name="cancellationToken">A token that cancels the operation.</param>
-        /// <returns>
-        /// The next JSON RPC message, or <c>null</c> if no more messages exist.
-        /// </returns>
-        /// <exception cref="OperationCanceledException">The operation has been canceled.</exception>
-        public override Task<Message> ReadAsync(CancellationToken cancellationToken)
+        protected BufferedMessageReader() : this(16)
         {
-            return ReadAsync(_ => true, cancellationToken);
+            
         }
 
-        /// <summary>
-        /// Asynchronously reads the next message that matches the 
-        /// </summary>
-        /// <param name="filter">The expected type of the message.</param>
-        /// <param name="cancellationToken">A token that cancels the operation.</param>
-        /// <returns>
-        /// The next JSON RPC message, or <c>null</c> if no more messages exist.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref name="filter"/> is <c>null</c>.</exception>
-        /// <exception cref="OperationCanceledException">The operation has been canceled.</exception>
-        public override async Task<Message> ReadAsync(Predicate<Message> filter, CancellationToken cancellationToken)
+        protected BufferedMessageReader(int bufferCapacity)
         {
-            if (filter == null) throw new ArgumentNullException(nameof(filter));
-            cancellationToken.ThrowIfCancellationRequested();
-            LinkedListNode<Message> lastNode = null;
-            while (true)
+            BufferBlock = new BufferBlock<Message>(new DataflowBlockOptions
             {
-                using (await messagesLock.LockAsync(cancellationToken))
-                {
-                    // Check if there's a satisfying item in the queue.
-                    var node = lastNode?.Next == null ? messages.First : lastNode;
-                    while (node != null)
-                    {
-                        if (filter(node.Value))
-                        {
-                            messages.Remove(node);
-                            return node.Value;
-                        }
-                        node = node.Next;
-                    }
-                    lastNode = messages.Last;
-                }
-                if (fetchMessagesLock.Wait(0))
-                {
-                    // Fetch the next message, and decide whether it can pass the filter.
-                    try
-                    {
-                        var next = await ReadDirectAsync(cancellationToken);
-                        if (next == null) return null;  // EOF reached.
-                        if (filter(next)) return next; // We're lucky.
-                        // We still need to put the next item into the queue
-                        // ReSharper disable once MethodSupportsCancellation
-                        using (await messagesLock.LockAsync())
-                            messages.AddLast(next);
-                        // After that, we can check the cancellation
-                        cancellationToken.ThrowIfCancellationRequested();
-                    }
-                    finally
-                    {
-                        fetchMessagesLock.Release();
-                    }
-                }
-                else
-                {
-                    // Or wait for the next message to come.
-                    await messagesLock.WaitAsync(cancellationToken);
-                    messagesLock.Release();
-                }
+                BoundedCapacity = bufferCapacity,
+                CancellationToken = cts.Token
+            });
+            var t = ReadMessagesAsync(cts.Token).ContinueWith(_ => cts.Dispose());
+        }
+
+        public override ISourceBlock<Message> SourceBlock => BufferBlock;
+
+        protected BufferBlock<Message> BufferBlock { get; }
+
+        public void Stop()
+        {
+            try
+            {
+                cts.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
             }
         }
 
         /// <summary>
-        /// When overridden in the derived class, directly asynchronously reads the next message.
+        /// Asynchrnously reads the next message.
         /// </summary>
-        /// <param name="cancellationToken">A token that cancels the operation.</param>
-        /// <exception cref="OperationCanceledException">The operation has been canceled.</exception>
-        protected abstract Task<Message> ReadDirectAsync(CancellationToken cancellationToken);
+        /// <param name="cancellationToken">A token used to cancel the operation.</param>
+        /// <returns>A task that returns the next message, or <c>null</c> if EOF has been reached.</returns>
+        protected abstract Task<Message> ReadMessageAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// The main loop that pumps the messages into <see cref="BufferBlock"/>.
+        /// </summary>
+        /// <param name="cancellationToken">A token used to cancel the request.</param>
+        protected async Task ReadMessagesAsync(CancellationToken cancellationToken)
+        {
+            await Task.Yield();
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var message = await ReadMessageAsync(cancellationToken).ConfigureAwait(false);
+                if (message == null) break;     // EOF has been reached.
+                await BufferBlock.SendAsync(message, cancellationToken);
+            }
+            BufferBlock.Complete();
+        }
+
     }
+
 }

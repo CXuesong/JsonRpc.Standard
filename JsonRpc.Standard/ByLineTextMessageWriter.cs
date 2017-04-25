@@ -10,10 +10,8 @@ namespace JsonRpc.Standard
     /// <summary>
     /// Represents a message writer that writes the message line-by-line to <see cref="TextWriter"/>.
     /// </summary>
-    public class ByLineTextMessageWriter : MessageWriter
+    public class ByLineTextMessageWriter : BufferedMessageWriter
     {
-        private readonly SemaphoreSlim writerSemaphore = new SemaphoreSlim(1, 1);
-
         /// <summary>
         /// Initialize a line-by-line message writer to <see cref="TextWriter" />.
         /// </summary>
@@ -55,26 +53,21 @@ namespace JsonRpc.Standard
         public string Delimiter { get; }
 
         /// <inheritdoc />
-        public override async Task WriteAsync(Message message, CancellationToken cancellationToken)
+        protected override async Task WriteMessageAsync(Message message, CancellationToken cancellationToken)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
             cancellationToken.ThrowIfCancellationRequested();
             var content = RpcSerializer.SerializeMessage(message);
-            await writerSemaphore.WaitAsync(cancellationToken);
             try
             {
-                await Writer.WriteLineAsync(content);
-                if (Delimiter != null) await Writer.WriteLineAsync();
+                await Writer.WriteLineAsync(content).ConfigureAwait(false);
+                if (Delimiter != null) await Writer.WriteLineAsync().ConfigureAwait(false);
             }
             catch (ObjectDisposedException)
             {
                 // Throws OperationCanceledException if the cancellation has already been requested.
                 cancellationToken.ThrowIfCancellationRequested();
                 throw;
-            }
-            finally
-            {
-                writerSemaphore.Release();
             }
         }
     }

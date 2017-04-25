@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using JsonRpc.Standard.Contracts;
 
 namespace JsonRpc.Standard.Server
@@ -28,28 +29,23 @@ namespace JsonRpc.Standard.Server
     /// <summary>
     /// Used to host a JSON RPC services.
     /// </summary>
-    public class JsonRpcServiceHost : IJsonRpcServiceHost
+    public class JsonRpcServiceHost
     {
-        private volatile CancellationTokenSource cts = null;
-        private int isRunning = 0;
-        private volatile SemaphoreSlim responseQueueSemaphore = null;
-        private readonly LinkedList<ResponseSlot> responseQueue = new LinkedList<ResponseSlot>();
-
-        public JsonRpcServiceHost(MessageReader reader, MessageWriter writer,
-            IRpcMethodResolver resolver, JsonRpcServiceHostOptions options)
+        public JsonRpcServiceHost(IRpcMethodResolver resolver, JsonRpcServiceHostOptions options)
         {
-            if (reader == null) throw new ArgumentNullException(nameof(reader));
-            if (writer == null) throw new ArgumentNullException(nameof(writer));
             if (resolver == null) throw new ArgumentNullException(nameof(resolver));
-            Reader = reader;
-            Writer = writer;
             Resolver = resolver;
+            Propagator = new TransformBlock<Message, ResponseMessage>(
+                (Func<Message, Task<ResponseMessage>>) ReaderAction,
+                new ExecutionDataflowBlockOptions
+                {
+                    EnsureOrdered = (options & JsonRpcServiceHostOptions.ConsistentResponseSequence) ==
+                                    JsonRpcServiceHostOptions.ConsistentResponseSequence
+                });
             Options = options;
         }
 
-        public MessageReader Reader { get; }
-
-        public MessageWriter Writer { get; }
+        protected IPropagatorBlock<Message, ResponseMessage> Propagator { get; }
 
         public IRpcMethodResolver Resolver { get; }
 
@@ -58,185 +54,71 @@ namespace JsonRpc.Standard.Server
         public JsonRpcServiceHostOptions Options { get; }
 
         /// <summary>
-        /// Asynchronously starts the JSON RPC service host.
+        /// Attaches the host to the specific source block and target block.
         /// </summary>
-        /// <param name="cancellationToken">The token used to shut down the service host.</param>
-        /// <returns>A task that indicates the host state.</returns>
-        public async Task RunAsync(CancellationToken cancellationToken)
+        /// <param name="source">The source block used to retrieve the requests.</param>
+        /// <param name="target">The target block used to emit the responses.</param>
+        /// <returns>A <see cref="IDisposable"/> used to disconnect the source and target blocks.</returns>
+        /// <exception cref="ArgumentNullException">Both <paramref name="source"/> and <paramref name="target"/> are <c>null</c>.</exception>
+        public IDisposable Attach(ISourceBlock<Message> source, ITargetBlock<ResponseMessage> target)
         {
-            var localRunning = Interlocked.Exchange(ref isRunning, 1);
-            if (localRunning != 0) throw new InvalidOperationException("The service host is already running.");
-            using (responseQueueSemaphore = new SemaphoreSlim(0))
-            using (cts = new CancellationTokenSource())
-            using (var linked = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, cancellationToken))
+            if (source == null && target == null)
+                throw new ArgumentNullException("Either source or target should not be null.", (Exception) null);
+            IDisposable d1 = null;
+            if (source != null)
             {
-                var cancellationTcs = new TaskCompletionSource<bool>();
-                var writerTask = Task.Factory.StartNew(state => WriterEntryPoint((CancellationToken) state).GetAwaiter().GetResult(),
-                    linked.Token, linked.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-                var readerTask = Task.Factory.StartNew(state => ReaderEntryPoint((CancellationToken) state).GetAwaiter().GetResult(),
-                    linked.Token, linked.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-                // Tasks that we can safely await
-                var readerTask1 = readerTask.ContinueWith(_ => { });
-                var writerTask1 = writerTask.ContinueWith(_ => { });
-                // Wait for reader EOF, Stop(), or user cancellation.
-                await Task.WhenAny(readerTask1, cancellationTcs.Task);
-                // Cleanup.
-                lock (responseQueue) responseQueue.Clear();
+                d1 = source.LinkTo(Propagator, m => m is GeneralRequestMessage);
             }
-            Interlocked.Exchange(ref isRunning, 0);
+            if (target != null)
+            {
+                var d2 = Propagator.LinkTo(target, m => m != null);
+                if (d1 != null && d2 != null) return Utility.CombineDisposable(d1, d2);
+                return d2;
+            }
+            return d1;
         }
 
-        /// <inheritdoc />
-        public void Stop()
+        private Task<ResponseMessage> ReaderAction(Message message)
         {
-            try
-            {
-                var localCts = cts;
-                localCts?.Cancel(false);
-            }
-            catch (ObjectDisposedException)
-            {
-            }
+            var ct = CancellationToken.None;
+            if (ct.IsCancellationRequested) return Task.FromCanceled<ResponseMessage>(ct);
+            var request = message as GeneralRequestMessage;
+            if (request == null) return Task.FromResult<ResponseMessage>(null);
+            // TODO provides a way to cancel the request from inside JsonRpcService.
+            // TODO
+            var context = new RequestContext(null, Session, request, ct);
+            return RpcMethodEntryPoint(context);
         }
 
-        private async Task ReaderEntryPoint(CancellationToken ct)
+        private async Task<ResponseMessage> RpcMethodEntryPoint(RequestContext context)
         {
-            ct.ThrowIfCancellationRequested();
-            while (true)
-            {
-                ct.ThrowIfCancellationRequested();
-                var request = (GeneralRequestMessage) await Reader.ReadAsync(m => m is GeneralRequestMessage, ct);
-                if (request == null) return; // EOF reached.
-                try
-                {
-                    ct.ThrowIfCancellationRequested();
-                }
-                catch (ObjectDisposedException)
-                {
-                    return;
-                }
-                // TODO provides a way to cancel the request from inside JsonRpcService.
-                var context = new RequestContext(this, Session, request, ct);
-                ResponseSlot responseSlot = null;
-                if (context.Request is RequestMessage)
-                {
-                    responseSlot = new ResponseSlot();
-                    lock (responseQueue)
-                    {
-                        responseQueue.AddLast(responseSlot);
-                    }
-                }
-#pragma warning disable 4014
-                Task.Factory.StartNew(RpcMethodEntryPoint, new RpcMethodEntryPointState(context, responseSlot),
-                    context.CancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-#pragma warning restore 4014
-            }
-        }
-
-        private async Task WriterEntryPoint(CancellationToken ct)
-        {
-            var preserveOrder = (Options & JsonRpcServiceHostOptions.ConsistentResponseSequence) ==
-                                JsonRpcServiceHostOptions.ConsistentResponseSequence;
-            while (true)
-            {
-                // Wait for incoming response, or cancellation.
-                try
-                {
-                    ct.ThrowIfCancellationRequested();
-                    await responseQueueSemaphore.WaitAsync(ct);
-                }
-                catch (ObjectDisposedException)
-                {
-                    return;
-                }
-                while (true)
-                {
-                    ResponseMessage response;
-                    lock (responseQueue)
-                    {
-                        var node = responseQueue.First;
-                        if (!preserveOrder)
-                        {
-                            while (node != null)
-                            {
-                                if (node.Value.Response != null) break;
-                                node = node.Next;
-                            }
-                        }
-                        response = node?.Value.Response;
-                        // If the response is not ready, then we simply wait for the next "response ready" event.
-                        if (response == null) goto NEXT;
-                        // Pick out the node
-                        responseQueue.Remove(node);
-                    }
-                    // This operation might simply block the thread, rather than async.
-                    await Writer.WriteAsync(response, ct);
-                }
-                NEXT:;
-            }
-        }
-
-        private async Task RpcMethodEntryPoint(object o)
-        {
-            var state = (RpcMethodEntryPointState) o;
-            var request = state.Context.Request as RequestMessage;
-            ResponseMessage response = null;
+            var request = context.Request as RequestMessage;
             JsonRpcMethod method;
             try
             {
-                method = Resolver.TryResolve(state.Context);
+                method = Resolver.TryResolve(context);
             }
             catch (AmbiguousMatchException)
             {
                 if (request != null)
-                    response = new ResponseMessage(request.Id, null, new ResponseError(JsonRpcErrorCode.MethodNotFound,
+                    return new ResponseMessage(request.Id, null, new ResponseError(JsonRpcErrorCode.MethodNotFound,
                         $"Invocation of method \"{request.Method}\" is ambiguous."));
-                goto FINAL;
+                return null;
             }
             if (method == null)
             {
                 if (request != null)
-                    response = new ResponseMessage(request.Id, null, new ResponseError(JsonRpcErrorCode.MethodNotFound,
+                    return new ResponseMessage(request.Id, null, new ResponseError(JsonRpcErrorCode.MethodNotFound,
                         $"Cannot resolve method \"{request.Method}\"."));
-                goto FINAL;
+                return null;
             }
-            response = await method.Handler.InvokeAsync(method, state.Context);
-            FINAL:
+            var response = await method.Handler.InvokeAsync(method, context);
             if (request != null && response == null)
             {
                 // Provides a default response
-                response = new ResponseMessage(request.Id, null);
+                return new ResponseMessage(request.Id, null);
             }
-            if (response != null)
-            {
-                lock (responseQueue) state.ResponseSlot.Response = response;
-            }
-            try
-            {
-                responseQueueSemaphore.Release();
-            }
-            catch (ObjectDisposedException)
-            {
-                return;
-            }
-        }
-
-        private class RpcMethodEntryPointState
-        {
-            public RpcMethodEntryPointState(RequestContext context, ResponseSlot responseSlot)
-            {
-                Context = context;
-                ResponseSlot = responseSlot;
-            }
-
-            public RequestContext Context { get; }
-
-            public ResponseSlot ResponseSlot { get; }
-        }
-
-        private class ResponseSlot
-        {
-            public ResponseMessage Response { get; set; }
+            return null;
         }
     }
 }

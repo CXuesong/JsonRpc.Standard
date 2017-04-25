@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using JsonRpc.Standard.Contracts;
 using JsonRpc.Standard.Server;
 
@@ -37,43 +38,41 @@ namespace JsonRpc.Standard.Client
     {
         private readonly string requestIdPrefix;
         private int requestIdCounter = 0;
-        private Dictionary<object, RequestMessage> impendingRequestDict = new Dictionary<object, RequestMessage>();
+
+        private readonly Dictionary<object, TaskCompletionSource<ResponseMessage>> impendingRequestDict
+            = new Dictionary<object, TaskCompletionSource<ResponseMessage>>();
 
         /// <summary>
         /// Initializes a JSON RPC client.
         /// </summary>
-        /// <param name="reader">The <see cref="MessageReader"/> used to retrieve the response of the requests.</param>
-        /// <param name="writer">The <see cref="MessageWriter"/> used to send requests.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is <c>null</c>.</exception>
-        public JsonRpcClient(MessageReader reader, MessageWriter writer) : this(reader, writer, JsonRpcClientOptions.None)
+        public JsonRpcClient() : this(JsonRpcClientOptions.None)
         {
         }
 
         /// <summary>
         /// Initializes a JSON RPC client.
         /// </summary>
-        /// <param name="reader">The <see cref="MessageReader"/> used to retrieve the response of the requests.</param>
-        /// <param name="writer">The <see cref="MessageWriter"/> used to send requests.</param>
         /// <param name="options">Client options.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is <c>null</c>.</exception>
-        public JsonRpcClient(MessageReader reader, MessageWriter writer, JsonRpcClientOptions options)
+        public JsonRpcClient(JsonRpcClientOptions options)
         {
-            if (writer == null) throw new ArgumentNullException(nameof(writer));
-            Reader = reader;
-            Writer = writer;
             Options = options;
             requestIdPrefix = RuntimeHelpers.GetHashCode(this) + "#";
+            OutBufferBlock = new BufferBlock<GeneralRequestMessage>();
+            InBufferBlock = new ActionBlock<Message>(message =>
+            {
+                var resp = message as ResponseMessage;
+                Debug.Assert(resp != null);
+                if (resp == null) return;
+                TaskCompletionSource<ResponseMessage> tcs;
+                lock (impendingRequestDict)
+                {
+                    // We might be going to discard the foreign response.
+                    if (!impendingRequestDict.TryGetValue(resp.Id, out tcs)) return;
+                    impendingRequestDict.Remove(resp.Id);
+                }
+                tcs.TrySetResult(resp);
+            });
         }
-
-        /// <summary>
-        /// The <see cref="MessageReader"/> used to retrieve the response of the requests.
-        /// </summary>
-        public MessageReader Reader { get; }
-
-        /// <summary>
-        /// The <see cref="MessageWriter"/> used to send requests.
-        /// </summary>
-        public MessageWriter Writer { get; }
 
         /// <summary>
         /// Client options.
@@ -81,7 +80,53 @@ namespace JsonRpc.Standard.Client
         public JsonRpcClientOptions Options { get; }
 
         /// <summary>
-        /// Gets the next unique value that can be used as <see cref="RequestMessage.Id"/>.
+        /// The input buffer used to receive responses.
+        /// </summary>
+        protected ITargetBlock<Message> InBufferBlock { get; }
+
+        /// <summary>
+        /// The output buffer used to emit requests.
+        /// </summary>
+        protected BufferBlock<GeneralRequestMessage> OutBufferBlock { get; }
+
+        /// <summary>
+        /// Attaches the host to the specific source block and target block.
+        /// </summary>
+        /// <param name="source">The source block used to retrieve the responses.</param>
+        /// <param name="target">The target block used to emit the requests.</param>
+        /// <returns>A <see cref="IDisposable"/> used to disconnect the source and target blocks.</returns>
+        /// <exception cref="ArgumentNullException">Both <paramref name="source"/> and <paramref name="target"/> are <c>null</c>.</exception>
+        public IDisposable Attach(ISourceBlock<Message> source, ITargetBlock<Message> target)
+        {
+            // reader --> InBufferBlock
+            // OutBufferBlock --> writer
+            if (source == null && target == null)
+                throw new ArgumentNullException("Either source or target should not be null.", (Exception)null);
+            IDisposable d1 = null;
+            if (source != null)
+            {
+                d1 = source.LinkTo(InBufferBlock, m =>
+                {
+                    var resp = m as ResponseMessage;
+                    if (resp == null) return false;
+                    // Discard foreign responses, if any.
+                    if ((Options & JsonRpcClientOptions.PreserveForeignResponses) !=
+                        JsonRpcClientOptions.PreserveForeignResponses) return true;
+                    // Or we will check if we're wating for this response.
+                    lock (impendingRequestDict) return impendingRequestDict.ContainsKey(resp.Id);
+                });
+            }
+            if (target != null)
+            {
+                var d2 = OutBufferBlock.LinkTo(target);
+                if (d1 != null && d2 != null) return Utility.CombineDisposable(d1, d2);
+                return d2;
+            }
+            return d1;
+        }
+
+        /// <summary>
+        /// Generates the next unique value that can be used as <see cref="RequestMessage.Id"/>.
         /// </summary>
         public object NextRequestId()
         {
@@ -107,57 +152,64 @@ namespace JsonRpc.Standard.Client
         {
             Debug.Assert(message != null);
             var request = message as RequestMessage;
-            if (Reader != null && request != null)
+            TaskCompletionSource<ResponseMessage> tcs = null;
+            CancellationTokenRegistration ctr;
+            if (request != null)
             {
-                lock (impendingRequestDict) impendingRequestDict.Add(request.Id, request);
+                tcs = new TaskCompletionSource<ResponseMessage>();
+                lock (impendingRequestDict) impendingRequestDict.Add(request.Id, tcs);
+                ctr = cancellationToken.Register(o =>
+                {
+                    TaskCompletionSource<ResponseMessage> tcs1;
+                    lock (impendingRequestDict)
+                        if (!impendingRequestDict.TryGetValue(o, out tcs1)) return;
+                    if (!tcs1.TrySetCanceled()) return;
+                    // Note that server might still send the response after cancellation on the client.
+                    // If we are going to keep all "foreign" responses, we need to be able to recgnize it later.
+                    var keepRequestIdInMind = (Options & JsonRpcClientOptions.PreserveForeignResponses) ==
+                                              JsonRpcClientOptions.PreserveForeignResponses;
+                    if (keepRequestIdInMind)
+                    {
+#pragma warning disable 4014
+                        // ReSharper disable MethodSupportsCancellation
+                        Task.Delay(60000)
+                            .ContinueWith((_, o1) =>
+                            {
+                                lock (impendingRequestDict) impendingRequestDict.Remove(o1);
+                            }, o);
+                        // ReSharper restore MethodSupportsCancellation
+#pragma warning restore 4014
+                    }
+                    else
+                    {
+                        lock (impendingRequestDict) impendingRequestDict.Remove(o);
+                    }
+                }, request.Id);
             }
-            await Writer.WriteAsync(message, cancellationToken);
-            if (Reader == null || request == null) return null;
-            // Wait for response.
-            var id = request.Id;
             try
             {
-                if ((Options & JsonRpcClientOptions.PreserveForeignResponses) ==
-                    JsonRpcClientOptions.PreserveForeignResponses)
+                await OutBufferBlock.SendAsync(message, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                // Exception when sending the request…
+                if (request != null)
                 {
-                    var response = (ResponseMessage) await Reader.ReadAsync(m =>
-                            m is ResponseMessage resp && Equals(resp.Id, id),
-                        cancellationToken);
-                    return response;
+                    ctr.Dispose();
+                    lock (impendingRequestDict) impendingRequestDict.Remove(request.Id);
                 }
-                else
-                {
-                    // Discard all the responses that are not in the dictionary.
-                    while (true)
-                    {
-                        var response = (ResponseMessage) await Reader.ReadAsync(m =>
-                            {
-                                if (!(m is ResponseMessage resp)) return false;
-                                if (Equals(resp.Id, id)) return true;
-                                lock (impendingRequestDict) return !impendingRequestDict.ContainsKey(resp.Id);
-                            },
-                            cancellationToken);
-                        if (object.Equals(response.Id, id)) return response;
-                    }
-                }
+                throw;
+            }
+            if (request == null) return null;
+            // Now wait for the response.
+            try
+            {
+                return await tcs.Task.ConfigureAwait(false);
             }
             finally
             {
-                lock (impendingRequestDict) impendingRequestDict.Remove(id);
+                ctr.Dispose();
             }
-        }
-
-        /// <summary>
-        /// Asynchronously send the notification message.
-        /// </summary>
-        /// <param name="request">The notification message to be sent.</param>
-        /// <param name="cancellationToken">A token used to cancel the operation.</param>
-        /// <returns>A task that finishes when the message has been sent.</returns>
-        public Task SendAsync(NotificationMessage request, CancellationToken cancellationToken)
-        {
-            if (request == null) throw new ArgumentNullException(nameof(request));
-            if (cancellationToken.IsCancellationRequested) return Task.FromCanceled(cancellationToken);
-            return Writer.WriteAsync(request, cancellationToken);
         }
     }
 }

@@ -11,11 +11,9 @@ namespace JsonRpc.Standard
     /// in the format specified in Microsoft Language Server Protocol
     /// (https://github.com/Microsoft/language-server-protocol/blob/master/protocol.md).
     /// </summary>
-    public class PartwiseStreamMessageWriter : MessageWriter
+    public class PartwiseStreamMessageWriter : BufferedMessageWriter
     {
         private static readonly UTF8Encoding UTF8NoBom = new UTF8Encoding(false, true);
-
-        private readonly SemaphoreSlim streamSemaphore = new SemaphoreSlim(1, 1);
 
         public PartwiseStreamMessageWriter(Stream stream)
             : this(stream, UTF8NoBom, null)
@@ -45,7 +43,7 @@ namespace JsonRpc.Standard
         public IStreamMessageLogger MessageLogger { get; }
 
         /// <inheritdoc />
-        public override async Task WriteAsync(Message message, CancellationToken cancellationToken)
+        protected override async Task WriteMessageAsync(Message message, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             using (var ms = new MemoryStream())
@@ -64,29 +62,26 @@ namespace JsonRpc.Standard
                     }
                 }
                 cancellationToken.ThrowIfCancellationRequested();
-                using (await streamSemaphore.LockAsync(cancellationToken))
+                try
                 {
-                    try
+                    using (var writer = new StreamWriter(BaseStream, Encoding, 4096, true))
                     {
-                        using (var writer = new StreamWriter(BaseStream, Encoding, 4096, true))
-                        {
-                            await writer.WriteAsync("Content-Length: ");
-                            await writer.WriteAsync(ms.Length.ToString());
-                            await writer.WriteAsync("\r\n");
-                            await writer.WriteAsync("Content-Type: ");
-                            await writer.WriteAsync(ContentType);
-                            await writer.WriteAsync("\r\n\r\n");
-                            await writer.FlushAsync();
-                        }
-                        ms.Seek(0, SeekOrigin.Begin);
-                        await ms.CopyToAsync(BaseStream, 81920, cancellationToken);
+                        await writer.WriteAsync("Content-Length: ");
+                        await writer.WriteAsync(ms.Length.ToString());
+                        await writer.WriteAsync("\r\n");
+                        await writer.WriteAsync("Content-Type: ");
+                        await writer.WriteAsync(ContentType);
+                        await writer.WriteAsync("\r\n\r\n");
+                        await writer.FlushAsync();
                     }
-                    catch (ObjectDisposedException)
-                    {
-                        // Throws OperationCanceledException if the cancellation has already been requested.
-                        cancellationToken.ThrowIfCancellationRequested();
-                        throw;
-                    }
+                    ms.Seek(0, SeekOrigin.Begin);
+                    await ms.CopyToAsync(BaseStream, 81920, cancellationToken);
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Throws OperationCanceledException if the cancellation has already been requested.
+                    cancellationToken.ThrowIfCancellationRequested();
+                    throw;
                 }
             }
         }
