@@ -36,7 +36,7 @@ namespace JsonRpc.Standard.Client
         protected async Task<TResult> SendAsync<TResult>(int methodIndex, IList<object> paramValues)
         {
             var method = MethodTable[methodIndex];
-            var response = await SendInternalAsync(method, paramValues);
+            var response = await SendInternalAsync(method, paramValues).ConfigureAwait(false);
             if (response.Error != null)
             {
                 if (response.Error.Code == (int) JsonRpcErrorCode.UnhandledClrException)
@@ -52,7 +52,9 @@ namespace JsonRpc.Standard.Client
             }
             if (method.ReturnParameter.ParameterType != typeof(void))
             {
-                if (response.Result == null) throw new TargetInvocationException($"Expect \"{method.ReturnParameter.ParameterType}\" result, got void.", null);
+                if (response.Result == null)
+                    throw new TargetInvocationException(
+                        $"Expect \"{method.ReturnParameter.ParameterType}\" result, got void.", null);
                 return response.Result.ToObject<TResult>(method.ReturnParameter.Serializer);
             }
             return default(TResult);
@@ -87,12 +89,13 @@ namespace JsonRpc.Standard.Client
             // Send the request
             if (method.IsNotification)
             {
-                await Client.SendAsync(new NotificationMessage(method.MethodName, jargs), ct);
+                await Client.SendAsync(new NotificationMessage(method.MethodName, jargs), ct).ConfigureAwait(false);
                 return null;
             }
             else
             {
-                return await Client.SendAsync(new RequestMessage(Client.NextRequestId(), method.MethodName, jargs), ct);
+                return await Client.SendAsync(new RequestMessage(Client.NextRequestId(), method.MethodName, jargs), ct)
+                    .ConfigureAwait(false);
             }
         }
     }

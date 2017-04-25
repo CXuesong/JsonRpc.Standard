@@ -9,17 +9,13 @@ namespace JsonRpc.Standard.Contracts
     /// </summary>
     public class RequestContext
     {
-        public RequestContext(IJsonRpcServiceHost host, ISession session, GeneralRequestMessage request, CancellationToken cancellationToken)
+        public RequestContext(ISession session, GeneralRequestMessage request, CancellationToken cancellationToken)
         {
-            if (host == null) throw new ArgumentNullException(nameof(host));
             if (request == null) throw new ArgumentNullException(nameof(request));
-            Host = host;
             Session = session;
             Request = request;
             CancellationToken = cancellationToken;
         }
-
-        public IJsonRpcServiceHost Host { get; }
 
         public ISession Session { get; }
 

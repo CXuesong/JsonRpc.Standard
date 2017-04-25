@@ -86,7 +86,7 @@ namespace JsonRpc.Standard.Server
             if (request == null) return Task.FromResult<ResponseMessage>(null);
             // TODO provides a way to cancel the request from inside JsonRpcService.
             // TODO
-            var context = new RequestContext(null, Session, request, ct);
+            var context = new RequestContext(Session, request, ct);
             return RpcMethodEntryPoint(context);
         }
 
@@ -112,13 +112,13 @@ namespace JsonRpc.Standard.Server
                         $"Cannot resolve method \"{request.Method}\"."));
                 return null;
             }
-            var response = await method.Handler.InvokeAsync(method, context);
+            var response = await method.Handler.InvokeAsync(method, context).ConfigureAwait(false);
             if (request != null && response == null)
             {
                 // Provides a default response
                 return new ResponseMessage(request.Id, null);
             }
-            return null;
+            return response;
         }
     }
 }
