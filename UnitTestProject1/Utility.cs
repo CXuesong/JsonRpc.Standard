@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using JsonRpc.Standard;
+using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
 using JsonRpc.Standard.Server;
 
@@ -24,18 +26,22 @@ namespace UnitTestProject1
             return rpcMethodResolver.Value;
         }
 
-        public static IJsonRpcServiceHost CreateJsonRpcServiceHost(MessageReader reader, MessageWriter writer)
+        public static JsonRpcServiceHost CreateJsonRpcHost()
         {
-            return new JsonRpcServiceHost(reader, writer, GetRpcMethodResolver(), JsonRpcServiceHostOptions.None);
+            return new JsonRpcServiceHost(GetRpcMethodResolver(), JsonRpcServiceHostOptions.None);
         }
 
-        public static (IJsonRpcServiceHost Host, MessageReader ClientReader, MessageWriter ClientWriter) CreateJsonRpcServiceHost()
+        public static
+            (JsonRpcServiceHost Host, JsonRpcClient Client, IDisposable HostLifetime, IDisposable ClientLifetime)
+            CreateJsonRpcHostClient()
         {
-            var serverQueue = new ConcurrentQueue<Message>();
-            var clientQueue = new ConcurrentQueue<Message>();
-            var host = CreateJsonRpcServiceHost(new QueueMessageReader(clientQueue),
-                new QueueMessageWriter(serverQueue));
-            return (host, new QueueMessageReader(serverQueue), new QueueMessageWriter(clientQueue));
+            var server = CreateJsonRpcHost();
+            var client = new JsonRpcClient();
+            var serverBuffer = new BufferBlock<Message>();
+            var clientBuffer = new BufferBlock<Message>();
+            var lifetime1 = server.Attach(clientBuffer, serverBuffer);
+            var lifetime2 = client.Attach(serverBuffer, clientBuffer);
+            return (server, client, lifetime1, lifetime2);
         }
     }
 }

@@ -1,25 +1,28 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Server;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace UnitTestProject1
 {
-    [TestClass]
     public class ServerTest
     {
-        [TestMethod]
-        public void TestMethod1()
+        [Fact]
+        public async Task TestMethod1()
         {
             var request = "{\"jsonrpc\": \"2.0\",\"id\": 1,\"method\": \"sum\",\"params\": {\"x\":100, \"y\":-200}}";
             using (var reader = new StringReader(request))
             using (var writer = new StringWriter())
             {
-                var host = Utility.CreateJsonRpcServiceHost(new ByLineTextMessageReader(reader),
-                    new ByLineTextMessageWriter(writer));
-                host.RunAsync().Wait();
+                var host = Utility.CreateJsonRpcHost();
+                var mreader = new ByLineTextMessageReader(reader).SourceBlock;
+                using (host.Attach(mreader, new ByLineTextMessageWriter(writer).TargetBlock))
+                {
+                    await mreader.Completion;
+                }
                 Trace.WriteLine(writer.ToString());
             }
         }
