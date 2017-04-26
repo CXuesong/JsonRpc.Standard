@@ -47,6 +47,7 @@ namespace JsonRpc.Standard.Contracts
         /// <inheritdoc />
         public virtual object JsonToValue(JToken json, Type valueType)
         {
+            if (valueType == typeof(void)) return null;
             return json?.ToObject(valueType, serializer);
         }
     }

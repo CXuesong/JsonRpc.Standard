@@ -14,25 +14,22 @@ namespace UnitTestProject1
 {
     static class Utility
     {
-        private static readonly Lazy<IRpcMethodResolver> rpcMethodResolver = new Lazy<IRpcMethodResolver>(() =>
+        public static readonly JsonRpcContractResolver DefaultContractResolver = new JsonRpcContractResolver
         {
-            var r = new RpcMethodResolver();
-            r.Register(typeof(Utility).Assembly);
-            return r;
-        });
+            NamingStrategy = JsonRpcNamingStrategies.CamelCase,
+            ParameterValueConverter = JsonValueConverters.CamelCase
+        };
 
-        public static IRpcMethodResolver GetRpcMethodResolver()
+        public static IJsonRpcServiceHost CreateJsonRpcHost()
         {
-            return rpcMethodResolver.Value;
-        }
-
-        public static JsonRpcServiceHost CreateJsonRpcHost()
-        {
-            return new JsonRpcServiceHost(GetRpcMethodResolver(), JsonRpcServiceHostOptions.None);
+            var builder = new ServiceHostBuilder();
+            builder.Register(typeof(Utility).Assembly);
+            builder.ContractResolver = DefaultContractResolver;
+            return builder.Build();
         }
 
         public static
-            (JsonRpcServiceHost Host, JsonRpcClient Client, IDisposable HostLifetime, IDisposable ClientLifetime)
+            (IJsonRpcServiceHost Host, JsonRpcClient Client, IDisposable HostLifetime, IDisposable ClientLifetime)
             CreateJsonRpcHostClient()
         {
             var server = CreateJsonRpcHost();

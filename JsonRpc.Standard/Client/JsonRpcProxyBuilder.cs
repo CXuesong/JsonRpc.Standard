@@ -9,6 +9,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
 using JsonRpc.Standard.Contracts;
+using Newtonsoft.Json;
 
 namespace JsonRpc.Standard.Client
 {
@@ -30,7 +31,7 @@ namespace JsonRpc.Standard.Client
         private readonly Lazy<AssemblyBuilder> _AssemblyBuilder;
 
         private readonly Lazy<ModuleBuilder> _ModuleBuilder;
-
+        private IJsonRpcContractResolver _ContractResolver = JsonRpcContractResolver.Default;
 
         public JsonRpcProxyBuilder()
         {
@@ -58,11 +59,16 @@ namespace JsonRpc.Standard.Client
                 () => AssemblyBuilder.DefineDynamicModule(ImplementedProxyNamespace + ".tmp"));
         }
 
+        public IJsonRpcContractResolver ContractResolver
+        {
+            get { return _ContractResolver; }
+            set { _ContractResolver = value ?? JsonRpcContractResolver.Default; }
+        }
+
         protected string ImplementedProxyNamespace { get; }
 
         protected string ImplementedProxyAssemblyName { get; }
-
-
+        
         protected AssemblyBuilder AssemblyBuilder => _AssemblyBuilder.Value;
 
         protected ModuleBuilder ModuleBuilder => _ModuleBuilder.Value;
@@ -126,6 +132,7 @@ namespace JsonRpc.Standard.Client
 
         protected virtual ProxyBuilderEntry ImplementProxy(Type proxyType)
         {
+            var contract = ContractResolver.CreateClientContract(new[] {proxyType});
             var builder = ModuleBuilder.DefineType(NextProxyTypeName(), TypeAttributes.Class | TypeAttributes.Sealed,
                 typeof(JsonRpcProxyBase), new[] {proxyType});
             {
@@ -140,7 +147,7 @@ namespace JsonRpc.Standard.Client
             }
             int methodCounter = 0;
             var methodTable = new List<JsonRpcMethod>();
-            foreach (var p in ResolveMethods(proxyType))
+            foreach (var p in contract.Methods)
             {
                 methodCounter++;
                 var impl = builder.DefineMethod("$impl$." + methodCounter,
@@ -204,28 +211,6 @@ namespace JsonRpc.Standard.Client
                     gen.Emit(OpCodes.Pop);
             }
             gen.Emit(OpCodes.Ret);
-        }
-
-        /// <summary>
-        /// Resolves all the RPC methods from the specified service type.
-        /// </summary>
-        /// <param name="serviceType"></param>
-        /// <returns></returns>
-        protected virtual IEnumerable<KeyValuePair<MethodInfo, JsonRpcMethod>> ResolveMethods(Type serviceType)
-        {
-            if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
-            foreach (var m in serviceType.GetRuntimeMethods())
-            {
-                if (m.GetCustomAttribute<JsonRpcMethodAttribute>() != null)
-                {
-                    var rpcm = JsonRpcMethod.FromMethod(serviceType, m, true);
-                    yield return new KeyValuePair<MethodInfo, JsonRpcMethod>(m, rpcm);
-                }
-                else
-                {
-                    yield return new KeyValuePair<MethodInfo, JsonRpcMethod>(m, null);
-                }
-            }
         }
 
         protected class ProxyBuilderEntry

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -28,12 +29,12 @@ namespace JsonRpc.Standard.Client
 
         protected IList<JsonRpcMethod> MethodTable { get; }
 
-        protected TResult Send<TResult>(int methodIndex, IList<object> paramValues)
+        protected TResult Send<TResult>(int methodIndex, IList paramValues)
         {
             return SendAsync<TResult>(methodIndex, paramValues).GetAwaiter().GetResult();
         }
 
-        protected async Task<TResult> SendAsync<TResult>(int methodIndex, IList<object> paramValues)
+        protected async Task<TResult> SendAsync<TResult>(int methodIndex, IList paramValues)
         {
             var method = MethodTable[methodIndex];
             var response = await SendInternalAsync(method, paramValues).ConfigureAwait(false);
@@ -46,8 +47,9 @@ namespace JsonRpc.Standard.Client
                 }
                 else
                 {
-                    throw new TargetInvocationException(new JsonRpcException(response.Error.Code,
-                        response.Error.Message, response.Error.Data));
+                    var rpcException = new JsonRpcException(response.Error.Code,
+                        response.Error.Message, response.Error.Data);
+                    throw new TargetInvocationException(rpcException);
                 }
             }
             if (method.ReturnParameter.ParameterType != typeof(void))
@@ -60,43 +62,13 @@ namespace JsonRpc.Standard.Client
             return default(TResult);
         }
 
-        protected async Task<ResponseMessage> SendInternalAsync(JsonRpcMethod method, IList<object> paramValues)
+        protected async Task<ResponseMessage> SendInternalAsync(JsonRpcMethod method, IList paramValues)
         {
             if (method == null) throw new ArgumentNullException(nameof(method));
-            CancellationToken ct = CancellationToken.None;
-            // Parse parameters
-            JObject jargs = null;
-            if (method.Parameters.Count > 0)
-            {
-                if (paramValues == null) throw new ArgumentNullException(nameof(paramValues));
-                if (method.Parameters.Count != paramValues.Count)
-                    throw new ArgumentException(
-                        $"Incorrect arguments count. Expect: {method.Parameters.Count}, actual: {paramValues.Count}.");
-                jargs = new JObject();
-                for (int i = 0; i < method.Parameters.Count; i++)
-                {
-                    if (method.Parameters[i].IsOptional && paramValues[i] == Type.Missing)
-                        continue;
-                    if (method.Parameters[i].ParameterType == typeof(CancellationToken))
-                    {
-                        ct = (CancellationToken) paramValues[i];
-                        continue;
-                    }
-                    var value = method.Parameters[i].Converter.ValueToJson(paramValues[i]);
-                    jargs.Add(method.Parameters[i].ParameterName, value);
-                }
-            }
+            var message = method.Marshal(paramValues);
             // Send the request
-            if (method.IsNotification)
-            {
-                await Client.SendAsync(new NotificationMessage(method.MethodName, jargs), ct).ConfigureAwait(false);
-                return null;
-            }
-            else
-            {
-                return await Client.SendAsync(new RequestMessage(Client.NextRequestId(), method.MethodName, jargs), ct)
-                    .ConfigureAwait(false);
-            }
+            if (message is RequestMessage request) request.Id = Client.NextRequestId();
+            return await Client.SendAsync(message, message.CancellationToken).ConfigureAwait(false);
         }
     }
 

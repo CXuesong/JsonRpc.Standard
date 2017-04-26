@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -59,6 +60,9 @@ namespace JsonRpc.Standard
         /// <remarks>This member MAY be omitted (null).</remarks>
         [JsonProperty("params")]
         public JToken Parameters { get; set; }
+
+
+        public CancellationToken CancellationToken { get; set; }
     }
 
     /// <summary>

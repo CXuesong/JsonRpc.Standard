@@ -21,7 +21,7 @@ namespace UnitTestProject1
             using (hostLifetime)
             using (clientLifetime)
             {
-                var builder = new JsonRpcProxyBuilder();
+                var builder = new JsonRpcProxyBuilder {ContractResolver = Utility.DefaultContractResolver};
                 var proxy = builder.CreateProxy<ITestRpcContract>(client);
                 Assert.Equal(100, proxy.Add(73, 27));
                 Assert.Equal("abcdef", proxy.Add("ab", "cdef"));
