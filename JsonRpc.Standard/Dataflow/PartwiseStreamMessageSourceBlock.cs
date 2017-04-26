@@ -20,28 +20,18 @@ namespace JsonRpc.Standard.Dataflow
 
         private static readonly byte[] headerTerminationSequence = {0x0d, 0x0a, 0x0d, 0x0a};
 
-        public PartwiseStreamMessageSourceBlock(Stream stream) : this(stream, Encoding.UTF8, null)
+        public PartwiseStreamMessageSourceBlock(Stream stream) : this(stream, Encoding.UTF8)
         {
 
         }
 
-        public PartwiseStreamMessageSourceBlock(Stream stream, IStreamMessageLogger messageLogger) : this(stream,
-            Encoding.UTF8,
-            messageLogger)
-        {
-
-        }
-
-        public PartwiseStreamMessageSourceBlock(Stream stream, Encoding encoding, IStreamMessageLogger messageLogger)
+        public PartwiseStreamMessageSourceBlock(Stream stream, Encoding encoding)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
             if (encoding == null) throw new ArgumentNullException(nameof(encoding));
             BaseStream = stream;
             Encoding = encoding;
-            MessageLogger = messageLogger;
         }
-
-        public IStreamMessageLogger MessageLogger { get; }
 
         public Stream BaseStream { get; }
 
@@ -63,7 +53,8 @@ namespace JsonRpc.Standard.Dataflow
                 int readLength;
                 try
                 {
-                    readLength = await BaseStream.ReadAsync(headerSubBuffer, 0, headerBufferSize, cancellationToken).ConfigureAwait(false);
+                    readLength = await BaseStream.ReadAsync(headerSubBuffer, 0, headerBufferSize, cancellationToken)
+                        .ConfigureAwait(false);
                 }
                 catch (ObjectDisposedException)
                 {
@@ -140,54 +131,9 @@ namespace JsonRpc.Standard.Dataflow
             {
                 using (var sr = new StreamReader(ms, Encoding))
                 {
-                    if (MessageLogger != null)
-                    {
-                        var content = sr.ReadToEnd();
-                        MessageLogger.NotifyMessageReceived(content);
-                        return RpcSerializer.DeserializeMessage(content);
-                    }
-                    else
-                    {
-                        return RpcSerializer.DeserializeMessage(sr);
-                    }
+                    return RpcSerializer.DeserializeMessage(sr);
                 }
             }
-        }
-    }
-
-    /// <summary>
-    /// Provides logger of messages for diagnostic purpose.
-    /// </summary>
-    [Obsolete("This type will be remvoed in the future.")]
-    public interface IStreamMessageLogger
-    {
-        void NotifyMessageSent(string content);
-
-        void NotifyMessageReceived(string content);
-    }
-
-    [Obsolete("This type will be remvoed in the future.")]
-    public class StreamMessageLogger : IStreamMessageLogger
-    {
-        private readonly Action<string> _NotifyMessageSent;
-        private readonly Action<string> _NotifyMessageReceived;
-
-        public StreamMessageLogger(Action<string> notifyMessageSent, Action<string> notifyMessageReceived)
-        {
-            _NotifyMessageSent = notifyMessageSent;
-            _NotifyMessageReceived = notifyMessageReceived;
-        }
-
-        /// <inheritdoc />
-        public void NotifyMessageSent(string content)
-        {
-            _NotifyMessageSent?.Invoke(content);
-        }
-
-        /// <inheritdoc />
-        public void NotifyMessageReceived(string content)
-        {
-            _NotifyMessageReceived?.Invoke(content);
         }
     }
 }

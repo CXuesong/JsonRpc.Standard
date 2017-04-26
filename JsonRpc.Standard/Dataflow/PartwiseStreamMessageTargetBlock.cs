@@ -16,22 +16,16 @@ namespace JsonRpc.Standard.Dataflow
         private static readonly UTF8Encoding UTF8NoBom = new UTF8Encoding(false, true);
 
         public PartwiseStreamMessageTargetBlock(Stream stream)
-            : this(stream, UTF8NoBom, null)
+            : this(stream, UTF8NoBom)
         {
         }
 
-        public PartwiseStreamMessageTargetBlock(Stream stream, IStreamMessageLogger messageLogger) : this(stream, UTF8NoBom,
-            messageLogger)
-        {
-        }
-
-        public PartwiseStreamMessageTargetBlock(Stream stream, Encoding encoding, IStreamMessageLogger messageLogger)
+        public PartwiseStreamMessageTargetBlock(Stream stream, Encoding encoding)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
             if (encoding == null) throw new ArgumentNullException(nameof(encoding));
             BaseStream = stream;
             Encoding = encoding;
-            MessageLogger = messageLogger;
         }
 
         public Stream BaseStream { get; }
@@ -39,8 +33,6 @@ namespace JsonRpc.Standard.Dataflow
         public Encoding Encoding { get; }
 
         public string ContentType { get; set; }
-
-        public IStreamMessageLogger MessageLogger { get; }
 
         /// <inheritdoc />
         protected override async Task WriteMessageAsync(Message message, CancellationToken cancellationToken)
@@ -50,16 +42,7 @@ namespace JsonRpc.Standard.Dataflow
             {
                 using (var writer = new StreamWriter(ms, Encoding, 4096, true))
                 {
-                    if (MessageLogger == null)
-                    {
-                        RpcSerializer.SerializeMessage(writer, message);
-                    }
-                    else
-                    {
-                        var content = RpcSerializer.SerializeMessage(message);
-                        MessageLogger.NotifyMessageSent(content);
-                        writer.Write(content);
-                    }
+                    RpcSerializer.SerializeMessage(writer, message);
                 }
                 cancellationToken.ThrowIfCancellationRequested();
                 try
