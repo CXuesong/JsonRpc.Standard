@@ -26,6 +26,8 @@ namespace JsonRpc.Standard.Contracts
     internal class RpcMethodBinder : IRpcMethodBinder
     {
 
+        public static readonly RpcMethodBinder Default = new RpcMethodBinder();
+
         /// <inheritdoc />
         public JsonRpcMethod TryBindToMethod(ICollection<JsonRpcMethod> candidates, RequestContext context)
         {

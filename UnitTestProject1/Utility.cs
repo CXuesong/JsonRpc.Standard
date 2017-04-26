@@ -9,6 +9,7 @@ using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
 using JsonRpc.Standard.Server;
+using Xunit;
 
 namespace UnitTestProject1
 {

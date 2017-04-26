@@ -22,7 +22,6 @@ namespace JsonRpc.Standard.Dataflow
             BufferBlock = new BufferBlock<Message>(new DataflowBlockOptions
             {
                 BoundedCapacity = bufferCapacity,
-                CancellationToken = cts.Token
             });
             var t = WriteMessagesAsync(cts.Token).ContinueWith(_ => cts.Dispose());
         }
@@ -52,9 +51,23 @@ namespace JsonRpc.Standard.Dataflow
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     var message = await BufferBlock.ReceiveAsync(cancellationToken).ConfigureAwait(false);
+                    // ^ We might get TaskCancelledException here.
                     if (message != null)
-                        await WriteMessageAsync(message, cancellationToken);
+                        await WriteMessageAsync(message, CancellationToken.None /*cancellationToken*/);
                 }
+                // We want to propagate all the items left before completion
+                if (BufferBlock.TryReceiveAll(out var items))
+                {
+                    foreach (var message in items)
+                    {
+                        if (message != null)
+                            await WriteMessageAsync(message, CancellationToken.None /*cancellationToken*/);
+                    }
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                
             }
             catch (Exception ex)
             {
@@ -81,7 +94,6 @@ namespace JsonRpc.Standard.Dataflow
         public void Complete()
         {
             cts.Cancel();
-            BufferBlock.Complete();
         }
 
         /// <inheritdoc />

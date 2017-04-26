@@ -6,25 +6,35 @@ using JsonRpc.Standard;
 using JsonRpc.Standard.Dataflow;
 using JsonRpc.Standard.Server;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace UnitTestProject1
 {
     public class ServerTest
     {
+        private readonly ITestOutputHelper output;
+
+        public ServerTest(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
         [Fact]
         public async Task TestMethod1()
         {
             var request = "{\"jsonrpc\": \"2.0\",\"id\": 1,\"method\": \"sum\",\"params\": {\"x\":100, \"y\":-200}}";
+            output.WriteLine(request);
             using (var reader = new StringReader(request))
             using (var writer = new StringWriter())
             {
                 var host = Utility.CreateJsonRpcHost();
-                var mreader = new ByLineTextMessageSourceBlock(reader);
-                using (host.Attach(mreader, new ByLineTextMessageTargetBlock(writer)))
+                var source = new ByLineTextMessageSourceBlock(reader);
+                var target = new ByLineTextMessageTargetBlock(writer);
+                using (host.Attach(source, target))
                 {
-                    await mreader.Completion;
+                    await target.Completion;
                 }
-                Trace.WriteLine(writer.ToString());
+                output.WriteLine(writer.ToString());
             }
         }
     }

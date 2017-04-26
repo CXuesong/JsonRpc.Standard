@@ -26,7 +26,6 @@ namespace UnitTestProject1
                 Assert.Equal(100, proxy.Add(73, 27));
                 Assert.Equal("abcdef", proxy.Add("ab", "cdef"));
                 Assert.Equal(new Complex(100, 200), await proxy.MakeComplex(100, 200));
-
             }
         }
     }

@@ -63,8 +63,10 @@ namespace JsonRpc.Standard.Server
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (target == null) throw new ArgumentNullException(nameof(target));
-            var d1 = source.LinkTo(Propagator, m => m is GeneralRequestMessage);
-            var d2 = Propagator.LinkTo(target, m => m != null);
+            var d1 = source.LinkTo(Propagator, new DataflowLinkOptions {PropagateCompletion = true},
+                m => m is GeneralRequestMessage);
+            var d2 = Propagator.LinkTo(target, new DataflowLinkOptions {PropagateCompletion = true},
+                m => m != null);
             return Utility.CombineDisposable(d1, d2);
         }
 

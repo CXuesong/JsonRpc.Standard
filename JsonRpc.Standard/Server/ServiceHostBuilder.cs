@@ -90,7 +90,7 @@ namespace JsonRpc.Standard.Server
             {
                 ServiceFactory = ServiceFactory ?? DefaultServiceFactory.Default,
                 Session = Session,
-                MethodBinder = MethodBinder
+                MethodBinder = MethodBinder ?? RpcMethodBinder.Default,
             };
         }
     }

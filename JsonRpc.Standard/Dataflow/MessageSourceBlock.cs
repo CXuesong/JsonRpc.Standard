@@ -23,7 +23,6 @@ namespace JsonRpc.Standard.Dataflow
             BufferBlock = new BufferBlock<Message>(new DataflowBlockOptions
             {
                 BoundedCapacity = bufferCapacity,
-                CancellationToken = cts.Token
             });
             var t = ReadMessagesAsync(cts.Token).ContinueWith(_ => cts.Dispose());
         }
@@ -55,6 +54,10 @@ namespace JsonRpc.Standard.Dataflow
                     await BufferBlock.SendAsync(message, cancellationToken);
                 }
             }
+            catch (TaskCanceledException)
+            {
+                
+            }
             catch (Exception ex)
             {
                 ((ITargetBlock<Message>) BufferBlock).Fault(ex);
@@ -71,7 +74,6 @@ namespace JsonRpc.Standard.Dataflow
         public void Complete()
         {
             cts.Cancel();
-            BufferBlock.Complete();
         }
 
         /// <inheritdoc />
