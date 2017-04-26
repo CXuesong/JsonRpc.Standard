@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using JsonRpc.Standard;
+using JsonRpc.Standard.Dataflow;
 using JsonRpc.Standard.Server;
 using Xunit;
 
@@ -18,8 +19,8 @@ namespace UnitTestProject1
             using (var writer = new StringWriter())
             {
                 var host = Utility.CreateJsonRpcHost();
-                var mreader = new ByLineTextMessageReader(reader).SourceBlock;
-                using (host.Attach(mreader, new ByLineTextMessageWriter(writer).TargetBlock))
+                var mreader = new ByLineTextMessageSourceBlock(reader);
+                using (host.Attach(mreader, new ByLineTextMessageTargetBlock(writer)))
                 {
                     await mreader.Completion;
                 }

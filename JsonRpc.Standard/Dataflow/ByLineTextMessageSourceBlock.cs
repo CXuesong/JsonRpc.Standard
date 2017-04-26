@@ -1,23 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
-namespace JsonRpc.Standard
+namespace JsonRpc.Standard.Dataflow
 {
     /// <summary>
     /// Represents a message reader that parses the message line-by-line from <see cref="TextReader"/>.
     /// </summary>
-    public class ByLineTextMessageReader : BufferedMessageReader
+    public class ByLineTextMessageSourceBlock : BufferedMessageSourceBlock
     {
         /// <summary>
         /// Initialize a line-by-line message reader from <see cref="TextReader" />.
         /// </summary>
         /// <param name="reader">The underlying text reader.</param>
-        public ByLineTextMessageReader(TextReader reader) : this(reader, null)
+        public ByLineTextMessageSourceBlock(TextReader reader) : this(reader, null)
         {
         }
 
@@ -31,7 +29,7 @@ namespace JsonRpc.Standard
         /// Use <c>null</c> to indicate that each line, as long as it is not empty,
         /// should be treated a message.
         /// </param>
-        public ByLineTextMessageReader(TextReader reader, string delimiter)
+        public ByLineTextMessageSourceBlock(TextReader reader, string delimiter)
         {
             if (reader == null) throw new ArgumentNullException(nameof(reader));
             Reader = reader;

@@ -1,22 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace JsonRpc.Standard
+namespace JsonRpc.Standard.Dataflow
 {
     /// <summary>
     /// Represents a message writer that writes the message line-by-line to <see cref="TextWriter"/>.
     /// </summary>
-    public class ByLineTextMessageWriter : BufferedMessageWriter
+    public class ByLineTextMessageTargetBlock : BufferedMessageTargetBlock
     {
         /// <summary>
         /// Initialize a line-by-line message writer to <see cref="TextWriter" />.
         /// </summary>
         /// <param name="writer">The underlying text writer.</param>
-        public ByLineTextMessageWriter(TextWriter writer) : this(writer, null)
+        public ByLineTextMessageTargetBlock(TextWriter writer) : this(writer, null)
         {
         }
 
@@ -30,7 +28,7 @@ namespace JsonRpc.Standard
         /// Use <c>null</c> to indicate that each line, as long as it is not empty,
         /// should be treated a message.
         /// </param>
-        public ByLineTextMessageWriter(TextWriter writer, string delimiter)
+        public ByLineTextMessageTargetBlock(TextWriter writer, string delimiter)
         {
             if (writer == null) throw new ArgumentNullException(nameof(writer));
             Writer = writer;

@@ -6,33 +6,33 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace JsonRpc.Standard
+namespace JsonRpc.Standard.Dataflow
 {
     /// <summary>
     /// Reads JSON RPC messages from a <see cref="Stream"/>,
     /// in the format specified in Microsoft Language Server Protocol
     /// (https://github.com/Microsoft/language-server-protocol/blob/master/protocol.md).
     /// </summary>
-    public class PartwiseStreamMessageReader : BufferedMessageReader
+    public class PartwiseStreamMessageSourceBlock : BufferedMessageSourceBlock
     {
         private const int headerBufferSize = 1024;
         private const int contentBufferSize = 4 * 1024;
 
         private static readonly byte[] headerTerminationSequence = {0x0d, 0x0a, 0x0d, 0x0a};
 
-        public PartwiseStreamMessageReader(Stream stream) : this(stream, Encoding.UTF8, null)
+        public PartwiseStreamMessageSourceBlock(Stream stream) : this(stream, Encoding.UTF8, null)
         {
 
         }
 
-        public PartwiseStreamMessageReader(Stream stream, IStreamMessageLogger messageLogger) : this(stream,
+        public PartwiseStreamMessageSourceBlock(Stream stream, IStreamMessageLogger messageLogger) : this(stream,
             Encoding.UTF8,
             messageLogger)
         {
 
         }
 
-        public PartwiseStreamMessageReader(Stream stream, Encoding encoding, IStreamMessageLogger messageLogger)
+        public PartwiseStreamMessageSourceBlock(Stream stream, Encoding encoding, IStreamMessageLogger messageLogger)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
             if (encoding == null) throw new ArgumentNullException(nameof(encoding));

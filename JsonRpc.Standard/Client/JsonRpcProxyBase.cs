@@ -37,7 +37,10 @@ namespace JsonRpc.Standard.Client
         protected async Task<TResult> SendAsync<TResult>(int methodIndex, IList paramValues)
         {
             var method = MethodTable[methodIndex];
-            var response = await SendInternalAsync(method, paramValues).ConfigureAwait(false);
+            var message = method.Marshal(paramValues);
+            // Send the request
+            if (message is RequestMessage request) request.Id = Client.NextRequestId();
+            var response = await Client.SendAsync(message, message.CancellationToken).ConfigureAwait(false);
             if (response.Error != null)
             {
                 if (response.Error.Code == (int) JsonRpcErrorCode.UnhandledClrException)
@@ -60,15 +63,6 @@ namespace JsonRpc.Standard.Client
                 return (TResult) method.ReturnParameter.Converter.JsonToValue(response.Result, typeof(TResult));
             }
             return default(TResult);
-        }
-
-        protected async Task<ResponseMessage> SendInternalAsync(JsonRpcMethod method, IList paramValues)
-        {
-            if (method == null) throw new ArgumentNullException(nameof(method));
-            var message = method.Marshal(paramValues);
-            // Send the request
-            if (message is RequestMessage request) request.Id = Client.NextRequestId();
-            return await Client.SendAsync(message, message.CancellationToken).ConfigureAwait(false);
         }
     }
 
