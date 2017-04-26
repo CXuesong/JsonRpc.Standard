@@ -95,7 +95,7 @@ namespace JsonRpc.Standard.Client
         /// <param name="source">The source block used to retrieve the responses.</param>
         /// <param name="target">The target block used to emit the requests.</param>
         /// <returns>A <see cref="IDisposable"/> used to disconnect the source and target blocks.</returns>
-        /// <exception cref="ArgumentNullException">Both <paramref name="source"/> and <paramref name="target"/> are <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Either <paramref name="source"/> or <paramref name="target"/> is <c>null</c>.</exception>
         public IDisposable Attach(ISourceBlock<Message> source, ITargetBlock<Message> target)
         {
             // so client is not a propagation block…
@@ -104,29 +104,20 @@ namespace JsonRpc.Standard.Client
             //  <------ SERVER ------<
             //  |
             // reader --> InBufferBlock
-            if (source == null && target == null)
-                throw new ArgumentNullException("Either source or target should not be null.", (Exception)null);
-            IDisposable d1 = null;
-            if (source != null)
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            var d1 = source.LinkTo(InBufferBlock, m =>
             {
-                d1 = source.LinkTo(InBufferBlock, m =>
-                {
-                    var resp = m as ResponseMessage;
-                    if (resp == null) return false;
-                    // Discard foreign responses, if any.
-                    if ((Options & JsonRpcClientOptions.PreserveForeignResponses) !=
-                        JsonRpcClientOptions.PreserveForeignResponses) return true;
-                    // Or we will check if we're wating for this response.
-                    lock (impendingRequestDict) return impendingRequestDict.ContainsKey(resp.Id);
-                });
-            }
-            if (target != null)
-            {
-                var d2 = OutBufferBlock.LinkTo(target);
-                if (d1 != null && d2 != null) return Utility.CombineDisposable(d1, d2);
-                return d2;
-            }
-            return d1;
+                var resp = m as ResponseMessage;
+                if (resp == null) return false;
+                // Discard foreign responses, if any.
+                if ((Options & JsonRpcClientOptions.PreserveForeignResponses) !=
+                    JsonRpcClientOptions.PreserveForeignResponses) return true;
+                // Or we will check if we're wating for this response.
+                lock (impendingRequestDict) return impendingRequestDict.ContainsKey(resp.Id);
+            });
+            var d2 = OutBufferBlock.LinkTo(target);
+            return Utility.CombineDisposable(d1, d2);
         }
 
         /// <summary>
