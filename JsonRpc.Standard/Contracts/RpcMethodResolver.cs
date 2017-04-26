@@ -16,12 +16,7 @@ namespace JsonRpc.Standard.Contracts
     /// </summary>
     public class JsonRpcParameter
     {
-        private static readonly JsonSerializer defaultSerializer = new JsonSerializer
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver()
-        };
-
-        private JsonSerializer _Serializer = defaultSerializer;
+        private IJsonValueConverter _Converter = JsonValueConverters.Default;
 
         /// <summary>
         /// The parameter name used in JSON.
@@ -85,26 +80,31 @@ namespace JsonRpc.Standard.Contracts
         /// <summary>
         /// The serializer used to convert the parameter.
         /// </summary>
-        public JsonSerializer Serializer
+        public IJsonValueConverter Converter
         {
-            get { return _Serializer; }
-            set { _Serializer = value ?? defaultSerializer; }
+            get => _Converter;
+            set => _Converter = value ?? JsonValueConverters.Default;
         }
 
         /// <inheritdoc />
         public override string ToString() => ParameterType + " " + ParameterName;
 
-        internal static JsonRpcParameter FromParameter(ParameterInfo parameter)
+        internal static JsonRpcParameter FromParameter(ParameterInfo parameter, JsonRpcNamingStrategy namingStrategy)
         {
             if (parameter == null) throw new ArgumentNullException(nameof(parameter));
+            if (namingStrategy == null) throw new ArgumentNullException(nameof(namingStrategy));
             if (parameter.IsOut || parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer)
                 throw new NotSupportedException("Argument with out, ref, or of pointer type is not supported.");
+            var attr = parameter.GetCustomAttribute<JsonRpcParameterAttribute>();
             var inst = new JsonRpcParameter
             {
-                ParameterName = parameter.Name,
                 IsOptional = parameter.IsOptional,
                 ParameterType = parameter.ParameterType
             };
+            if (attr?.ParameterName == null)
+                inst.ParameterName = namingStrategy.GetRpcParameterName(parameter.Name, false);
+            else
+                inst.ParameterName = namingStrategy.GetRpcParameterName(attr.ParameterName, true);
             var taskResultType = Utility.GetTaskResultType(parameter.ParameterType);
             if (taskResultType != null)
             {
@@ -144,23 +144,23 @@ namespace JsonRpc.Standard.Contracts
 
         public IRpcMethodHandler Handler { get; set; }
 
-        internal static JsonRpcMethod FromMethod(Type type, MethodInfo method, bool camelCase)
+        internal static JsonRpcMethod FromMethod(Type type, MethodInfo method, JsonRpcNamingStrategy namingStrategy)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
             if (method == null) throw new ArgumentNullException(nameof(method));
+            if (namingStrategy == null) throw new ArgumentNullException(nameof(namingStrategy));
             var inst = new JsonRpcMethod {ServiceType = type};
             var attr = method.GetCustomAttribute<JsonRpcMethodAttribute>();
             inst.MethodName = attr?.MethodName;
-            if (inst.MethodName == null)
-            {
-                inst.MethodName = method.Name;
-                if (camelCase)
-                    inst.MethodName = char.ToLowerInvariant(inst.MethodName[0]) + inst.MethodName.Substring(1);
-            }
+            if (attr?.MethodName == null)
+                inst.MethodName = namingStrategy.GetRpcMethodName(method.Name, false);
+            else
+                inst.MethodName = namingStrategy.GetRpcMethodName(attr.MethodName, true);
             inst.IsNotification = attr?.IsNotification ?? false;
             inst.AllowExtensionData = attr?.AllowExtensionData ?? false;
-            inst.ReturnParameter = JsonRpcParameter.FromParameter(method.ReturnParameter);
-            inst.Parameters = method.GetParameters().Select(JsonRpcParameter.FromParameter).ToList();
+            inst.ReturnParameter = JsonRpcParameter.FromParameter(method.ReturnParameter, namingStrategy);
+            inst.Parameters = method.GetParameters()
+                .Select(p => JsonRpcParameter.FromParameter(p, namingStrategy)).ToList();
             inst.Handler = new ReflectionRpcMethodHandler(method);
             return inst;
         }
@@ -188,9 +188,30 @@ namespace JsonRpc.Standard.Contracts
         private readonly IDictionary<string, ICollection<JsonRpcMethod>> methodDict =
             new Dictionary<string, ICollection<JsonRpcMethod>>();
 
+        private IJsonValueConverter _ParameterValueConverter = JsonValueConverters.Default;
+
+        private JsonRpcNamingStrategy _NamingStrategy = JsonRpcNamingStrategies.Default;
+        
         public RpcMethodResolver()
         {
+        }
 
+        /// <summary>
+        /// Gets/sets the converter used to convert the arguments from and results to JSON.
+        /// </summary>
+        public IJsonValueConverter ParameterValueConverter
+        {
+            get => _ParameterValueConverter;
+            set => _ParameterValueConverter = value ?? JsonValueConverters.Default;
+        }
+
+        /// <summary>
+        /// Gets/sets the naming strategy used to map the RPC method and argument names.
+        /// </summary>
+        public JsonRpcNamingStrategy NamingStrategy
+        {
+            get => _NamingStrategy;
+            set => _NamingStrategy = value ?? JsonRpcNamingStrategies.Default;
         }
 
         /// <summary>
@@ -298,18 +319,20 @@ namespace JsonRpc.Standard.Contracts
         /// <summary>
         /// Resolves all the RPC methods from the specified service type.
         /// </summary>
-        /// <param name="serviceType"></param>
-        /// <returns></returns>
         protected virtual IEnumerable<JsonRpcMethod> OnResolveMethods(Type serviceType)
         {
             if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
             foreach (var m in serviceType.GetRuntimeMethods().Where(m => m.GetCustomAttribute<JsonRpcMethodAttribute>() != null))
             {
-                var rpcm = JsonRpcMethod.FromMethod(serviceType, m, true);
+                var rpcm = JsonRpcMethod.FromMethod(serviceType, m, _NamingStrategy);
                 yield return rpcm;
             }
         }
 
+        /// <summary>
+        /// Gets or creates an service instance of sepcified type.
+        /// </summary>
+        /// <remarks>The default implementation will always create a new service instance with public parameterless constructor.</remarks>
         protected virtual JsonRpcService OnGetInstance(Type serviceType, GeneralRequestMessage request)
         {
             return (JsonRpcService) Activator.CreateInstance(serviceType);

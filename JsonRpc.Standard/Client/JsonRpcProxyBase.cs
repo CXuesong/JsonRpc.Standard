@@ -55,7 +55,7 @@ namespace JsonRpc.Standard.Client
                 if (response.Result == null)
                     throw new TargetInvocationException(
                         $"Expect \"{method.ReturnParameter.ParameterType}\" result, got void.", null);
-                return response.Result.ToObject<TResult>(method.ReturnParameter.Serializer);
+                return (TResult) method.ReturnParameter.Converter.JsonToValue(response.Result, typeof(TResult));
             }
             return default(TResult);
         }
@@ -82,7 +82,7 @@ namespace JsonRpc.Standard.Client
                         ct = (CancellationToken) paramValues[i];
                         continue;
                     }
-                    var value = JToken.FromObject(paramValues[i], method.Parameters[i].Serializer);
+                    var value = method.Parameters[i].Converter.ValueToJson(paramValues[i]);
                     jargs.Add(method.Parameters[i].ParameterName, value);
                 }
             }

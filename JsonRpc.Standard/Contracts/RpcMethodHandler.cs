@@ -86,7 +86,7 @@ namespace JsonRpc.Standard.Contracts
                 {
                     try
                     {
-                        argv[i] = jarg.ToObject(method.Parameters[i].ParameterType, method.Parameters[i].Serializer);
+                        argv[i] = jarg.ToObject(method.Parameters[i].ParameterType, method.Parameters[i].Converter);
                     }
                     catch (JsonException ex)
                     {
@@ -144,7 +144,7 @@ namespace JsonRpc.Standard.Contracts
                     return new ResponseMessage(request.Id, JValue.CreateNull());
                 if (result is ResponseError error)
                     return new ResponseMessage(request.Id, error);
-                return new ResponseMessage(request.Id, JToken.FromObject(result, method.ReturnParameter.Serializer));
+                return new ResponseMessage(request.Id, JToken.FromObject(result, method.ReturnParameter.Converter));
             }
             // Otherwise, we do not send anything.
             return null;
