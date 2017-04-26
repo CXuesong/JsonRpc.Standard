@@ -39,4 +39,32 @@ namespace JsonRpc.Standard.Contracts
         /// </summary>
         public bool AllowExtensionData { get; set; }
     }
+
+    /// <summary>
+    /// Specifies the 
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = true, AllowMultiple = false)]
+    public sealed class JsonRpcParameterAttribute : Attribute
+    {
+        /// <summary>
+        /// Creates a default attribute instance.
+        /// </summary>
+        public JsonRpcParameterAttribute() : this(null)
+        {
+        }
+
+        /// <summary>
+        /// Creates an attribute instance.
+        /// </summary>
+        /// <param name="parameterName">The name of the parameter.</param>
+        public JsonRpcParameterAttribute(string parameterName)
+        {
+            ParameterName = parameterName;
+        }
+
+        /// <summary>
+        /// The name of the parameter. <c>null</c> to use the applied Parameter name.
+        /// </summary>
+        public string ParameterName { get; }
+    }
 }
