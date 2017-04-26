@@ -98,8 +98,12 @@ namespace JsonRpc.Standard.Client
         /// <exception cref="ArgumentNullException">Both <paramref name="source"/> and <paramref name="target"/> are <c>null</c>.</exception>
         public IDisposable Attach(ISourceBlock<Message> source, ITargetBlock<Message> target)
         {
-            // reader --> InBufferBlock
+            // so client is not a propagation block…
             // OutBufferBlock --> writer
+            //                       |
+            //  <------ SERVER ------<
+            //  |
+            // reader --> InBufferBlock
             if (source == null && target == null)
                 throw new ArgumentNullException("Either source or target should not be null.", (Exception)null);
             IDisposable d1 = null;

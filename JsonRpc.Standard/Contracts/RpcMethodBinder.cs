@@ -37,11 +37,11 @@ namespace JsonRpc.Standard.Contracts
             Dictionary<string, JToken> requestProp = null;
             foreach (var m in candidates)
             {
-                if (!m.AllowExtensionData && context.Request.Parameters != null)
+                // context.Request.Parameters can be: {}, [], null (JValue), null
+                if (!m.AllowExtensionData && context.Request.Parameters is JObject paramsObj)
                 {
                     // Strict match
-                    requestProp = ((JObject) context.Request.Parameters).Properties()
-                        .ToDictionary(p => p.Name, p => p.Value);
+                    requestProp = paramsObj.Properties().ToDictionary(p => p.Name, p => p.Value);
                 }
                 foreach (var p in m.Parameters)
                 {

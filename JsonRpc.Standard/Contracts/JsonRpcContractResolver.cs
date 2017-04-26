@@ -124,7 +124,7 @@ namespace JsonRpc.Standard.Contracts
             inst.Parameters = method.GetParameters()
                 .Select(p => CreateParameter(serviceType, p))
                 .ToList();
-            inst.Handler = new ReflectionJsonRpcMethodHandler(serviceType, method);
+            inst.Invoker = new ReflectionJsonRpcMethodInvoker(serviceType, method);
             return inst;
         }
 
@@ -142,7 +142,8 @@ namespace JsonRpc.Standard.Contracts
             var inst = new JsonRpcParameter
             {
                 IsOptional = parameter.IsOptional,
-                ParameterType = parameter.ParameterType
+                ParameterType = parameter.ParameterType,
+                Converter = ParameterValueConverter
             };
             if (attr?.ParameterName == null)
                 inst.ParameterName = NamingStrategy.GetRpcParameterName(parameter.Name, false);

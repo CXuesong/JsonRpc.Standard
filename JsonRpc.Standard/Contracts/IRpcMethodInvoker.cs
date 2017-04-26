@@ -14,7 +14,7 @@ namespace JsonRpc.Standard.Contracts
     /// <summary>
     /// Defines method to invoke the specified JSON RPC method.
     /// </summary>
-    public interface IJsonRpcMethodHandler
+    public interface IJsonRpcMethodInvoker
     {
         /// <summary>
         /// Invokes the specified JSON RPC method asynchronously, using the specified request context.
@@ -34,14 +34,14 @@ namespace JsonRpc.Standard.Contracts
     }
 
     /// <summary>
-    /// The default implementation of <see cref="IJsonRpcMethodHandler"/>.
+    /// The default implementation of <see cref="IJsonRpcMethodInvoker"/>.
     /// </summary>
-    internal class ReflectionJsonRpcMethodHandler : IJsonRpcMethodHandler
+    internal class ReflectionJsonRpcMethodInvoker : IJsonRpcMethodInvoker
     {
         private readonly Type serviceType;
         private readonly MethodInfo methodInfo;
 
-        public ReflectionJsonRpcMethodHandler(Type serviceType, MethodInfo methodInfo)
+        public ReflectionJsonRpcMethodInvoker(Type serviceType, MethodInfo methodInfo)
         {
             this.serviceType = serviceType;
             this.methodInfo = methodInfo;

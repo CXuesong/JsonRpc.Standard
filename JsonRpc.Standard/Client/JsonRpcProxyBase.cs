@@ -66,9 +66,14 @@ namespace JsonRpc.Standard.Client
         }
     }
 
+#if DEBUG
+    //… So that I can see some IL
+
     internal interface IContractTest
     {
         object M1(int a, string b, object c, HashSet<int>.Enumerator d);
+
+        int P1 { get; set; }
     }
 
     internal class JsonRpcProxyTest : JsonRpcProxyBase, IContractTest
@@ -84,10 +89,14 @@ namespace JsonRpc.Standard.Client
             return Send<object>(1, new object[] {a, b, c, d});
         }
 
+        /// <inheritdoc />
+        public int P1 { get; set; }
+
         void XXX()
         {
             Send<object>(1, null);
         }
     }
+#endif
 }
 

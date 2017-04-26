@@ -130,11 +130,11 @@ namespace JsonRpc.Standard.Client
         private static readonly ConstructorInfo NotSupportedException_ctor1 =
             typeof(NotSupportedException).GetTypeInfo().DeclaredConstructors.First(c => c.GetParameters().Length == 1);
 
-        protected virtual ProxyBuilderEntry ImplementProxy(Type proxyType)
+        protected virtual ProxyBuilderEntry ImplementProxy(Type stubType)
         {
-            var contract = ContractResolver.CreateClientContract(new[] {proxyType});
+            var contract = ContractResolver.CreateClientContract(new[] {stubType});
             var builder = ModuleBuilder.DefineType(NextProxyTypeName(), TypeAttributes.Class | TypeAttributes.Sealed,
-                typeof(JsonRpcProxyBase), new[] {proxyType});
+                typeof(JsonRpcProxyBase), new[] {stubType});
             {
                 var ctor = builder.DefineConstructor(MethodAttributes.Public, CallingConventions.HasThis,
                     new[] {typeof(JsonRpcClient), typeof(IList<JsonRpcMethod>)});
@@ -145,28 +145,37 @@ namespace JsonRpc.Standard.Client
                 gen.Emit(OpCodes.Call, JsonRpcProxyBase_ctor);
                 gen.Emit(OpCodes.Ret);
             }
-            int methodCounter = 0;
+            int memberCounter = 0;          // Used to generate method names.
             var methodTable = new List<JsonRpcMethod>();
-            foreach (var p in contract.Methods)
+            var interfaceMembers = stubType.GetTypeInfo().DeclaredMembers;
+            foreach (var member in interfaceMembers)
             {
-                methodCounter++;
-                var impl = builder.DefineMethod("$impl$." + methodCounter,
-                    MethodAttributes.Private | MethodAttributes.Final | MethodAttributes.Virtual |
-                    MethodAttributes.NewSlot | MethodAttributes.HideBySig,
-                    p.Key.ReturnType,
-                    p.Key.GetParameters().Select(pa => pa.ParameterType).ToArray());
-                builder.DefineMethodOverride(impl, p.Key);
-                if (p.Value == null)
+                var implName = "$impl$." + memberCounter;
+                if (member is MethodInfo method)
                 {
-                    var gen = impl.GetILGenerator();
-                    gen.Emit(OpCodes.Ldstr, p.Key + "is not a JSON RPC method.");
-                    gen.Emit(OpCodes.Newobj, NotSupportedException_ctor1);
-                    gen.Emit(OpCodes.Throw);
+                    memberCounter++;
+                    var impl = builder.DefineMethod(implName,
+                        MethodAttributes.Private | MethodAttributes.Final | MethodAttributes.Virtual |
+                        MethodAttributes.NewSlot | MethodAttributes.HideBySig,
+                        method.ReturnType,
+                        method.GetParameters().Select(pa => pa.ParameterType).ToArray());
+                    builder.DefineMethodOverride(impl, method);
+                    if (contract.Methods.TryGetValue(method, out var rpcMethod))
+                    {
+                        ImplementProxyMethod(method, rpcMethod, methodTable.Count, impl);
+                        methodTable.Add(rpcMethod);
+                    }
+                    else
+                    {
+                        var gen = impl.GetILGenerator();
+                        gen.Emit(OpCodes.Ldstr, method.Name + "is not a JSON RPC method.");
+                        gen.Emit(OpCodes.Newobj, NotSupportedException_ctor1);
+                        gen.Emit(OpCodes.Throw);
+                    }
                 }
-                else
+                else if(member is PropertyInfo property)
                 {
-                    ImplementProxyMethod(p.Key, p.Value, methodTable.Count, impl);
-                    methodTable.Add(p.Value);
+                    throw new InvalidOperationException($"Cannot implement property member in \"{stubType}\".");
                 }
             }
             return new ProxyBuilderEntry(builder.CreateTypeInfo().AsType(), methodTable);
@@ -176,7 +185,7 @@ namespace JsonRpc.Standard.Client
         {
             var gen = builder.GetILGenerator();
             gen.Emit(OpCodes.Ldarg_0);              // this
-            gen.Emit(OpCodes.Ldc_I4, methodIndex);
+            gen.Emit(OpCodes.Ldc_I4, methodIndex);  // 1st param of send[Async]
             var args = method.GetParameters();
             if (args.Length == 0)
             {

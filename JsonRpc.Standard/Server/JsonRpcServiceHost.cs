@@ -108,7 +108,7 @@ namespace JsonRpc.Standard.Server
             try
             {
                 var args = method.UnmarshalArguments(context.Request);
-                result = await method.Handler.InvokeAsync(context, args).ConfigureAwait(false);
+                result = await method.Invoker.InvokeAsync(context, args).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
