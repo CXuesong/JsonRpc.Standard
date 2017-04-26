@@ -11,7 +11,7 @@ namespace JsonRpc.Standard.Contracts
     /// <summary>
     /// Defines method to choose the best match among a set of RPC methods according to the JSON RPC request.
     /// </summary>
-    public interface IRpcMethodBinder
+    public interface IJsonRpcMethodBinder
     {
         /// <summary>
         /// Resolves the target RPC method from the JSON RPC request.
@@ -23,10 +23,10 @@ namespace JsonRpc.Standard.Contracts
         JsonRpcMethod TryBindToMethod(ICollection<JsonRpcMethod> candidates, RequestContext context);
     }
 
-    internal class RpcMethodBinder : IRpcMethodBinder
+    internal class JsonRpcMethodBinder : IJsonRpcMethodBinder
     {
 
-        public static readonly RpcMethodBinder Default = new RpcMethodBinder();
+        public static readonly JsonRpcMethodBinder Default = new JsonRpcMethodBinder();
 
         /// <inheritdoc />
         public JsonRpcMethod TryBindToMethod(ICollection<JsonRpcMethod> candidates, RequestContext context)

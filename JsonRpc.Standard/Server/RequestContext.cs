@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading;
-using JsonRpc.Standard.Server;
 
-namespace JsonRpc.Standard.Contracts
+namespace JsonRpc.Standard.Server
 {
     /// <summary>
     /// Provides the context per JSON RPC request.

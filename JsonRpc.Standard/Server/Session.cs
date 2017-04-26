@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
 
-namespace JsonRpc.Standard.Contracts
+namespace JsonRpc.Standard.Server
 {
     /// <summary>
-    /// Provides basic session data.
+    /// Provides session data.
     /// </summary>
     /// <remarks>
     /// It's recommended that you use the session id as a key, and store the actual runtime state in other
@@ -17,6 +17,9 @@ namespace JsonRpc.Standard.Contracts
         string Id { get; }
     }
 
+    /// <summary>
+    /// A basic implementation of <see cref="ISession"/>.
+    /// </summary>
     public class Session : ISession
     {
         private static int counter = 0;

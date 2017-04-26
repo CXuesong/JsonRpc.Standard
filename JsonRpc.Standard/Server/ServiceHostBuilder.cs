@@ -42,7 +42,7 @@ namespace JsonRpc.Standard.Server
         /// <summary>
         /// The binder that chooses the best match among a set of RPC methods.
         /// </summary>
-        public IRpcMethodBinder MethodBinder { get; set; }
+        public IJsonRpcMethodBinder MethodBinder { get; set; }
 
         /// <summary>
         /// Registers all the exposed JSON PRC methods in the public service object types contained in the specified assembly.
@@ -90,7 +90,7 @@ namespace JsonRpc.Standard.Server
             {
                 ServiceFactory = ServiceFactory ?? DefaultServiceFactory.Default,
                 Session = Session,
-                MethodBinder = MethodBinder ?? RpcMethodBinder.Default,
+                MethodBinder = MethodBinder ?? JsonRpcMethodBinder.Default,
             };
         }
     }

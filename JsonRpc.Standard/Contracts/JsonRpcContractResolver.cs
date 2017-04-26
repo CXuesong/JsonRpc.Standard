@@ -124,7 +124,7 @@ namespace JsonRpc.Standard.Contracts
             inst.Parameters = method.GetParameters()
                 .Select(p => CreateParameter(serviceType, p))
                 .ToList();
-            inst.Handler = new ReflectionRpcMethodHandler(serviceType, method);
+            inst.Handler = new ReflectionJsonRpcMethodHandler(serviceType, method);
             return inst;
         }
 

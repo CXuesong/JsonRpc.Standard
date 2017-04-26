@@ -56,7 +56,7 @@ namespace JsonRpc.Standard.Server
 
         public IServiceFactory ServiceFactory { get; set; }
 
-        internal IRpcMethodBinder MethodBinder { get; set; }
+        internal IJsonRpcMethodBinder MethodBinder { get; set; }
 
         /// <inheritdoc />
         public IDisposable Attach(ISourceBlock<Message> source, ITargetBlock<ResponseMessage> target)

@@ -31,7 +31,7 @@ namespace JsonRpc.Standard.Contracts
 
         public JsonRpcParameter ReturnParameter { get; set; }
 
-        public IRpcMethodHandler Handler { get; set; }
+        public IJsonRpcMethodHandler Handler { get; set; }
 
         internal GeneralRequestMessage Marshal(IList arguments)
         {
