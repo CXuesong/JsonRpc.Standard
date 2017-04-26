@@ -28,6 +28,32 @@ namespace JsonRpc.Standard
         /// </remarks>
         [JsonProperty("jsonrpc")]
         public string Version { get; set; }
+
+        /// <summary>
+        /// Converts a string containing JSON RPC message into <see cref="Message"/>.
+        /// </summary>
+        /// <param name="jsonContent">JSON content.</param>
+        /// <returns>A subclass of <see cref="Message"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="jsonContent"/> doesn't contain valid JSON RPC message.</exception>
+        public static Message FromJson(string jsonContent)
+        {
+            try
+            {
+                return RpcSerializer.DeserializeMessage(jsonContent);
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is JsonSerializationException)
+            {
+                throw new ArgumentException("jsonContent doesn't contain valid JSON RPC message.", nameof(jsonContent));
+            }
+        }
+
+        /// <summary>
+        /// Gets the JSON representation of the message.
+        /// </summary>
+        public override string ToString()
+        {
+            return RpcSerializer.SerializeMessage(this);
+        }
     }
 
     public abstract class GeneralRequestMessage : Message

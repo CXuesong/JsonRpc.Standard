@@ -34,7 +34,9 @@ namespace UnitTestProject1
                 {
                     await target.Completion;
                 }
-                output.WriteLine(writer.ToString());
+                var result = writer.ToString();
+                output.WriteLine(result);
+                Assert.Equal("{\"id\":1,\"result\":-100,\"jsonrpc\":\"2.0\"}", result.Trim());
             }
         }
     }
