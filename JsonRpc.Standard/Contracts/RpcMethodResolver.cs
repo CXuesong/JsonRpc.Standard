@@ -263,20 +263,20 @@ namespace JsonRpc.Standard.Contracts
         public virtual JsonRpcMethod TryResolve(RequestContext context, ICollection<JsonRpcMethod> candidates)
         {
             //TODO Support array as params
-            if (context.Request.Params != null && context.Request.Params.Type == JTokenType.Array) return null;
+            if (context.Request.Parameters != null && context.Request.Parameters.Type == JTokenType.Array) return null;
             JsonRpcMethod firstMatch = null;
             Dictionary<string, JToken> requestProp = null;
             foreach (var m in candidates)
             {
-                if (!m.AllowExtensionData && context.Request.Params != null)
+                if (!m.AllowExtensionData && context.Request.Parameters != null)
                 {
                     // Strict match
-                    requestProp = ((JObject) context.Request.Params).Properties()
+                    requestProp = ((JObject) context.Request.Parameters).Properties()
                         .ToDictionary(p => p.Name, p => p.Value);
                 }
                 foreach (var p in m.Parameters)
                 {
-                    var jp = context.Request.Params?[p.ParameterName];
+                    var jp = context.Request.Parameters?[p.ParameterName];
                     if (jp == null)
                     {
                         if (!p.IsOptional) goto NEXT;

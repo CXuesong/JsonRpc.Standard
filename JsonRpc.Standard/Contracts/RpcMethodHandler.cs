@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JsonRpc.Standard.Server;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace JsonRpc.Standard.Contracts
 {
@@ -68,13 +69,13 @@ namespace JsonRpc.Standard.Contracts
                     continue;
                 }
                 // Resolve other parameters, considering the optional
-                var jarg = context.Request.Params?[method.Parameters[i].ParameterName];
+                var jarg = context.Request.Parameters?[method.Parameters[i].ParameterName];
                 if (jarg == null)
                 {
                     if (method.Parameters[i].IsOptional)
                         argv[i] = Type.Missing;
                     else if (context.Request is RequestMessage request)
-                        return new ResponseMessage(request.Id, null, new ResponseError(JsonRpcErrorCode.InvalidParams,
+                        return new ResponseMessage(request.Id, new ResponseError(JsonRpcErrorCode.InvalidParams,
                             $"Required parameter \"{method.Parameters[i].ParameterName}\" is missing for \"{method.MethodName}\"."));
                     else
                     {
@@ -86,25 +87,25 @@ namespace JsonRpc.Standard.Contracts
                     try
                     {
                         argv[i] = jarg.ToObject(method.Parameters[i].ParameterType, method.Parameters[i].Serializer);
-                        if (method.Parameters[i].IsTask)
-                        {
-                            // This is a rare case, I suppose.
-                            argv[i] = Task_FromResult.MakeGenericMethod(method.Parameters[i].ParameterType)
-                                .Invoke(null, new[] {argv[i]});
-                        }
                     }
                     catch (JsonException ex)
                     {
                         if (context.Request is RequestMessage request)
-                            return new ResponseMessage(request.Id, null, new ResponseError(JsonRpcErrorCode.ParseError,
+                            return new ResponseMessage(request.Id, new ResponseError(JsonRpcErrorCode.ParseError,
                                 $"JSON error when parsing argument \"{method.Parameters[i].ParameterName}\" in \"{method.MethodName}\": {ex.Message}"));
+                    }
+                    if (method.Parameters[i].IsTask)
+                    {
+                        // This is a rare case, I suppose.
+                        argv[i] = Task_FromResult.MakeGenericMethod(method.Parameters[i].ParameterType)
+                            .Invoke(null, new[] {argv[i]});
                     }
                 }
             }
             var inst = OnGetService(method, context);
             inst.RequestContext = context;
             var result = methodInfo.Invoke(inst, argv);
-            var response = await ToResponseMessageAsync(result, context);
+            var response = await ToResponseMessageAsync(result, method, context);
             // Some cleanup
             inst.RequestContext = null;
             return response;
@@ -114,10 +115,11 @@ namespace JsonRpc.Standard.Contracts
         /// Converts the return value of the RPC method to <see cref="ResponseMessage"/> asynchronously.
         /// </summary>
         /// <param name="invocationResult">The return value of target method.</param>
+        /// <param name="method">The resolved RPC method.</param>
         /// <param name="context">The context of the invocation.</param>
         /// <returns>A task that returns a <see cref="ResponseMessage"/> to indicate the response,
         /// or that returns <c>null</c> if the request do not need any response.</returns>
-        protected virtual async Task<ResponseMessage> ToResponseMessageAsync(object invocationResult, RequestContext context)
+        protected virtual async Task<ResponseMessage> ToResponseMessageAsync(object invocationResult, JsonRpcMethod method, RequestContext context)
         {
             object result = null;
             if (invocationResult is Task taskResult)
@@ -138,9 +140,11 @@ namespace JsonRpc.Standard.Contracts
             if (context.Request is RequestMessage request)
             {
                 // We need a response.
+                if (result == null)
+                    return new ResponseMessage(request.Id, JValue.CreateNull());
                 if (result is ResponseError error)
-                    return new ResponseMessage(request.Id, null, error);
-                return new ResponseMessage(request.Id, result);
+                    return new ResponseMessage(request.Id, error);
+                return new ResponseMessage(request.Id, JToken.FromObject(result, method.ReturnParameter.Serializer));
             }
             // Otherwise, we do not send anything.
             return null;

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using JsonRpc.Standard.Contracts;
+using Newtonsoft.Json.Linq;
 
 namespace JsonRpc.Standard.Server
 {
@@ -103,14 +104,14 @@ namespace JsonRpc.Standard.Server
             catch (AmbiguousMatchException)
             {
                 if (request != null)
-                    return new ResponseMessage(request.Id, null, new ResponseError(JsonRpcErrorCode.MethodNotFound,
+                    return new ResponseMessage(request.Id, new ResponseError(JsonRpcErrorCode.MethodNotFound,
                         $"Invocation of method \"{request.Method}\" is ambiguous."));
                 return null;
             }
             if (method == null)
             {
                 if (request != null)
-                    return new ResponseMessage(request.Id, null, new ResponseError(JsonRpcErrorCode.MethodNotFound,
+                    return new ResponseMessage(request.Id, new ResponseError(JsonRpcErrorCode.MethodNotFound,
                         $"Cannot resolve method \"{request.Method}\"."));
                 return null;
             }
@@ -118,7 +119,7 @@ namespace JsonRpc.Standard.Server
             if (request != null && response == null)
             {
                 // Provides a default response
-                return new ResponseMessage(request.Id, null);
+                return new ResponseMessage(request.Id, JValue.CreateNull());
             }
             return response;
         }

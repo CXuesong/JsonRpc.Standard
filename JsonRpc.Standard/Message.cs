@@ -41,24 +41,24 @@ namespace JsonRpc.Standard
             
         }
 
-        internal GeneralRequestMessage(string method, JToken paramsValue)
+        internal GeneralRequestMessage(string method, JToken parameters)
         {
             Method = method;
-            Params = paramsValue;
+            Parameters = parameters;
         }
 
         /// <summary>
         /// The method to invoke on the receiver.
         /// </summary>
-        [JsonProperty]
+        [JsonProperty("method")]
         public string Method { get; set; }
 
         /// <summary>
         /// A <see cref="JObject" /> representing parameters for the method.
         /// </summary>
         /// <remarks>This member MAY be omitted (null).</remarks>
-        [JsonProperty]
-        public JToken Params { get; set; }
+        [JsonProperty("params")]
+        public JToken Parameters { get; set; }
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ namespace JsonRpc.Standard
         {
         }
 
-        public RequestMessage(object id, string method, JToken paramsValue) : base(method, paramsValue)
+        public RequestMessage(object id, string method, JToken parameters) : base(method, parameters)
         {
             Id = id;
         }
@@ -114,7 +114,7 @@ namespace JsonRpc.Standard
         {
         }
 
-        public NotificationMessage(string method, JToken paramsValue) : base(method, paramsValue)
+        public NotificationMessage(string method, JToken parameters) : base(method, parameters)
         {
 
         }
@@ -137,26 +137,34 @@ namespace JsonRpc.Standard
         }
 
         /// <summary>
-        /// Creates a new <see cref="ResponseMessage" /> instance.
+        /// Creates a new <see cref="ResponseMessage" /> instance that indicates success.
         /// </summary>
-        public ResponseMessage(object id, object result) : this(id, result, null)
+        public ResponseMessage(object id, JToken result) : this(id, result, null)
+        {
+        }
+
+
+        /// <summary>
+        /// Creates a new <see cref="ResponseMessage" /> instance that indicates error.
+        /// </summary>
+        public ResponseMessage(object id, ResponseError error) : this(id, null, error)
         {
         }
 
         /// <summary>
         /// Creates a new <see cref="ResponseMessage" /> instance.
         /// </summary>
-        public ResponseMessage(object id, object result, ResponseError error)
+        public ResponseMessage(object id, JToken result, ResponseError error)
         {
             Id = id;
-            SetResult(result);
+            Result = result;
             Error = error;
         }
 
         /// <summary>
         /// A unique ID assigned to the request/response session. The request creator is responsible for this value.
         /// </summary>
-        [JsonProperty]
+        [JsonProperty("id")]
         public object Id
         {
             get { return _Id; }
@@ -173,28 +181,22 @@ namespace JsonRpc.Standard
         /// <summary>
         /// The error that occurred while processing the request.
         /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        // This member MUST NOT exist if there was no error triggered during invocation.
+        // The value for this member MUST be an Object as defined in section 5.1.
+        [JsonProperty("error", NullValueHandling = NullValueHandling.Ignore)]
         public ResponseError Error { get; set; }
 
         /// <summary>
         /// An object representing the result of processing the request.
         /// </summary>
-        [JsonProperty]
+        /// <remarks>
+        /// To compose a valid JSON RPC response, you need to set this property to
+        /// the value returned by <see cref="JValue.CreateNull"/>, if the response is
+        /// sucess and no other value is to be offered.
+        /// </remarks>
+        // This member is REQUIRED on success.
+        // This member MUST NOT exist if there was an error invoking the method.
+        [JsonProperty("result", NullValueHandling = NullValueHandling.Ignore)]
         public JToken Result { get; set; }
-
-        public object GetResult(Type resultType)
-        {
-            return Result?.ToObject(resultType, RpcSerializer.Serializer);
-        }
-
-        public T GetResult<T>()
-        {
-            return Result == null ? default(T) : Result.ToObject<T>(RpcSerializer.Serializer);
-        }
-
-        public void SetResult(object result)
-        {
-            Result = result == null ? null : JToken.FromObject(result, RpcSerializer.Serializer);
-        }
     }
 }
