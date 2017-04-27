@@ -34,6 +34,11 @@ namespace UnitTestProject1
         [JsonRpcMethod]
         Task<Complex> MakeComplex(double real, double imaginary);
 
+        [JsonRpcMethod]
+        void Delay(TimeSpan duration);
+
+        [JsonRpcMethod]
+        void Delay();
     }
 
     public interface ITestRpcExceptionContract
@@ -94,9 +99,21 @@ namespace UnitTestProject1
         }
 
         [JsonRpcMethod]
-        Task ThrowException()
+        public Task ThrowException()
         {
             throw new InvalidOperationException("The operation is invalid.", new InvalidTimeZoneException());
+        }
+
+        [JsonRpcMethod]
+        public Task Delay(TimeSpan duration, CancellationToken ct)
+        {
+            return Task.Delay(duration, ct);
+        }
+
+        [JsonRpcMethod]
+        public void Delay(CancellationToken ct)
+        {
+            Task.Delay(100, ct).Wait(ct);
         }
     }
 }

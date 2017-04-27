@@ -41,6 +41,8 @@ namespace UnitTestProject1
         {
             var builder = new JsonRpcProxyBuilder {ContractResolver = Utility.DefaultContractResolver};
             var proxy = builder.CreateProxy<ITestRpcContract>(client);
+            proxy.Delay();
+            proxy.Delay(TimeSpan.FromMilliseconds(100));
             Assert.Equal(1, proxy.One());
             Assert.Equal(1, proxy.One(false));
             Assert.Equal(-1, proxy.One(true));
@@ -62,13 +64,12 @@ namespace UnitTestProject1
                 ("add", new {x = "true", y = 100}, JsonRpcErrorCode.InvalidParams),
                 ("add", new {a = 100, b = 100}, JsonRpcErrorCode.InvalidParams)
             };
-            var responses = await Task.WhenAll(requests.Select(r =>
-                client.SendRequestAsync(r.Name, r.Parameters == null ? null : JToken.FromObject(r.Parameters),
-                    CancellationToken.None)));
-            foreach ((var request, var response)
-                in requests.Zip(responses, (req, res) => (Request:req, Response: res)))
+            foreach (var request in requests)
             {
                 Output.WriteLine(request + "");
+                var response = await client.SendRequestAsync(request.Name,
+                    request.Parameters == null ? null : JToken.FromObject(request.Parameters),
+                    CancellationToken.None);
                 Assert.Null(response.Result);
                 Assert.NotNull(response.Error);
                 Assert.Equal(request.ExpectedErrorCode, (JsonRpcErrorCode) response.Error.Code);

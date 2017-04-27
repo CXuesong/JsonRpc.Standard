@@ -40,7 +40,7 @@ namespace JsonRpc.Standard.Contracts
         internal bool MatchJTokenType(JTokenType type)
         {
             if (ParameterType == typeof(JToken)) return true;
-            var ti = IntrospectionExtensions.GetTypeInfo(ParameterType);
+            var ti = ParameterType.GetTypeInfo();
             switch (type)
             {
                 case JTokenType.Object:
@@ -61,10 +61,15 @@ namespace JsonRpc.Standard.Contracts
                            || ParameterType == typeof(ulong) || ParameterType == typeof(ulong?)
                            || ParameterType == typeof(float) || ParameterType == typeof(float?)
                            || ParameterType == typeof(double) || ParameterType == typeof(double?);
+                case JTokenType.Date:
+                case JTokenType.TimeSpan:
+                case JTokenType.Uri:
+                case JTokenType.Guid:
                 case JTokenType.String:
+                    // They are all JSON string¡­
                     return !ti.IsPrimitive || ParameterType == typeof(char) || ParameterType == typeof(char?);
                 case JTokenType.Null:
-                    return !IntrospectionExtensions.GetTypeInfo(ParameterType).IsValueType
+                    return !ParameterType.GetTypeInfo().IsValueType
                            || ParameterType.IsConstructedGenericType &&
                            ParameterType.GetGenericTypeDefinition() == typeof(Nullable<>);
                 default:

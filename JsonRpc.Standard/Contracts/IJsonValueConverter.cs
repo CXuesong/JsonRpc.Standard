@@ -41,6 +41,7 @@ namespace JsonRpc.Standard.Contracts
         /// <inheritdoc />
         public virtual JToken ValueToJson(object value)
         {
+            if (value == null) return JValue.CreateNull();
             return JToken.FromObject(value, serializer);
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -193,7 +194,10 @@ namespace JsonRpc.Standard.Server
                 var result = await method.Invoker.InvokeAsync(context, args).ConfigureAwait(false);
                 // Produce the response.
                 if (context.Response != null && context.Response.Result == null && context.Response.Error == null)
+                {
                     context.Response.Result = method.ReturnParameter.Converter.ValueToJson(result);
+                    Debug.Assert(context.Response.Result != null);
+                }
             }
             catch (TargetInvocationException ex)
             {
