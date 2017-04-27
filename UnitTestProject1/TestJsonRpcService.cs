@@ -20,6 +20,12 @@ namespace UnitTestProject1
         int One(bool negative);
 
         [JsonRpcMethod]
+        int Two();
+
+        [JsonRpcMethod]
+        int Two(bool negative);
+
+        [JsonRpcMethod]
         int Add(int x, int y);
 
         [JsonRpcMethod]
@@ -53,6 +59,12 @@ namespace UnitTestProject1
         public int One([JsonRpcParameter("negative")] bool neg)
         {
             return neg ? -1 : 1;
+        }
+
+        [JsonRpcMethod]
+        public int Two(bool negative = false)
+        {
+            return negative ? -2 : 2;
         }
 
         [JsonRpcMethod]

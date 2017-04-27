@@ -168,7 +168,7 @@ namespace JsonRpc.Standard.Client
                     else
                     {
                         var gen = impl.GetILGenerator();
-                        gen.Emit(OpCodes.Ldstr, method.Name + "is not a JSON RPC method.");
+                        gen.Emit(OpCodes.Ldstr, $"\"{method.Name}\" is not implemented as a JSON RPC method.");
                         gen.Emit(OpCodes.Newobj, NotSupportedException_ctor1);
                         gen.Emit(OpCodes.Throw);
                     }

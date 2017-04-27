@@ -95,9 +95,9 @@ namespace JsonRpc.Standard.Contracts
                 {
                     if (this.Parameters[i].IsOptional)
                         argv[i] = Type.Missing;
-                    throw new ArgumentException(
-                        $"Required parameter \"{this.Parameters[i].ParameterName}\" is missing for \"{this.MethodName}\".",
-                        nameof(message));
+                    else
+                        throw new InvalidOperationException(
+                            $"Required parameter \"{Parameters[i].ParameterName}\" is missing for \"{MethodName}\".");
                 }
                 else
                 {
