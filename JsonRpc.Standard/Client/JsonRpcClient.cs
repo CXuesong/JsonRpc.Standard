@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using JsonRpc.Standard.Contracts;
 using JsonRpc.Standard.Server;
+using Newtonsoft.Json.Linq;
 
 namespace JsonRpc.Standard.Client
 {
@@ -130,14 +131,44 @@ namespace JsonRpc.Standard.Client
         }
 
         /// <summary>
-        /// Asynchronously send the request message.
+        /// Asynchronously send a JSON RPC notification message.
+        /// </summary>
+        /// <param name="methodName">RPC method name.</param>
+        /// <param name="parameters">The parameters of the invocation. Can be null.</param>
+        /// <param name="cancellationToken">A token used to cancel the operation.</param>
+        /// <returns>A task contains the response of the request, or that contains <c>null</c> if the specified request does not need a response.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="methodName"/> is <c>null</c>.</exception>
+        public Task<ResponseMessage> SendNotificationAsync(string methodName, JToken parameters, CancellationToken cancellationToken)
+        {
+            if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+            return SendAsync(new NotificationMessage(methodName, parameters), cancellationToken);
+        }
+
+        /// <summary>
+        /// Asynchronously send a JSON RPC request message.
+        /// </summary>
+        /// <param name="methodName">RPC method name.</param>
+        /// <param name="parameters">The parameters of the invocation. Can be null.</param>
+        /// <param name="cancellationToken">A token used to cancel the operation.</param>
+        /// <returns>A task contains the response of the request, or that contains <c>null</c> if the specified request does not need a response.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="methodName"/> is <c>null</c>.</exception>
+        public Task<ResponseMessage> SendRequestAsync(string methodName, JToken parameters, CancellationToken cancellationToken)
+        {
+            if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+            return SendAsync(new RequestMessage(NextRequestId(), methodName, parameters), cancellationToken);
+        }
+
+        /// <summary>
+        /// Asynchronously send a JSON RPC request or notification message.
         /// </summary>
         /// <param name="message">The request message to be sent.</param>
         /// <param name="cancellationToken">A token used to cancel the operation.</param>
-        /// <returns>A task contains the response of the request, or that contains <c>null</c> if <see cref="Reader"/> is <c>null</c>.</returns>
+        /// <returns>A task contains the response of the request, or that contains <c>null</c> if the specified request does not need a response.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="message"/> is <c>null</c>.</exception>
         public async Task<ResponseMessage> SendAsync(GeneralRequestMessage message, CancellationToken cancellationToken)
         {
-            Debug.Assert(message != null);
+            if (message == null) throw new ArgumentNullException(nameof(message));
+            cancellationToken.ThrowIfCancellationRequested();
             var request = message as RequestMessage;
             TaskCompletionSource<ResponseMessage> tcs = null;
             CancellationTokenRegistration ctr;
