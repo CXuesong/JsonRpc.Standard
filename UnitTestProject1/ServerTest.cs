@@ -10,20 +10,18 @@ using Xunit.Abstractions;
 
 namespace UnitTestProject1
 {
-    public class ServerTest
+    public class ServerTest : UnitTestBase
     {
-        private readonly ITestOutputHelper output;
-
-        public ServerTest(ITestOutputHelper output)
+        public ServerTest(ITestOutputHelper output) : base(output)
         {
-            this.output = output;
+            
         }
 
         [Fact]
         public async Task TestMethod1()
         {
             var request = "{\"jsonrpc\": \"2.0\",\"id\": 1,\"method\": \"sum\",\"params\": {\"x\":100, \"y\":-200}}";
-            output.WriteLine(request);
+            Output.WriteLine(request);
             using (var reader = new StringReader(request))
             using (var writer = new StringWriter())
             {
@@ -35,7 +33,7 @@ namespace UnitTestProject1
                     await target.Completion;
                 }
                 var result = writer.ToString();
-                output.WriteLine(result);
+                Output.WriteLine(result);
                 Assert.Equal("{\"id\":1,\"result\":-100,\"jsonrpc\":\"2.0\"}", result.Trim());
             }
         }

@@ -14,6 +14,12 @@ namespace UnitTestProject1
     public interface ITestRpcContract
     {
         [JsonRpcMethod]
+        int One();
+
+        [JsonRpcMethod]
+        int One(bool negative);
+
+        [JsonRpcMethod]
         int Add(int x, int y);
 
         [JsonRpcMethod]
@@ -24,12 +30,35 @@ namespace UnitTestProject1
 
     }
 
+    public interface ITestRpcExceptionContract
+    {
+
+        [JsonRpcMethod]
+        void ThrowException();
+
+        [JsonRpcMethod("throwException")]
+        Task ThrowExceptionAsync();
+
+    }
+
     public class TestJsonRpcService : JsonRpcService
     {
-        // For backward compatibility
+        [JsonRpcMethod]
+        public int One()
+        {
+            return 1;
+        }
+
+        [JsonRpcMethod]
+        public int One([JsonRpcParameter("negative")] bool neg)
+        {
+            return neg ? -1 : 1;
+        }
+
         [JsonRpcMethod]
         public Task<int> Sum(int x, int y, CancellationToken ct)
         {
+            // For backward compatibility
             return Add(x, y, ct);
         }
 
@@ -50,6 +79,12 @@ namespace UnitTestProject1
         public Complex MakeComplex(double real, double imaginary)
         {
             return new Complex(real, imaginary);
+        }
+
+        [JsonRpcMethod]
+        Task ThrowException()
+        {
+            throw new InvalidOperationException("The operation is invalid.", new InvalidTimeZoneException());
         }
     }
 }
