@@ -32,20 +32,21 @@ namespace JsonRpc.Standard.Contracts
         public JsonRpcMethod TryBindToMethod(ICollection<JsonRpcMethod> candidates, RequestContext context)
         {
             //TODO Support array as params
-            if (context.Request.Parameters != null && context.Request.Parameters.Type == JTokenType.Array) return null;
+            // context.Request.Parameters can be: {}, [], null (JValue), null
+            var paramsObj = context.Request.Parameters as JObject;
+            if (context.Request.Parameters is JArray) return null;
             JsonRpcMethod firstMatch = null;
             Dictionary<string, JToken> requestProp = null;
             foreach (var m in candidates)
             {
-                // context.Request.Parameters can be: {}, [], null (JValue), null
-                if (!m.AllowExtensionData && context.Request.Parameters is JObject paramsObj)
+                if (!m.AllowExtensionData && paramsObj != null)
                 {
                     // Strict match
                     requestProp = paramsObj.Properties().ToDictionary(p => p.Name, p => p.Value);
                 }
                 foreach (var p in m.Parameters)
                 {
-                    var jp = context.Request.Parameters?[p.ParameterName];
+                    var jp = paramsObj?[p.ParameterName];
                     if (jp == null)
                     {
                         if (!p.IsOptional) goto NEXT;

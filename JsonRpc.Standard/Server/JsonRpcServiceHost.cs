@@ -99,7 +99,7 @@ namespace JsonRpc.Standard.Server
             catch (Exception ex)
             {
                 // Swallow any exceptions
-                Logger.LogError(0, ex, "Unhandled exception while processing the request.");
+                Logger.LogError(1000, ex, "Unhandled exception while processing the request.\r\n{exception}", ex);
                 if (context.Response != null)
                 {
                     context.Response.Result = null;
@@ -113,12 +113,35 @@ namespace JsonRpc.Standard.Server
         private void TrySetErrorResponse(RequestContext context, JsonRpcErrorCode errorCode,
             string message)
         {
+            Logger.LogError("({code}) {message}", errorCode, message);
             if (context.Response == null) return;
             context.Response.Error = new ResponseError(errorCode, message);
         }
 
+        private bool ValidateRequest(RequestContext context)
+        {
+            if (context.Request.Method == null)
+            {
+                // Even "method": null is still allowed.
+                TrySetErrorResponse(context, JsonRpcErrorCode.InvalidRequest,
+                    "\"method\" property is missing in the request.");
+                return false;
+            }
+            if (context.Request.Parameters is JValue jv)
+            {
+                if (jv.Type != JTokenType.Null && jv.Type != JTokenType.Undefined)
+                {
+                    TrySetErrorResponse(context, JsonRpcErrorCode.InvalidRequest,
+                        "Invalid \"params\" value.");
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private async Task RpcMethodEntryPoint(RequestContext context)
         {
+            if (!ValidateRequest(context)) return;
             JsonRpcMethod method;
             try
             {
@@ -135,13 +158,13 @@ namespace JsonRpc.Standard.Server
             }
             catch (AmbiguousMatchException)
             {
-                TrySetErrorResponse(context, JsonRpcErrorCode.InvalidRequest,
+                TrySetErrorResponse(context, JsonRpcErrorCode.InvalidParams,
                     $"Invocation of method \"{context.Request.Method}\" is ambiguous.");
                 return;
             }
             if (method == null)
             {
-                TrySetErrorResponse(context, JsonRpcErrorCode.InvalidRequest,
+                TrySetErrorResponse(context, JsonRpcErrorCode.InvalidParams,
                     $"Cannot find method \"{context.Request.Method}\" with matching signature.");
                 return;
             }

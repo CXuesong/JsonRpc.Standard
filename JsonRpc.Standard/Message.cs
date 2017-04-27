@@ -84,9 +84,8 @@ namespace JsonRpc.Standard
         /// A <see cref="JObject" /> representing parameters for the method.
         /// </summary>
         /// <remarks>This member MAY be omitted (null).</remarks>
-        [JsonProperty("params")]
+        [JsonProperty("params", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public JToken Parameters { get; set; }
-
 
         public CancellationToken CancellationToken { get; set; }
     }
