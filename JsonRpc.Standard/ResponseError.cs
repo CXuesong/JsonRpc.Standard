@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -42,6 +43,9 @@ namespace JsonRpc.Standard
         UnhandledClrException = -32010,
     }
 
+    /// <summary>
+    /// JSON RPC Error contract object.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class ResponseError
     {
@@ -69,15 +73,9 @@ namespace JsonRpc.Standard
 
         public static ResponseError FromException(Exception ex)
         {
-            if (ex is JsonRpcException re) return FromException(re);
+            if (ex is JsonRpcException re && re.Error != null) return re.Error;
             return new ResponseError(JsonRpcErrorCode.UnhandledClrException, $"{ex.GetType()}: {ex.Message}",
-                UnhandledClrExceptionData.FromException(ex));
-        }
-
-        public static ResponseError FromException(JsonRpcException ex)
-        {
-            if (ex == null) throw new ArgumentNullException(nameof(ex));
-            return new ResponseError(ex.Code, ex.Message, ex.RpcData);
+                ClrExceptionErrorData.FromException(ex));
         }
 
         [JsonProperty]
@@ -108,17 +106,14 @@ namespace JsonRpc.Standard
         }
     }
 
-    /// <summary>
-    /// This class is for internal use.
-    /// </summary>
-    internal class UnhandledClrExceptionData
+    public class ClrExceptionErrorData
     {
-        public static UnhandledClrExceptionData FromException(Exception ex)
+        public static ClrExceptionErrorData FromException(Exception ex)
         {
             if (ex == null) throw new ArgumentNullException(nameof(ex));
-            return new UnhandledClrExceptionData
+            return new ClrExceptionErrorData
             {
-                ExceptionType = ex.GetType().AssemblyQualifiedName,
+                ExceptionType = ex.GetType().FullName,
                 Data = ex.Data,
                 HResult = ex.HResult,
                 HelpLink = ex.HelpLink,
@@ -139,22 +134,30 @@ namespace JsonRpc.Standard
 
         public string StackTrace { get; set; }
 
-        public UnhandledClrExceptionData InnerException { get; set; }
+        public ClrExceptionErrorData InnerException { get; set; }
 
-        public Exception ToException()
+        private void ToString(StringBuilder sb, int indention)
         {
-            var inner = InnerException?.ToException();
-            var type = Type.GetType(ExceptionType);
-            if (type != null)
+            if (indention > 0)
             {
-                var inst = (Exception) Activator.CreateInstance(type, Message, inner);
-                inst.HelpLink = HelpLink;
-                return inst;
+                sb.Append('-', indention);
+                sb.Append(" ");
             }
-            else
+            sb.AppendFormat("{0}: {1}", ExceptionType, Message);
+            sb.AppendLine();
+            if (!string.IsNullOrEmpty(StackTrace)) sb.AppendLine(StackTrace);
+            if (InnerException != null)
             {
-                return new Exception($"[{ExceptionType}]: {Message}", inner);
+                InnerException.ToString(sb, indention + 1);
             }
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            ToString(sb, 0);
+            return sb.ToString();
         }
     }
 }

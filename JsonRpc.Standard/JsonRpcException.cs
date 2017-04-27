@@ -1,55 +1,58 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Newtonsoft.Json.Linq;
 
 namespace JsonRpc.Standard
 {
     /// <summary>
-    /// Indicates an general JSON RPC compatible exception.
+    /// An exception that indicates an general JSON RPC error.
     /// </summary>
     public class JsonRpcException : Exception
     {
-        public JsonRpcException(string message) : this(JsonRpcErrorCode.InternalError, message)
+
+        private static string BuildMessage(string message, ResponseError error)
+        {
+            if (message == null)
+            {
+                if (error != null)
+                {
+                    message = error.Message;
+                    if (string.IsNullOrEmpty(message))
+                        message = $"An JSON RPC error occured. Error code: {error.Code}.";
+                }
+                else
+                {
+                    message = "An JSON RPC error occured.";
+                }
+            }
+            return message;
+        }
+
+        public JsonRpcException(string message) : this(message, null, null)
         {
         }
 
-        public JsonRpcException(JsonRpcErrorCode code, string message) : this((int) code, message, null)
+        public JsonRpcException(ResponseError error) : this(null, error)
         {
         }
 
-        public JsonRpcException(int code, string message) : this(code, message, null)
+        public JsonRpcException(string message, ResponseError error) : this(message, error, null)
         {
         }
 
-        public JsonRpcException(int code, string message, object data) : this(code, message, data, null)
+        public JsonRpcException(string message, Exception innerException) : this(message, null, innerException)
         {
         }
 
-        public JsonRpcException(int code, string message, object data, Exception inner) : base(message, inner)
+        public JsonRpcException(string message, ResponseError error, Exception innerException) : base(
+            BuildMessage(message, error), innerException)
         {
-            Code = code;
-            RpcData = data == null ? null : JToken.FromObject(data, RpcSerializer.Serializer);
+            Error = error;
         }
 
         /// <summary>
-        /// JSON RPC error code.
+        /// JSON RPC error object.
         /// </summary>
-        public virtual int Code { get; }
-
-        /// <summary>
-        /// Additional information about the error. This property will be passed to client when
-        /// returning JSON RPC error object.
-        /// </summary>
-        public virtual JToken RpcData { get; }
-
-
-        public object GetRpcData(Type dataType)
-        {
-            return RpcData?.ToObject(dataType, RpcSerializer.Serializer);
-        }
-
-        public T GetRpcData<T>()
-        {
-            return RpcData == null ? default(T) : RpcData.ToObject<T>(RpcSerializer.Serializer);
-        }
+        public ResponseError Error { get; }
     }
 }

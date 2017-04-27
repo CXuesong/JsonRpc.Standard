@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -15,6 +16,7 @@ namespace JsonRpc.Standard.Client
     /// <summary>
     /// Infrastructure. Base class for client proxy implementation.
     /// </summary>
+    [Browsable(false)]
     public class JsonRpcProxyBase
     {
         protected JsonRpcProxyBase(JsonRpcClient client, IList<JsonRpcMethod> methodTable)
@@ -29,38 +31,58 @@ namespace JsonRpc.Standard.Client
 
         protected IList<JsonRpcMethod> MethodTable { get; }
 
+        /// <summary>
+        /// Infrastructure. Sends the request and wait for the response.
+        /// </summary>
         protected TResult Send<TResult>(int methodIndex, IList paramValues)
         {
             return SendAsync<TResult>(methodIndex, paramValues).GetAwaiter().GetResult();
         }
 
+        /// <summary>
+        /// Infrastructure. Asynchronously sends the request and wait for the response.
+        /// </summary>
+        /// <typeparam name="TResult">Response type.</typeparam>
+        /// <param name="methodIndex">The JSON RPC method index in <see cref="MethodTable"/>.</param>
+        /// <param name="paramValues">Parameters, in the order of expected parameter order.</param>
+        /// <exception cref="JsonRpcRemoteException">An error has occurred on the remote-side.</exception>
+        /// <exception cref="JsonRpcContractException">An error has occurred when generating the request or parsing the response.</exception>
+        /// <returns>The response.</returns>
         protected async Task<TResult> SendAsync<TResult>(int methodIndex, IList paramValues)
         {
             var method = MethodTable[methodIndex];
-            var message = method.Marshal(paramValues);
+            GeneralRequestMessage message;
+            try
+            {
+                message = method.Marshal(paramValues);
+            }
+            catch (Exception ex)
+            {
+                throw new JsonRpcContractException("An exception occured while marshalling the request. " + ex.Message,
+                    ex);
+            }
             // Send the request
             if (message is RequestMessage request) request.Id = Client.NextRequestId();
             var response = await Client.SendAsync(message, message.CancellationToken).ConfigureAwait(false);
             if (response.Error != null)
             {
-                if (response.Error.Code == (int) JsonRpcErrorCode.UnhandledClrException)
-                {
-                    var error = response.Error.Data.ToObject<UnhandledClrExceptionData>(RpcSerializer.Serializer);
-                    throw new TargetInvocationException(error.ToException());
-                }
-                else
-                {
-                    var rpcException = new JsonRpcException(response.Error.Code,
-                        response.Error.Message, response.Error.Data);
-                    throw new TargetInvocationException(rpcException);
-                }
+                throw new JsonRpcRemoteException(response.Error);
             }
             if (method.ReturnParameter.ParameterType != typeof(void))
             {
                 if (response.Result == null)
-                    throw new TargetInvocationException(
-                        $"Expect \"{method.ReturnParameter.ParameterType}\" result, got void.", null);
-                return (TResult) method.ReturnParameter.Converter.JsonToValue(response.Result, typeof(TResult));
+                    throw new JsonRpcContractException(
+                        $"Expect \"{method.ReturnParameter.ParameterType}\" result, got void.",
+                        message);
+                try
+                {
+                    return (TResult) method.ReturnParameter.Converter.JsonToValue(response.Result, typeof(TResult));
+                }
+                catch (Exception ex)
+                {
+                    throw new JsonRpcContractException("An exception occured while unmarshalling the response. " + ex.Message,
+                        message, ex);
+                }
             }
             return default(TResult);
         }

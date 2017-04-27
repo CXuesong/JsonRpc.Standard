@@ -33,6 +33,12 @@ namespace JsonRpc.Standard.Contracts
 
         public IJsonRpcMethodInvoker Invoker { get; set; }
 
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"{MethodName}({Parameters.Count})";
+        }
+
         internal GeneralRequestMessage Marshal(IList arguments)
         {
             CancellationToken ct = CancellationToken.None;
@@ -89,13 +95,9 @@ namespace JsonRpc.Standard.Contracts
                 {
                     if (this.Parameters[i].IsOptional)
                         argv[i] = Type.Missing;
-                    else if (message is RequestMessage request)
-                        throw new JsonRpcException(JsonRpcErrorCode.InvalidParams,
-                            $"Required parameter \"{this.Parameters[i].ParameterName}\" is missing for \"{this.MethodName}\".");
-                    else
-                    {
-                        // TODO Logging: Argument missing, but the client do not need a response, so we just ignore the error.
-                    }
+                    throw new ArgumentException(
+                        $"Required parameter \"{this.Parameters[i].ParameterName}\" is missing for \"{this.MethodName}\".",
+                        nameof(message));
                 }
                 else
                 {

@@ -41,7 +41,7 @@ namespace JsonRpc.Standard.Contracts
     }
 
     /// <summary>
-    /// Specifies the 
+    /// Specifies the parameter options of a JSON RPC method.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = true, AllowMultiple = false)]
     public sealed class JsonRpcParameterAttribute : Attribute

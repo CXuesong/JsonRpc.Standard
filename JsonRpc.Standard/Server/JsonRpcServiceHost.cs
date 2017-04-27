@@ -89,6 +89,9 @@ namespace JsonRpc.Standard.Server
             {
                 if (Contract.Methods.TryGetValue(context.Request.Method, out var candidates))
                     method = MethodBinder.TryBindToMethod(candidates, context);
+                else
+                    return new ResponseMessage(request.Id, new ResponseError(JsonRpcErrorCode.MethodNotFound,
+                        $"Method \"{request.Method}\" is not found."));
             }
             catch (AmbiguousMatchException)
             {
@@ -101,13 +104,30 @@ namespace JsonRpc.Standard.Server
             {
                 if (request != null)
                     return new ResponseMessage(request.Id, new ResponseError(JsonRpcErrorCode.MethodNotFound,
-                        $"Cannot resolve method \"{request.Method}\"."));
+                        $"Cannot find method \"{request.Method}\" with matching signature."));
                 return null;
             }
+            object[] args;
             object result;
             try
             {
-                var args = method.UnmarshalArguments(context.Request);
+                args = method.UnmarshalArguments(context.Request);
+            }
+            catch (ArgumentException ex)
+            {
+                // Signature not match. This is not likely to happen. Still there might be problem with binder.
+                if (request != null)
+                    return new ResponseMessage(request, new ResponseError(JsonRpcErrorCode.InvalidParams, ex.Message));
+                return null;
+            }
+            catch (Exception ex)
+            {
+                if (request != null)
+                    return new ResponseMessage(request, ResponseError.FromException(ex));
+                return null;
+            }
+            try
+            {
                 result = await method.Invoker.InvokeAsync(context, args).ConfigureAwait(false);
             }
             catch (Exception ex)
