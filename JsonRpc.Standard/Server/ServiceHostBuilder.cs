@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using JsonRpc.Standard.Contracts;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace JsonRpc.Standard.Server
 {
@@ -139,7 +140,7 @@ namespace JsonRpc.Standard.Server
                 ServiceFactory = ServiceFactory ?? DefaultServiceFactory.Default,
                 Session = Session,
                 MethodBinder = MethodBinder ?? JsonRpcMethodBinder.Default,
-                Logger = (ILogger) LoggerFactory?.CreateLogger<JsonRpcServiceHost>() ?? NullLogger.Default
+                Logger = (ILogger) LoggerFactory?.CreateLogger<JsonRpcServiceHost>() ?? NullLogger.Instance
             };
             if (interceptions.Count > 0) host.interceptionHandlers = interceptions.ToArray();
             return host;
