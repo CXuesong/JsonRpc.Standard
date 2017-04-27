@@ -70,45 +70,56 @@ namespace JsonRpc.Standard.Server
             return Utility.CombineDisposable(d1, d2);
         }
 
-        private Task<ResponseMessage> ReaderAction(Message message)
+        private async Task<ResponseMessage> ReaderAction(Message message)
         {
             var ct = CancellationToken.None;
-            if (ct.IsCancellationRequested) return Task.FromCanceled<ResponseMessage>(ct);
+            if (ct.IsCancellationRequested) return null;
             var request = message as GeneralRequestMessage;
-            if (request == null) return Task.FromResult<ResponseMessage>(null);
+            if (request == null) return null;
             // TODO provides a way to cancel the request from inside JsonRpcService.
             var context = new RequestContext(this, Session, request, ct);
-            return RpcMethodEntryPoint(context);
+            await RpcMethodEntryPoint(context);
+            return context.Response;
         }
 
-        private async Task<ResponseMessage> RpcMethodEntryPoint(RequestContext context)
+        private void TrySetErrorResponse(RequestContext context, JsonRpcErrorCode errorCode,
+            string message)
+        {
+            if (context.Response == null) return;
+            context.Response.Error = new ResponseError(errorCode, message);
+        }
+
+        private async Task RpcMethodEntryPoint(RequestContext context)
         {
             var request = context.Request as RequestMessage;
             JsonRpcMethod method = null;
             try
             {
                 if (Contract.Methods.TryGetValue(context.Request.Method, out var candidates))
+                {
                     method = MethodBinder.TryBindToMethod(candidates, context);
+                }
                 else
-                    return new ResponseMessage(request.Id, new ResponseError(JsonRpcErrorCode.MethodNotFound,
-                        $"Method \"{request.Method}\" is not found."));
+                {
+                    TrySetErrorResponse(context, JsonRpcErrorCode.MethodNotFound,
+                        $"Method \"{context.Request.Method}\" is not found.");
+                    return;
+                }
             }
             catch (AmbiguousMatchException)
             {
-                if (request != null)
-                    return new ResponseMessage(request.Id, new ResponseError(JsonRpcErrorCode.InvalidRequest,
-                        $"Invocation of method \"{request.Method}\" is ambiguous."));
-                return null;
+                TrySetErrorResponse(context, JsonRpcErrorCode.InvalidRequest,
+                    $"Invocation of method \"{context.Request.Method}\" is ambiguous.");
+                return;
             }
             if (method == null)
             {
-                if (request != null)
-                    return new ResponseMessage(request.Id, new ResponseError(JsonRpcErrorCode.MethodNotFound,
-                        $"Cannot find method \"{request.Method}\" with matching signature."));
-                return null;
+                TrySetErrorResponse(context, JsonRpcErrorCode.InvalidRequest,
+                    $"Cannot find method \"{context.Request.Method}\" with matching signature.");
+                return;
             }
+            // Parse the arguments
             object[] args;
-            object result;
             try
             {
                 args = method.UnmarshalArguments(context.Request);
@@ -116,44 +127,36 @@ namespace JsonRpc.Standard.Server
             catch (ArgumentException ex)
             {
                 // Signature not match. This is not likely to happen. Still there might be problem with binder.
-                if (request != null)
-                    return new ResponseMessage(request.Id,
-                        new ResponseError(JsonRpcErrorCode.InvalidParams, ex.Message));
-                return null;
+                TrySetErrorResponse(context, JsonRpcErrorCode.InvalidParams, ex.Message);
+                return;
             }
             catch (Exception ex)
             {
-                if (request != null)
-                    return new ResponseMessage(request.Id, ResponseError.FromException(ex));
-                return null;
+                TrySetErrorResponse(context, JsonRpcErrorCode.InvalidParams, ex.Message);
+                if (context.Response != null)
+                    context.Response.Error = ResponseError.FromException(ex);
+                return;
             }
+            // Call the method
             try
             {
-                result = await method.Invoker.InvokeAsync(context, args).ConfigureAwait(false);
+                var result = await method.Invoker.InvokeAsync(context, args).ConfigureAwait(false);
+                // Produce the response.
+                if (context.Response != null && context.Response.Result == null && context.Response.Error == null)
+                    context.Response.Result = method.ReturnParameter.Converter.ValueToJson(result);
             }
             catch (TargetInvocationException ex)
             {
-                if (request != null)
-                    return new ResponseMessage(request.Id, ResponseError.FromException(ex.InnerException));
-                return null;
+                if (context.Response != null)
+                    context.Response.Error = ResponseError.FromException(ex.InnerException);
+                return;
             }
             catch (Exception ex)
             {
-                if (request != null)
-                    return new ResponseMessage(request.Id, ResponseError.FromException(ex));
-                return null;
+                if (context.Response != null)
+                    context.Response.Error = ResponseError.FromException(ex);
+                return;
             }
-            if (request != null)
-            {
-                // We need a response.
-                if (result == null)
-                    return new ResponseMessage(request.Id, JValue.CreateNull());
-                if (result is ResponseError error)
-                    return new ResponseMessage(request.Id, error);
-                return new ResponseMessage(request.Id, method.ReturnParameter.Converter.ValueToJson(result));
-            }
-            // Otherwise, we do not send anything.
-            return null;
         }
     }
 }

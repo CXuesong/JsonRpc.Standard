@@ -161,9 +161,16 @@ namespace JsonRpc.Standard
         /// <summary>
         /// Creates a new <see cref="ResponseMessage" /> instance.
         /// </summary>
-        public ResponseMessage() : this(-1, null, null)
+        public ResponseMessage() : this(null, null, null)
         {
 
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="ResponseMessage" /> instance.
+        /// </summary>
+        public ResponseMessage(object id) : this(id, null, null)
+        {
         }
 
         /// <summary>

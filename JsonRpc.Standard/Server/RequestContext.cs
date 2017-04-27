@@ -8,13 +8,16 @@ namespace JsonRpc.Standard.Server
     /// </summary>
     public class RequestContext
     {
-        public RequestContext(IJsonRpcServiceHost serviceHost, ISession session, GeneralRequestMessage request, CancellationToken cancellationToken)
+        public RequestContext(IJsonRpcServiceHost serviceHost, ISession session,
+            GeneralRequestMessage request, CancellationToken cancellationToken)
         {
             if (serviceHost == null) throw new ArgumentNullException(nameof(serviceHost));
             if (request == null) throw new ArgumentNullException(nameof(request));
             ServiceHost = serviceHost;
             Session = session;
             Request = request;
+            if (request is RequestMessage req)
+                Response = new ResponseMessage(req.Id);
             CancellationToken = cancellationToken;
         }
 
@@ -26,6 +29,11 @@ namespace JsonRpc.Standard.Server
         /// The request message.
         /// </summary>
         public GeneralRequestMessage Request { get; }
+
+        /// <summary>
+        /// The response message to be sent.
+        /// </summary>
+        public ResponseMessage Response { get; }
 
         /// <summary>
         /// The <see cref="CancellationToken"/> used to cancel this request. This token may be
