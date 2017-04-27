@@ -117,23 +117,30 @@ namespace JsonRpc.Standard.Server
             {
                 // Signature not match. This is not likely to happen. Still there might be problem with binder.
                 if (request != null)
-                    return new ResponseMessage(request, new ResponseError(JsonRpcErrorCode.InvalidParams, ex.Message));
+                    return new ResponseMessage(request.Id,
+                        new ResponseError(JsonRpcErrorCode.InvalidParams, ex.Message));
                 return null;
             }
             catch (Exception ex)
             {
                 if (request != null)
-                    return new ResponseMessage(request, ResponseError.FromException(ex));
+                    return new ResponseMessage(request.Id, ResponseError.FromException(ex));
                 return null;
             }
             try
             {
                 result = await method.Invoker.InvokeAsync(context, args).ConfigureAwait(false);
             }
+            catch (TargetInvocationException ex)
+            {
+                if (request != null)
+                    return new ResponseMessage(request.Id, ResponseError.FromException(ex.InnerException));
+                return null;
+            }
             catch (Exception ex)
             {
                 if (request != null)
-                    return new ResponseMessage(request, ResponseError.FromException(ex));
+                    return new ResponseMessage(request.Id, ResponseError.FromException(ex));
                 return null;
             }
             if (request != null)

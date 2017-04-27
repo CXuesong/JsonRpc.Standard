@@ -114,10 +114,11 @@ namespace JsonRpc.Standard
             return new ClrExceptionErrorData
             {
                 ExceptionType = ex.GetType().FullName,
+                Message = ex.Message,
                 Data = ex.Data,
                 HResult = ex.HResult,
                 HelpLink = ex.HelpLink,
-                StackTrace = null,
+                StackTrace = ex.StackTrace,
                 InnerException = ex.InnerException == null ? null : FromException(ex.InnerException)
             };
         }
@@ -136,12 +137,12 @@ namespace JsonRpc.Standard
 
         public ClrExceptionErrorData InnerException { get; set; }
 
-        private void ToString(StringBuilder sb, int indention)
+        internal void ToString(StringBuilder sb, int indention)
         {
             if (indention > 0)
             {
                 sb.Append('-', indention);
-                sb.Append(" ");
+                sb.Append("> ");
             }
             sb.AppendFormat("{0}: {1}", ExceptionType, Message);
             sb.AppendLine();

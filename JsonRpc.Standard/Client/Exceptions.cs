@@ -48,7 +48,7 @@ namespace JsonRpc.Standard.Client
             Error = error;
             if (error?.Code == (int) JsonRpcErrorCode.UnhandledClrException)
             {
-                ExceptionData = error.GetData<ClrExceptionErrorData>();
+                RemoteException = error.GetData<ClrExceptionErrorData>();
             }
         }
 
@@ -66,7 +66,17 @@ namespace JsonRpc.Standard.Client
         /// <summary>
         /// Remote CLR exception data, if available.
         /// </summary>
-        public ClrExceptionErrorData ExceptionData { get; }
+        public ClrExceptionErrorData RemoteException { get; }
 
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            if (RemoteException == null) return base.ToString();
+            var sb = new StringBuilder(base.ToString());
+            sb.AppendLine();
+            sb.AppendLine("Remote Exception information:");
+            RemoteException.ToString(sb, 0);
+            return sb.ToString();
+        }
     }
 }

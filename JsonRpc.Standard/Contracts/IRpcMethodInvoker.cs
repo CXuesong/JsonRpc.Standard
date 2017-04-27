@@ -30,6 +30,7 @@ namespace JsonRpc.Standard.Contracts
         /// If there is error or exception occurred during invocation,
         /// it should be encapsulated in the <see cref="object"/>.
         /// </remarks>
+        /// <exception cref="TargetInvocationException">The invoked method throws an exception.</exception>
         Task<object> InvokeAsync(RequestContext context,object[] arguments);
     }
 
@@ -56,7 +57,14 @@ namespace JsonRpc.Standard.Contracts
             if (result is Task taskResult)
             {
                 // Wait for the task to complete.
-                await taskResult;
+                try
+                {
+                    await taskResult;
+                }
+                catch (Exception ex)
+                {
+                    throw new TargetInvocationException(ex);
+                }
                 // Then collect result of the task.
                 if (result.GetType().IsConstructedGenericType &&
                     result.GetType().GetGenericTypeDefinition() == typeof(Task<>))
@@ -67,6 +75,5 @@ namespace JsonRpc.Standard.Contracts
             context.ServiceHost.ServiceFactory.ReleaseService(inst);
             return result;
         }
-
     }
 }
