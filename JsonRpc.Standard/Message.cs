@@ -213,8 +213,6 @@ namespace JsonRpc.Standard
             }
         }
 
-        // TODO a response should EITHER contain result or error node, not BOTH.
-
         /// <summary>
         /// The error that occurred while processing the request.
         /// </summary>

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using JsonRpc.Standard.Contracts;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace JsonRpc.Standard.Server
@@ -58,6 +60,10 @@ namespace JsonRpc.Standard.Server
 
         internal IJsonRpcMethodBinder MethodBinder { get; set; }
 
+        internal IList<Func<RequestContext, Func<Task>, Task>> interceptionHandlers { get; set; }
+
+        internal ILogger Logger { get; set; }
+
         /// <inheritdoc />
         public IDisposable Attach(ISourceBlock<Message> source, ITargetBlock<ResponseMessage> target)
         {
@@ -78,7 +84,29 @@ namespace JsonRpc.Standard.Server
             if (request == null) return null;
             // TODO provides a way to cancel the request from inside JsonRpcService.
             var context = new RequestContext(this, Session, request, ct);
-            await RpcMethodEntryPoint(context);
+            var pipeline = Utility.Bind(RpcMethodEntryPoint, context);
+            if (interceptionHandlers != null)
+            {
+                foreach (var handler in interceptionHandlers.Reverse())
+                {
+                    pipeline = Utility.Bind(handler, context, pipeline);
+                }
+            }
+            try
+            {
+                await pipeline();
+            }
+            catch (Exception ex)
+            {
+                // Swallow any exceptions
+                Logger.LogError(0, ex, "Unhandled exception while processing the request.");
+                if (context.Response != null)
+                {
+                    context.Response.Result = null;
+                    context.Response.Error = new ResponseError(JsonRpcErrorCode.InternalError,
+                        "Unhandled exception while processing the request.");
+                }
+            }
             return context.Response;
         }
 
@@ -91,8 +119,7 @@ namespace JsonRpc.Standard.Server
 
         private async Task RpcMethodEntryPoint(RequestContext context)
         {
-            var request = context.Request as RequestMessage;
-            JsonRpcMethod method = null;
+            JsonRpcMethod method;
             try
             {
                 if (Contract.Methods.TryGetValue(context.Request.Method, out var candidates))

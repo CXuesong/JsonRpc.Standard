@@ -21,7 +21,7 @@ namespace UnitTestProject1
 
         public ClientTest(ITestOutputHelper output) : base(output)
         {
-            (host, client, hostLifetime, clientLifetime) = Utility.CreateJsonRpcHostClient();
+            (host, client, hostLifetime, clientLifetime) = Utility.CreateJsonRpcHostClient(output);
         }
 
         /// <inheritdoc />

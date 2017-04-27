@@ -61,6 +61,7 @@ namespace JsonRpc.Standard.Client
                 throw new JsonRpcContractException("An exception occured while marshalling the request. " + ex.Message,
                     ex);
             }
+            message.CancellationToken.ThrowIfCancellationRequested();
             // Send the request
             if (message is RequestMessage request) request.Id = Client.NextRequestId();
             var response = await Client.SendAsync(message, message.CancellationToken).ConfigureAwait(false);

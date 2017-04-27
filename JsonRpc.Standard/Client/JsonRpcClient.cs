@@ -132,18 +132,10 @@ namespace JsonRpc.Standard.Client
         /// <summary>
         /// Asynchronously send the request message.
         /// </summary>
-        /// <param name="request">The request message to be sent.</param>
+        /// <param name="message">The request message to be sent.</param>
         /// <param name="cancellationToken">A token used to cancel the operation.</param>
         /// <returns>A task contains the response of the request, or that contains <c>null</c> if <see cref="Reader"/> is <c>null</c>.</returns>
-        public Task<ResponseMessage> SendAsync(GeneralRequestMessage request, CancellationToken cancellationToken)
-        {
-            if (request == null) throw new ArgumentNullException(nameof(request));
-            if (cancellationToken.IsCancellationRequested) return Task.FromCanceled<ResponseMessage>(cancellationToken);
-            return SendAsyncCore(request, cancellationToken);
-        }
-
-        internal async Task<ResponseMessage> SendAsyncCore(GeneralRequestMessage message,
-            CancellationToken cancellationToken)
+        public async Task<ResponseMessage> SendAsync(GeneralRequestMessage message, CancellationToken cancellationToken)
         {
             Debug.Assert(message != null);
             var request = message as RequestMessage;
