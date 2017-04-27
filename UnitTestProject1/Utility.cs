@@ -23,28 +23,29 @@ namespace UnitTestProject1
             ParameterValueConverter = JsonValueConverters.CamelCase
         };
 
-        public static IJsonRpcServiceHost CreateJsonRpcHost(ITestOutputHelper output)
+        public static IJsonRpcServiceHost CreateJsonRpcHost(UnitTestBase owner)
         {
             var builder = new ServiceHostBuilder();
             builder.Register(typeof(Utility).Assembly);
             builder.ContractResolver = DefaultContractResolver;
-            if (output != null)
+            if (owner.Output != null)
             {
                 builder.Intercept(async (context, next) =>
                 {
-                    output.WriteLine("> {0}", context.Request);
+                    owner.Output.WriteLine("> {0}", context.Request);
                     await next();
-                    output.WriteLine("< {0}", context.Response);
+                    owner.Output.WriteLine("< {0}", context.Response);
                 });
             }
+            builder.LoggerFactory = owner.LoggerFactory;
             return builder.Build();
         }
 
         public static
             (IJsonRpcServiceHost Host, JsonRpcClient Client, IDisposable HostLifetime, IDisposable ClientLifetime)
-            CreateJsonRpcHostClient(ITestOutputHelper output)
+            CreateJsonRpcHostClient(UnitTestBase owner)
         {
-            var server = CreateJsonRpcHost(output);
+            var server = CreateJsonRpcHost(owner);
             var client = new JsonRpcClient();
             var serverBuffer = new BufferBlock<Message>();
             var clientBuffer = new BufferBlock<Message>();

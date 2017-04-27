@@ -24,7 +24,7 @@ namespace UnitTestProject1
             using (var reader = new StringReader(request))
             using (var writer = new StringWriter())
             {
-                var host = Utility.CreateJsonRpcHost(Output);
+                var host = Utility.CreateJsonRpcHost(this);
                 var source = new ByLineTextMessageSourceBlock(reader);
                 var target = new ByLineTextMessageTargetBlock(writer);
                 using (host.Attach(source, target))
