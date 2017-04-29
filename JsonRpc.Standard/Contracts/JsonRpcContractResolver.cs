@@ -33,8 +33,8 @@ namespace JsonRpc.Standard.Contracts
     /// </summary>
     public class JsonRpcContractResolver : IJsonRpcContractResolver
     {
-        private IJsonValueConverter _ParameterValueConverter = JsonValueConverters.Default;
-        private JsonRpcNamingStrategy _NamingStrategy = JsonRpcNamingStrategies.Default;
+        private IJsonValueConverter _ParameterValueConverter = JsonValueConverter.Default;
+        private JsonRpcNamingStrategy _NamingStrategy = JsonRpcNamingStrategy.Default;
 
         internal static readonly JsonRpcContractResolver Default = new JsonRpcContractResolver();
 
@@ -44,7 +44,7 @@ namespace JsonRpc.Standard.Contracts
         public IJsonValueConverter ParameterValueConverter
         {
             get => _ParameterValueConverter;
-            set => _ParameterValueConverter = value ?? JsonValueConverters.Default;
+            set => _ParameterValueConverter = value ?? JsonValueConverter.Default;
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace JsonRpc.Standard.Contracts
         public JsonRpcNamingStrategy NamingStrategy
         {
             get => _NamingStrategy;
-            set => _NamingStrategy = value ?? JsonRpcNamingStrategies.Default;
+            set => _NamingStrategy = value ?? JsonRpcNamingStrategy.Default;
         }
 
         /// <inheritdoc />
@@ -102,12 +102,13 @@ namespace JsonRpc.Standard.Contracts
         protected virtual IEnumerable<KeyValuePair<MethodInfo, JsonRpcMethod>> MethodsFromType(Type serviceType)
         {
             if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
+            var scope = serviceType.GetTypeInfo().GetCustomAttribute<JsonRpcScopeAttribute>();
             return serviceType.GetRuntimeMethods()
                 .Where(m => m.GetCustomAttribute<JsonRpcMethodAttribute>() != null)
-                .Select(m => new KeyValuePair<MethodInfo, JsonRpcMethod>(m, CreateMethod(serviceType, m)));
+                .Select(m => new KeyValuePair<MethodInfo, JsonRpcMethod>(m, CreateMethod(serviceType, m, scope)));
         }
-
-        protected virtual JsonRpcMethod CreateMethod(Type serviceType, MethodInfo method)
+        
+        protected virtual JsonRpcMethod CreateMethod(Type serviceType, MethodInfo method, JsonRpcScopeAttribute scopeAttribute)
         {
             if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
             if (method == null) throw new ArgumentNullException(nameof(method));
@@ -118,17 +119,20 @@ namespace JsonRpc.Standard.Contracts
                 inst.MethodName = NamingStrategy.GetRpcMethodName(method.Name, false);
             else
                 inst.MethodName = NamingStrategy.GetRpcMethodName(attr.MethodName, true);
+            if (scopeAttribute.MethodPrefix != null)
+                inst.MethodName = scopeAttribute.MethodPrefix + inst.MethodName;
             inst.IsNotification = attr?.IsNotification ?? false;
             inst.AllowExtensionData = attr?.AllowExtensionData ?? false;
-            inst.ReturnParameter = CreateParameter(serviceType, method.ReturnParameter);
+            inst.ReturnParameter = CreateParameter(serviceType, method.ReturnParameter, attr, scopeAttribute);
             inst.Parameters = method.GetParameters()
-                .Select(p => CreateParameter(serviceType, p))
+                .Select(p => CreateParameter(serviceType, p, attr, scopeAttribute))
                 .ToList();
             inst.Invoker = new ReflectionJsonRpcMethodInvoker(serviceType, method);
             return inst;
         }
 
-        protected virtual JsonRpcParameter CreateParameter(Type serviceType, ParameterInfo parameter)
+        protected virtual JsonRpcParameter CreateParameter(Type serviceType, ParameterInfo parameter,
+            JsonRpcMethodAttribute methodAttribute, JsonRpcScopeAttribute scopeAttribute)
         {
             if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
             if (parameter == null) throw new ArgumentNullException(nameof(parameter));
@@ -143,12 +147,15 @@ namespace JsonRpc.Standard.Contracts
             {
                 IsOptional = parameter.IsOptional,
                 ParameterType = parameter.ParameterType,
-                Converter = ParameterValueConverter
+                Converter = attr?.GetValueConverter() ?? methodAttribute?.GetValueConverter()
+                            ?? scopeAttribute?.GetValueConverter() ?? ParameterValueConverter
             };
+            var localNamingStrategy = methodAttribute?.GetNamingStrategy() ?? scopeAttribute?.GetNamingStrategy()
+                                      ?? NamingStrategy;
             if (attr?.ParameterName == null)
-                inst.ParameterName = NamingStrategy.GetRpcParameterName(parameter.Name, false);
+                inst.ParameterName = localNamingStrategy.GetRpcParameterName(parameter.Name, false);
             else
-                inst.ParameterName = NamingStrategy.GetRpcParameterName(attr.ParameterName, true);
+                inst.ParameterName = localNamingStrategy.GetRpcParameterName(attr.ParameterName, true);
             if (taskResultType != null)
             {
                 if (Utility.GetTaskResultType(taskResultType) != null)

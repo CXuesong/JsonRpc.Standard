@@ -10,8 +10,6 @@ using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
 using JsonRpc.Standard.Server;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace UnitTestProject1
 {
@@ -19,8 +17,8 @@ namespace UnitTestProject1
     {
         public static readonly JsonRpcContractResolver DefaultContractResolver = new JsonRpcContractResolver
         {
-            NamingStrategy = JsonRpcNamingStrategies.CamelCase,
-            ParameterValueConverter = JsonValueConverters.CamelCase
+            NamingStrategy = new CamelCaseJsonRpcNamingStrategy(),
+            ParameterValueConverter = new CamelCaseJsonValueConverter()
         };
 
         public static IJsonRpcServiceHost CreateJsonRpcHost(UnitTestBase owner)

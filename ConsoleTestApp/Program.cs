@@ -16,9 +16,9 @@ namespace ConsoleTestApp
         private static readonly IJsonRpcContractResolver myContractResolver = new JsonRpcContractResolver
         {
             // Use camelcase for RPC method names.
-            NamingStrategy = JsonRpcNamingStrategies.CamelCase,
+            NamingStrategy = new CamelCaseJsonRpcNamingStrategy(),
             // Use camelcase for the property names in parameter value objects
-            ParameterValueConverter = JsonValueConverters.CamelCase,
+            ParameterValueConverter = new CamelCaseJsonValueConverter()
         };
 
         static void Main(string[] args)

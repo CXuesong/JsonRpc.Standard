@@ -25,8 +25,13 @@ namespace JsonRpc.Standard.Contracts
 
         private static readonly JsonSerializer defaultSerializer = new JsonSerializer();
 
+        internal static readonly CamelCaseJsonValueConverter Default = new CamelCaseJsonValueConverter();
+
         private readonly JsonSerializer serializer;
 
+        /// <summary>
+        /// Initializes a new instance with a default JSON serializer.
+        /// </summary>
         public JsonValueConverter() : this(defaultSerializer)
         {
 
@@ -54,22 +59,18 @@ namespace JsonRpc.Standard.Contracts
     }
 
     /// <summary>
-    /// Predefined <see cref="IJsonValueConverter"/> implementations.
+    /// A JSON converter based on <see cref="JsonSerializer"/> with <see cref="CamelCasePropertyNamesContractResolver"/>.
     /// </summary>
-    public static class JsonValueConverters
+    public sealed class CamelCaseJsonValueConverter : JsonValueConverter
     {
-
         private static readonly JsonSerializer camelCaseSerializer =
             new JsonSerializer { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
-        /// <summary>
-        /// A default JSON converter using the default settings on JsonSerializer.
-        /// </summary>
-        public static IJsonValueConverter Default { get; } = new JsonValueConverter();
+        internal static readonly CamelCaseJsonValueConverter CamelCaseDefault = new CamelCaseJsonValueConverter();
 
-        /// <summary>
-        /// A JSON converter that maps all the member names into camelcase JSON property names.
-        /// </summary>
-        public static IJsonValueConverter CamelCase { get; } = new JsonValueConverter(camelCaseSerializer);
+        public CamelCaseJsonValueConverter() : base(camelCaseSerializer)
+        {
+            
+        }
     }
 }

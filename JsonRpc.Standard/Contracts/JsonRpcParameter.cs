@@ -11,7 +11,7 @@ namespace JsonRpc.Standard.Contracts
     /// </summary>
     public sealed class JsonRpcParameter
     {
-        private IJsonValueConverter _Converter = JsonValueConverters.Default;
+        private IJsonValueConverter _Converter = JsonValueConverter.Default;
 
         /// <summary>
         /// The parameter name used in JSON.
@@ -83,7 +83,7 @@ namespace JsonRpc.Standard.Contracts
         public IJsonValueConverter Converter
         {
             get => _Converter;
-            set => _Converter = value ?? JsonValueConverters.Default;
+            set => _Converter = value ?? JsonValueConverter.Default;
         }
 
         /// <inheritdoc />
