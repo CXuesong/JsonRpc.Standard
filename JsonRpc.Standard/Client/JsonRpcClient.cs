@@ -91,7 +91,7 @@ namespace JsonRpc.Standard.Client
         protected BufferBlock<GeneralRequestMessage> OutBufferBlock { get; }
 
         /// <summary>
-        /// Attaches the host to the specific source block and target block.
+        /// Attaches the client to the specific source block and target block.
         /// </summary>
         /// <param name="source">The source block used to retrieve the responses.</param>
         /// <param name="target">The target block used to emit the requests.</param>

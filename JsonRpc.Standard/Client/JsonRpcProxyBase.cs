@@ -65,24 +65,29 @@ namespace JsonRpc.Standard.Client
             // Send the request
             if (message is RequestMessage request) request.Id = Client.NextRequestId();
             var response = await Client.SendAsync(message, message.CancellationToken).ConfigureAwait(false);
-            if (response.Error != null)
+            // For notification, we do not have a response.
+            if (response != null)
             {
-                throw new JsonRpcRemoteException(response.Error);
-            }
-            if (method.ReturnParameter.ParameterType != typeof(void))
-            {
-                if (response.Result == null)
-                    throw new JsonRpcContractException(
-                        $"Expect \"{method.ReturnParameter.ParameterType}\" result, got void.",
-                        message);
-                try
+                if (response.Error != null)
                 {
-                    return (TResult) method.ReturnParameter.Converter.JsonToValue(response.Result, typeof(TResult));
+                    throw new JsonRpcRemoteException(response.Error);
                 }
-                catch (Exception ex)
+                if (method.ReturnParameter.ParameterType != typeof(void))
                 {
-                    throw new JsonRpcContractException("An exception occured while unmarshalling the response. " + ex.Message,
-                        message, ex);
+                    if (response.Result == null)
+                        throw new JsonRpcContractException(
+                            $"Expect \"{method.ReturnParameter.ParameterType}\" result, got void.",
+                            message);
+                    try
+                    {
+                        return (TResult) method.ReturnParameter.Converter.JsonToValue(response.Result, typeof(TResult));
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new JsonRpcContractException(
+                            "An exception occured while unmarshalling the response. " + ex.Message,
+                            message, ex);
+                    }
                 }
             }
             return default(TResult);

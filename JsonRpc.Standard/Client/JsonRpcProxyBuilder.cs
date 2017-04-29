@@ -59,6 +59,9 @@ namespace JsonRpc.Standard.Client
                 () => AssemblyBuilder.DefineDynamicModule(ImplementedProxyNamespace + ".tmp"));
         }
 
+        /// <summary>
+        /// Contract resolver that maps the JSON RPC methods to CLR service methods.
+        /// </summary>
         public IJsonRpcContractResolver ContractResolver
         {
             get { return _ContractResolver; }

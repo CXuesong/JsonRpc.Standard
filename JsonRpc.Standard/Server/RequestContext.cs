@@ -21,17 +21,24 @@ namespace JsonRpc.Standard.Server
             CancellationToken = cancellationToken;
         }
 
+        /// <summary>
+        /// Gets the service host that initiates this request.
+        /// </summary>
         public IJsonRpcServiceHost ServiceHost { get; }
 
+        /// <summary>
+        /// Gets the service host or user defined session object.
+        /// </summary>
         public ISession Session { get; }
 
         /// <summary>
-        /// The request message.
+        /// Gets the request message.
         /// </summary>
         public GeneralRequestMessage Request { get; }
 
         /// <summary>
-        /// The response message to be sent.
+        /// The response message to be sent. If this property is not <c>null</c>,
+        /// it will take precedence to the return value of the invoked CLR method.
         /// </summary>
         public ResponseMessage Response { get; }
 
