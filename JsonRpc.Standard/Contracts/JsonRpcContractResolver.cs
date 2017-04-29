@@ -119,7 +119,7 @@ namespace JsonRpc.Standard.Contracts
                 inst.MethodName = NamingStrategy.GetRpcMethodName(method.Name, false);
             else
                 inst.MethodName = NamingStrategy.GetRpcMethodName(attr.MethodName, true);
-            if (scopeAttribute.MethodPrefix != null)
+            if (scopeAttribute?.MethodPrefix != null)
                 inst.MethodName = scopeAttribute.MethodPrefix + inst.MethodName;
             inst.IsNotification = attr?.IsNotification ?? false;
             inst.AllowExtensionData = attr?.AllowExtensionData ?? false;
