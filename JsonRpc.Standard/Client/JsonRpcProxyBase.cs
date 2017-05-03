@@ -74,10 +74,13 @@ namespace JsonRpc.Standard.Client
                 }
                 if (method.ReturnParameter.ParameterType != typeof(void))
                 {
-                    if (response.Result == null)
-                        throw new JsonRpcContractException(
-                            $"Expect \"{method.ReturnParameter.ParameterType}\" result, got void.",
-                            message);
+                    // VSCode will return void for null in `window/showMessageRequest`.
+                    // I mean, https://github.com/Microsoft/language-server-protocol/blob/master/protocol.md#window_showMessageRequest
+                    // So just don't be picky…
+                    //if (response.Result == null)
+                    //    throw new JsonRpcContractException(
+                    //        $"Expect \"{method.ReturnParameter.ParameterType}\" result, got void.",
+                    //        message);
                     try
                     {
                         return (TResult) method.ReturnParameter.Converter.JsonToValue(response.Result, typeof(TResult));
