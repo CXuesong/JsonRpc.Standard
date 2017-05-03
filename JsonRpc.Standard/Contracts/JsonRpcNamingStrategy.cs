@@ -17,11 +17,23 @@ namespace JsonRpc.Standard.Contracts
 
         internal static readonly JsonRpcNamingStrategy Default = new JsonRpcNamingStrategy();
 
+        /// <summary>
+        /// Maps a CLR method name into JSON RPC method name.
+        /// </summary>
+        /// <param name="methodName">The CLR method name, or user-specified method name (e.g. via Attributes).</param>
+        /// <param name="isSpecified">Whether the <paramref name="methodName"/> is specified explicity by user.</param>
+        /// <returns>The mapped JSON RPC method name.</returns>
         public virtual string GetRpcMethodName(string methodName, bool isSpecified)
         {
             return methodName;
         }
 
+        /// <summary>
+        /// Maps a CLR parameter name into JSON RPC parameter name.
+        /// </summary>
+        /// <param name="parameterName">The CLR parameter name, or user-specified parameter name (e.g. via Attributes).</param>
+        /// <param name="isSpecified">Whether the <paramref name="parameterName"/> is specified explicity by user.</param>
+        /// <returns>The mapped JSON RPC parameter name.</returns>
         public virtual string GetRpcParameterName(string parameterName, bool isSpecified)
         {
             return parameterName;

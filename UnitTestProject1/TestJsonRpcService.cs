@@ -50,6 +50,9 @@ namespace UnitTestProject1
         [JsonRpcMethod("throwException")]
         Task ThrowExceptionAsync();
 
+        [JsonRpcMethod]
+        Task<int> Delay();
+
     }
 
     public class TestJsonRpcService : JsonRpcService

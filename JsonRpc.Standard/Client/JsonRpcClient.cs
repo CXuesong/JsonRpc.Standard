@@ -31,7 +31,6 @@ namespace JsonRpc.Standard.Client
         PreserveForeignResponses
     }
 
-
     /// <summary>
     /// Used to compose and send JSON RPC requests.
     /// </summary>
@@ -42,6 +41,17 @@ namespace JsonRpc.Standard.Client
 
         private readonly Dictionary<object, TaskCompletionSource<ResponseMessage>> impendingRequestDict
             = new Dictionary<object, TaskCompletionSource<ResponseMessage>>();
+
+        /// <summary>
+        /// Raises when a JSON RPC message will be sent.
+        /// </summary>
+        public event EventHandler<MessageEventArgs> MessageSending;
+
+        /// <summary>
+        /// Raises when a JSON RPC message will be received.
+        /// </summary>
+        public event EventHandler<MessageEventArgs> MessageReceiving;
+
 
         /// <summary>
         /// Initializes a JSON RPC client.
@@ -64,6 +74,7 @@ namespace JsonRpc.Standard.Client
                 var resp = message as ResponseMessage;
                 Debug.Assert(resp != null);
                 if (resp == null) return;
+                OnMessageReceiving(resp);
                 TaskCompletionSource<ResponseMessage> tcs;
                 lock (impendingRequestDict)
                 {
@@ -206,6 +217,7 @@ namespace JsonRpc.Standard.Client
             }
             try
             {
+                OnMessageSending(message);
                 await OutBufferBlock.SendAsync(message, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception)
@@ -227,6 +239,30 @@ namespace JsonRpc.Standard.Client
             finally
             {
                 ctr.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Raises <see cref="MessageSending"/> event.
+        /// </summary>
+        protected virtual void OnMessageSending(GeneralRequestMessage message)
+        {
+            if (MessageSending != null)
+            {
+                var e = new MessageEventArgs(message);
+                MessageSending?.Invoke(this, e);
+            }
+        }
+
+        /// <summary>
+        /// Raises <see cref="MessageReceiving"/> event.
+        /// </summary>
+        protected virtual void OnMessageReceiving(ResponseMessage message)
+        {
+            if (MessageReceiving != null)
+            {
+                var e = new MessageEventArgs(message);
+                MessageReceiving?.Invoke(this, e);
             }
         }
     }

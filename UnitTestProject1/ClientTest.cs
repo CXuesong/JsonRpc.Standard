@@ -83,6 +83,7 @@ namespace UnitTestProject1
             var proxy = builder.CreateProxy<ITestRpcExceptionContract>(client);
             var ex = Assert.Throws<JsonRpcRemoteException>(() => proxy.ThrowException());
             Output.WriteLine(await Assert.ThrowsAsync<JsonRpcRemoteException>(() => proxy.ThrowExceptionAsync()) + "");
+            await Assert.ThrowsAsync<JsonRpcContractException>(proxy.Delay);
         }
     }
 }

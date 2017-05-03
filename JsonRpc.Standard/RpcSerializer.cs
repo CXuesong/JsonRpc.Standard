@@ -28,14 +28,12 @@ namespace JsonRpc.Standard
             using (var jreader = new JsonTextReader(reader)) json = JObject.Load(jreader);
             if (json["jsonrpc"] == null)
                 throw new ArgumentException("Content is not a valid JSON-RPC message.", nameof(reader));
-            {
-                if (json["id"] == null)
-                    message = json.ToObject<NotificationMessage>(Serializer);
-                else if (json["method"] == null)
-                    message = json.ToObject<ResponseMessage>(Serializer);
-                else
-                    message = json.ToObject<RequestMessage>(Serializer);
-            }
+            if (json["id"] == null)
+                message = json.ToObject<NotificationMessage>(Serializer);
+            else if (json["method"] == null)
+                message = json.ToObject<ResponseMessage>(Serializer);
+            else
+                message = json.ToObject<RequestMessage>(Serializer);
             return message;
         }
 
