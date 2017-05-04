@@ -50,6 +50,8 @@ namespace JsonRpc.Standard.Contracts
                 case JTokenType.Boolean:
                     return ParameterType == typeof(bool) || ParameterType == typeof(bool?);
                 case JTokenType.Integer:
+                    if (ti.IsEnum) return true;
+                    goto case JTokenType.Float;
                 case JTokenType.Float:
                     return ParameterType == typeof(byte) || ParameterType == typeof(byte?)
                            || ParameterType == typeof(short) || ParameterType == typeof(short?)
