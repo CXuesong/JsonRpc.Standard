@@ -79,13 +79,25 @@ namespace JsonRpc.Standard.Server
 
         private async Task<ResponseMessage> ReaderAction(Message message)
         {
-            var ct = CancellationToken.None;
-            if (ct.IsCancellationRequested) return null;
             var request = message as GeneralRequestMessage;
             if (request == null) return null;
+            var pipelineTask = InvokePipeline(request);
+            if (request is RequestMessage)
+            {
+                // We need to wait for an response
+                return await pipelineTask.ConfigureAwait(false);
+            }
+            // For notification, we just forget it…
+            return null;
+        }
+
+        private async Task<ResponseMessage> InvokePipeline(GeneralRequestMessage request)
+        {
+            var ct = CancellationToken.None;
+            if (ct.IsCancellationRequested) return null;
             // TODO provides a way to cancel the request from inside JsonRpcService.
             var context = new RequestContext(this, Session, request, ct);
-            var pipeline = Utility.Bind(RpcMethodEntryPoint, context);
+            var pipeline = Utility.Bind(DispatchRpcMethod, context);
             if (interceptionHandlers != null)
             {
                 foreach (var handler in interceptionHandlers.Reverse())
@@ -95,7 +107,7 @@ namespace JsonRpc.Standard.Server
             }
             try
             {
-                await pipeline();
+                await pipeline().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -140,7 +152,7 @@ namespace JsonRpc.Standard.Server
             return true;
         }
 
-        private async Task RpcMethodEntryPoint(RequestContext context)
+        private async Task DispatchRpcMethod(RequestContext context)
         {
             if (!ValidateRequest(context)) return;
             JsonRpcMethod method;
