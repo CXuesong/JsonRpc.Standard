@@ -62,9 +62,17 @@ namespace JsonRpc.Standard.Server
 
         internal IJsonRpcMethodBinder MethodBinder { get; set; }
 
-        internal IList<Func<RequestContext, Func<Task>, Task>> InterceptionHandlers { get; set; }
+        private RequestHandler pipeline;
 
         internal ILogger Logger { get; set; }
+
+        // Middlewares, from innermost to outermost ones.
+        internal void BuildPipeline(IEnumerable<Func<RequestHandler, RequestHandler>> middlewares)
+        {
+            RequestHandler handler = DispatchRpcMethod;
+            foreach (var mw in middlewares) handler = mw(handler);
+            pipeline = handler;
+        }
 
         // Persists the CTS for all the currently processing, cancellable requests.
         private readonly Dictionary<MessageId, CancellationTokenSource> requestCtsDict =
@@ -124,17 +132,9 @@ namespace JsonRpc.Standard.Server
                 }
             }
             var context = new RequestContext(this, Session, request, cts?.Token ?? CancellationToken.None);
-            var pipeline = Utility.Bind(DispatchRpcMethod, context);
-            if (InterceptionHandlers != null)
-            {
-                foreach (var handler in InterceptionHandlers.Reverse())
-                {
-                    pipeline = Utility.Bind(handler, context, pipeline);
-                }
-            }
             try
             {
-                await pipeline().ConfigureAwait(false);
+                await pipeline(context).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

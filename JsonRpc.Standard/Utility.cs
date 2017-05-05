@@ -87,18 +87,5 @@ namespace JsonRpc.Standard
                 }
             }))(source, predicate, cancellationToken);
         }
-
-
-        public static Func<TResult> Bind<T, TResult>(Func<T, TResult> func, T arg1)
-        {
-            if (func == null) throw new ArgumentNullException(nameof(func));
-            return () => func(arg1);
-        }
-
-        public static Func<TResult> Bind<T1, T2, TResult>(Func<T1, T2, TResult> func, T1 arg1, T2 arg2)
-        {
-            if (func == null) throw new ArgumentNullException(nameof(func));
-            return () => func(arg1, arg2);
-        }
     }
 }
