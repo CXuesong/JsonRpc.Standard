@@ -51,6 +51,7 @@ namespace JsonRpc.Standard.Contracts
                     return ParameterType == typeof(bool) || ParameterType == typeof(bool?);
                 case JTokenType.Integer:
                     if (ti.IsEnum) return true;
+                    if (ParameterType == typeof(MessageId)) return true;
                     goto case JTokenType.Float;
                 case JTokenType.Float:
                     return ParameterType == typeof(byte) || ParameterType == typeof(byte?)
@@ -69,8 +70,11 @@ namespace JsonRpc.Standard.Contracts
                 case JTokenType.Guid:
                 case JTokenType.String:
                     // They are all JSON string¡­
-                    return !ti.IsPrimitive || ParameterType == typeof(char) || ParameterType == typeof(char?);
+                    return !ti.IsPrimitive
+                           || ParameterType == typeof(char)
+                           || ParameterType == typeof(char?);
                 case JTokenType.Null:
+                    if (ParameterType == typeof(MessageId)) return true;
                     return !ParameterType.GetTypeInfo().IsValueType
                            || ParameterType.IsConstructedGenericType &&
                            ParameterType.GetGenericTypeDefinition() == typeof(Nullable<>);
