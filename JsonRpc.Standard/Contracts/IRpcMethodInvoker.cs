@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 using JsonRpc.Standard.Server;
@@ -30,8 +31,7 @@ namespace JsonRpc.Standard.Contracts
         /// If there is error or exception occurred during invocation,
         /// it should be encapsulated in the <see cref="object"/>.
         /// </remarks>
-        /// <exception cref="TargetInvocationException">The invoked method throws an exception.</exception>
-        /// <exception cref="OperationCanceledException">The asynchronous invocation has been cancelled.</exception>
+        /// <exception cref="Exception">The invoked method throws an exception.</exception>
         Task<object> InvokeAsync(RequestContext context, object[] arguments);
     }
 
@@ -54,22 +54,22 @@ namespace JsonRpc.Standard.Contracts
         {
             var inst = context.ServiceHost.ServiceFactory.CreateService(serviceType, context);
             inst.RequestContext = context;
-            var result = methodInfo.Invoke(inst, arguments);
+            object result;
+            try
+            {
+                result = methodInfo.Invoke(inst, arguments);
+            }
+            catch (TargetInvocationException ex)
+            {
+                // Expand the actual exception.
+                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+                // We should never reach here.
+                throw;
+            }
             if (result is Task taskResult)
             {
                 // Wait for the task to complete.
-                try
-                {
-                    await taskResult;
-                }
-                catch (OperationCanceledException)
-                {
-                    throw;
-                }
-                catch (Exception ex)
-                {
-                    throw new TargetInvocationException(ex);
-                }
+                await taskResult;
                 // Then collect the result of the task.
                 var resultMethod = taskResult.GetType().GetRuntimeProperty("Result");
                 result = resultMethod?.GetValue(taskResult);
