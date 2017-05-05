@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
 using JsonRpc.Standard.Server;
+using Newtonsoft.Json.Linq;
 
 namespace UnitTestProject1
 {
@@ -45,6 +47,11 @@ namespace UnitTestProject1
         {
             var server = CreateJsonRpcHost(owner);
             var client = new JsonRpcClient();
+            client.RequestCancelling += (_, e) =>
+            {
+                ((JsonRpcClient) _).SendNotificationAsync("cancelRequest", JToken.FromObject(new {id = e.RequestId}),
+                    CancellationToken.None);
+            };
             var serverBuffer = new BufferBlock<Message>();
             var clientBuffer = new BufferBlock<Message>();
             var lifetime1 = server.Attach(clientBuffer, serverBuffer);

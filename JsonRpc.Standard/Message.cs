@@ -95,21 +95,20 @@ namespace JsonRpc.Standard
     /// </summary>
     public sealed class RequestMessage : GeneralRequestMessage
     {
-        private object _Id;
 
-        public RequestMessage() : this(0, null, null)
+        public RequestMessage() : this(MessageId.Empty, null, null)
         {
         }
 
-        public RequestMessage(object id) : this(id, null, null)
+        public RequestMessage(MessageId id) : this(id, null, null)
         {
         }
 
-        public RequestMessage(object id, string method) : this(id, method, null)
+        public RequestMessage(MessageId id, string method) : this(id, method, null)
         {
         }
 
-        public RequestMessage(object id, string method, JToken parameters) : base(method, parameters)
+        public RequestMessage(MessageId id, string method, JToken parameters) : base(method, parameters)
         {
             Id = id;
         }
@@ -118,16 +117,7 @@ namespace JsonRpc.Standard
         /// A unique ID given to the request/response session. The request creator is responsible for assigning this value.
         /// </summary>
         [JsonProperty]
-        public object Id
-        {
-            get { return _Id; }
-            set
-            {
-                if (!Utility.ValidateRequestId(value))
-                    throw new ArgumentException("Id should be either null, string, or int.", nameof(value));
-                _Id = value;
-            }
-        }
+        public MessageId Id { get; set; }
     }
 
     /// <summary>
@@ -155,12 +145,11 @@ namespace JsonRpc.Standard
     [JsonObject(MemberSerialization.OptIn)]
     public sealed class ResponseMessage : Message
     {
-        private object _Id;
 
         /// <summary>
         /// Creates a new <see cref="ResponseMessage" /> instance.
         /// </summary>
-        public ResponseMessage() : this(null, null, null)
+        public ResponseMessage() : this(MessageId.Empty, null, null)
         {
 
         }
@@ -168,14 +157,14 @@ namespace JsonRpc.Standard
         /// <summary>
         /// Creates a new <see cref="ResponseMessage" /> instance.
         /// </summary>
-        public ResponseMessage(object id) : this(id, null, null)
+        public ResponseMessage(MessageId id) : this(id, null, null)
         {
         }
 
         /// <summary>
         /// Creates a new <see cref="ResponseMessage" /> instance that indicates success.
         /// </summary>
-        public ResponseMessage(object id, JToken result) : this(id, result, null)
+        public ResponseMessage(MessageId id, JToken result) : this(id, result, null)
         {
         }
 
@@ -183,14 +172,14 @@ namespace JsonRpc.Standard
         /// <summary>
         /// Creates a new <see cref="ResponseMessage" /> instance that indicates error.
         /// </summary>
-        public ResponseMessage(object id, ResponseError error) : this(id, null, error)
+        public ResponseMessage(MessageId id, ResponseError error) : this(id, null, error)
         {
         }
 
         /// <summary>
         /// Creates a new <see cref="ResponseMessage" /> instance.
         /// </summary>
-        public ResponseMessage(object id, JToken result, ResponseError error)
+        public ResponseMessage(MessageId id, JToken result, ResponseError error)
         {
             Id = id;
             Result = result;
@@ -201,16 +190,7 @@ namespace JsonRpc.Standard
         /// A unique ID assigned to the request/response session. The request creator is responsible for this value.
         /// </summary>
         [JsonProperty("id")]
-        public object Id
-        {
-            get { return _Id; }
-            set
-            {
-                if (!Utility.ValidateRequestId(value))
-                    throw new ArgumentException("Id should be either null, string, or int.", nameof(value));
-                _Id = value;
-            }
-        }
+        public MessageId Id { get; set; }
 
         /// <summary>
         /// The error that occurred while processing the request.
@@ -232,5 +212,185 @@ namespace JsonRpc.Standard
         // This member MUST NOT exist if there was an error invoking the method.
         [JsonProperty("result", NullValueHandling = NullValueHandling.Ignore)]
         public JToken Result { get; set; }
+    }
+
+    /// <summary>
+    /// The message id in JSON RPC requests.
+    /// </summary>
+    [JsonConverter(typeof(MessageIdJsonConverter))]
+    public struct MessageId : IEquatable<MessageId>
+    {
+        // null, string, int, or long
+
+        /// <summary>
+        /// The underlying value of the Id.
+        /// </summary>
+        public object Value { get; }
+
+        /// <summary>
+        /// Represents an empty MessageId.
+        /// </summary>
+        public static readonly MessageId Empty = default(MessageId);
+
+        /// <summary>
+        /// Constructs a new instance from an underlying id value.
+        /// </summary>
+        /// <param name="id">Either null, string, or integer is acceptable.</param>
+        public MessageId(object id)
+        {
+            switch (id)
+            {
+                case null:
+                    Value = null;
+                    break;
+                case int i:
+                    Value = i;
+                    break;
+                case short si:
+                    Value = (int) si;
+                    break;
+                case ushort usi:
+                    Value = (int) usi;
+                    break;
+                case byte bi:
+                    Value = (int) bi;
+                    break;
+                case sbyte sbi:
+                    Value = (int) sbi;
+                    break;
+                case uint ui:
+                    // Shrink the data type, if necessary.
+                    if (ui <= int.MaxValue)
+                        Value = (int) ui;
+                    else
+                        Value = (long) ui;
+                    break;
+                case long l:
+                    // Shrink the data type, if necessary.
+                    if (l >= int.MinValue && l <= int.MaxValue)
+                        Value = (int) l;
+                    else
+                        Value = l;
+                    break;
+                case ulong ul:
+                    if (ul <= int.MaxValue)
+                        Value = (int) ul;
+                    else
+                        Value = (long) ul; // Overflow might happen
+                    break;
+                case string s:
+                    Value = s;
+                    break;
+                case MessageId id1:
+                    Value = id1.Value;
+                    break;
+                default:
+                    throw new ArgumentException("Id should be either null, string, or integer.", nameof(id));
+            }
+        }
+
+        private static Exception MakeInvalidCastException()
+        {
+            return new InvalidOperationException("Specified MessageId cannot be cast into the target type.");
+        }
+
+        public static implicit operator MessageId(string str)
+        {
+            return new MessageId(str);
+        }
+
+        public static implicit operator MessageId(int x)
+        {
+            return new MessageId(x);
+        }
+
+        public static implicit operator MessageId(long x)
+        {
+            return new MessageId(x);
+        }
+
+        public static explicit operator string(MessageId id)
+        {
+            if (id.Value is string s) return s;
+            throw MakeInvalidCastException();
+        }
+
+        public static explicit operator int(MessageId id)
+        {
+            if (id.Value is int i) return i;
+            if (id.Value is long l) return (int) l;
+            throw MakeInvalidCastException();
+        }
+
+        public static explicit operator long(MessageId id)
+        {
+            if (id.Value is int i) return i;
+            if (id.Value is long l) return l;
+            throw MakeInvalidCastException();
+        }
+
+        /// <inheritdoc />
+        public override string ToString() => Value?.ToString();
+
+        /// <inheritdoc />
+        public bool Equals(MessageId other)
+        {
+            return Equals(Value, other.Value);
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            return obj is MessageId && Equals((MessageId) obj);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return Value != null ? Value.GetHashCode() : 0;
+        }
+
+        /// <inheritdoc />
+        public static bool operator ==(MessageId left, MessageId right)
+        {
+            return left.Equals(right);
+        }
+
+        /// <inheritdoc />
+        public static bool operator !=(MessageId left, MessageId right)
+        {
+            return !left.Equals(right);
+        }
+    }
+
+    public class MessageIdJsonConverter : JsonConverter
+    {
+        /// <inheritdoc />
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            if (value == null)
+            {
+                writer.WriteNull();
+                return;
+            }
+            var id = (MessageId) value;
+            writer.WriteValue(id.Value);
+        }
+
+        /// <inheritdoc />
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            if (objectType != typeof(MessageId) && objectType != typeof(object)) throw new NotSupportedException();
+            if (reader.TokenType == JsonToken.Integer)
+                return new MessageId(Convert.ToInt64(reader.Value));
+            return new MessageId(Convert.ToString(reader.Value));
+        }
+
+        /// <inheritdoc />
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(MessageId);
+        }
     }
 }

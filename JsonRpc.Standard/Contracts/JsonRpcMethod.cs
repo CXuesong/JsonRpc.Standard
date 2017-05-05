@@ -33,6 +33,11 @@ namespace JsonRpc.Standard.Contracts
 
         public IJsonRpcMethodInvoker Invoker { get; set; }
 
+        ///// <summary>
+        ///// Whether the method is cancellable.
+        ///// </summary>
+        //public bool Cancellable { get; set; }
+
         /// <inheritdoc />
         public override string ToString()
         {

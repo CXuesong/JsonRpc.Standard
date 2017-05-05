@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JsonRpc.Standard;
 using JsonRpc.Standard.Contracts;
 using JsonRpc.Standard.Server;
 
@@ -34,11 +35,17 @@ namespace UnitTestProject1
         [JsonRpcMethod]
         Task<Complex> MakeComplex(double real, double imaginary);
 
+        [JsonRpcMethod("delay")]
+        Task DelayAsync(TimeSpan duration, CancellationToken ct);
+
         [JsonRpcMethod]
         void Delay(TimeSpan duration);
 
         [JsonRpcMethod]
         void Delay();
+
+        [JsonRpcMethod(IsNotification = true)]
+        void CancelRequest(MessageId id);
     }
 
     public interface ITestRpcExceptionContract
@@ -117,6 +124,12 @@ namespace UnitTestProject1
         public void Delay(CancellationToken ct)
         {
             Task.Delay(100, ct).Wait(ct);
+        }
+
+        [JsonRpcMethod(IsNotification = true)]
+        public void CancelRequest(MessageId id)
+        {
+            RequestContext.ServiceHost.TryCancelRequest(id);
         }
     }
 }

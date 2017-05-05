@@ -39,8 +39,8 @@ namespace JsonRpc.Standard.Client
         private readonly string requestIdPrefix;
         private int requestIdCounter = 0;
 
-        private readonly Dictionary<object, TaskCompletionSource<ResponseMessage>> impendingRequestDict
-            = new Dictionary<object, TaskCompletionSource<ResponseMessage>>();
+        private readonly Dictionary<MessageId, TaskCompletionSource<ResponseMessage>> impendingRequestDict
+            = new Dictionary<MessageId, TaskCompletionSource<ResponseMessage>>();
 
         /// <summary>
         /// Raises when a JSON RPC message will be sent.
@@ -51,6 +51,11 @@ namespace JsonRpc.Standard.Client
         /// Raises when a JSON RPC message will be received.
         /// </summary>
         public event EventHandler<MessageEventArgs> MessageReceiving;
+
+        /// <summary>
+        /// Raises when a JSON RPC call is to be cancelled.
+        /// </summary>
+        public event EventHandler<RequestCancellingEventArgs> RequestCancelling;
 
 
         /// <summary>
@@ -135,7 +140,7 @@ namespace JsonRpc.Standard.Client
         /// <summary>
         /// Generates the next unique value that can be used as <see cref="RequestMessage.Id"/>.
         /// </summary>
-        public object NextRequestId()
+        public MessageId NextRequestId()
         {
             var ct = Interlocked.Increment(ref requestIdCounter);
             return requestIdPrefix + ct;
@@ -163,6 +168,7 @@ namespace JsonRpc.Standard.Client
         /// <param name="cancellationToken">A token used to cancel the operation.</param>
         /// <returns>A task contains the response of the request, or that contains <c>null</c> if the specified request does not need a response.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="methodName"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">(Can be <see cref="TaskCanceledException"/>.) The operation has been cancelled.</exception>
         public Task<ResponseMessage> SendRequestAsync(string methodName, JToken parameters, CancellationToken cancellationToken)
         {
             if (methodName == null) throw new ArgumentNullException(nameof(methodName));
@@ -176,6 +182,7 @@ namespace JsonRpc.Standard.Client
         /// <param name="cancellationToken">A token used to cancel the operation.</param>
         /// <returns>A task contains the response of the request, or that contains <c>null</c> if the specified request does not need a response.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="message"/> is <c>null</c>.</exception>
+        /// <exception cref="OperationCanceledException">(Can be <see cref="TaskCanceledException"/>.) The operation has been cancelled.</exception>
         public async Task<ResponseMessage> SendAsync(GeneralRequestMessage message, CancellationToken cancellationToken)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
@@ -190,8 +197,10 @@ namespace JsonRpc.Standard.Client
                 ctr = cancellationToken.Register(o =>
                 {
                     TaskCompletionSource<ResponseMessage> tcs1;
+                    var id = (MessageId) o;
+                    OnRequestCancelling(id);
                     lock (impendingRequestDict)
-                        if (!impendingRequestDict.TryGetValue(o, out tcs1)) return;
+                        if (!impendingRequestDict.TryGetValue(id, out tcs1)) return;
                     if (!tcs1.TrySetCanceled()) return;
                     // Note that server might still send the response after cancellation on the client.
                     // If we are going to keep all "foreign" responses, we need to be able to recgnize it later.
@@ -204,14 +213,14 @@ namespace JsonRpc.Standard.Client
                         Task.Delay(60000)
                             .ContinueWith((_, o1) =>
                             {
-                                lock (impendingRequestDict) impendingRequestDict.Remove(o1);
+                                lock (impendingRequestDict) impendingRequestDict.Remove((MessageId) o1);
                             }, o);
                         // ReSharper restore MethodSupportsCancellation
 #pragma warning restore 4014
                     }
                     else
                     {
-                        lock (impendingRequestDict) impendingRequestDict.Remove(o);
+                        lock (impendingRequestDict) impendingRequestDict.Remove(id);
                     }
                 }, request.Id);
             }
@@ -265,5 +274,30 @@ namespace JsonRpc.Standard.Client
                 MessageReceiving?.Invoke(this, e);
             }
         }
+
+        /// <summary>
+        /// Raises <see cref="RequestCancelling"/> event.
+        /// </summary>
+        protected virtual void OnRequestCancelling(MessageId id)
+        {
+            if (RequestCancelling != null)
+            {
+                var e = new RequestCancellingEventArgs(id);
+                RequestCancelling?.Invoke(this, e);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Provides arguments for <see cref="JsonRpcClient.RequestCancelling"/> event.
+    /// </summary>
+    public class RequestCancellingEventArgs : EventArgs
+    {
+        public RequestCancellingEventArgs(MessageId requestId)
+        {
+            RequestId = requestId;
+        }
+
+        public MessageId RequestId { get; }
     }
 }

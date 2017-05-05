@@ -23,5 +23,12 @@ namespace JsonRpc.Standard.Server
         /// <returns>A <see cref="IDisposable"/> used to disconnect the source and target blocks.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="target"/> is <c>null</c>.</exception>
         IDisposable Attach(ISourceBlock<Message> source, ITargetBlock<ResponseMessage> target);
+
+        /// <summary>
+        /// Tries to cancel the request with specified request id.
+        /// </summary>
+        /// <param name="id">The message id to cancel.</param>
+        /// <returns><c>true</c>, if the request has been successfully cancelled; <c>false</c> otherwise.</returns>
+        bool TryCancelRequest(MessageId id);
     }
 }

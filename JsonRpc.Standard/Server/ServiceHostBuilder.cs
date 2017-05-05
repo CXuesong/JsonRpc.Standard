@@ -142,7 +142,7 @@ namespace JsonRpc.Standard.Server
                 MethodBinder = MethodBinder ?? JsonRpcMethodBinder.Default,
                 Logger = (ILogger) LoggerFactory?.CreateLogger<JsonRpcServiceHost>() ?? NullLogger.Instance
             };
-            if (interceptions.Count > 0) host.interceptionHandlers = interceptions.ToArray();
+            if (interceptions.Count > 0) host.InterceptionHandlers = interceptions.ToArray();
             return host;
         }
     }

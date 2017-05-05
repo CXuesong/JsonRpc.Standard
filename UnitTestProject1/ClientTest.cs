@@ -23,10 +23,12 @@ namespace UnitTestProject1
         private readonly IJsonRpcServiceHost host;
         private readonly JsonRpcClient client;
         private readonly IDisposable hostLifetime, clientLifetime;
+        private readonly JsonRpcProxyBuilder proxyBuilder;
 
         public ClientTest(ITestOutputHelper output) : base(output)
         {
             (host, client, hostLifetime, clientLifetime) = Utility.CreateJsonRpcHostClient(this);
+            proxyBuilder = new JsonRpcProxyBuilder {ContractResolver = Utility.DefaultContractResolver};
         }
 
         /// <inheritdoc />
@@ -39,8 +41,7 @@ namespace UnitTestProject1
         [Fact]
         public async Task ProxyTest()
         {
-            var builder = new JsonRpcProxyBuilder {ContractResolver = Utility.DefaultContractResolver};
-            var proxy = builder.CreateProxy<ITestRpcContract>(client);
+            var proxy = proxyBuilder.CreateProxy<ITestRpcContract>(client);
             proxy.Delay();
             proxy.Delay(TimeSpan.FromMilliseconds(100));
             Assert.Equal(1, proxy.One());
@@ -52,6 +53,18 @@ namespace UnitTestProject1
             Assert.Equal(100, proxy.Add(73, 27));
             Assert.Equal("abcdef", proxy.Add("ab", "cdef"));
             Assert.Equal(new Complex(100, 200), await proxy.MakeComplex(100, 200));
+        }
+
+        [Fact]
+        public async Task ProxyCancellationTest()
+        {
+            var proxy = proxyBuilder.CreateProxy<ITestRpcContract>(client);
+            using (var cts = new CancellationTokenSource(500))
+            {
+                await Assert.ThrowsAnyAsync<OperationCanceledException>(
+                    () => proxy.DelayAsync(TimeSpan.FromMilliseconds(2000), cts.Token));
+            }
+            await Task.Delay(500);
         }
 
         [Fact]
@@ -79,8 +92,7 @@ namespace UnitTestProject1
         [Fact]
         public async Task ProxyExceptionTest()
         {
-            var builder = new JsonRpcProxyBuilder {ContractResolver = Utility.DefaultContractResolver};
-            var proxy = builder.CreateProxy<ITestRpcExceptionContract>(client);
+            var proxy = proxyBuilder.CreateProxy<ITestRpcExceptionContract>(client);
             var ex = Assert.Throws<JsonRpcRemoteException>(() => proxy.ThrowException());
             Output.WriteLine(await Assert.ThrowsAsync<JsonRpcRemoteException>(() => proxy.ThrowExceptionAsync()) + "");
             await Assert.ThrowsAsync<JsonRpcContractException>(proxy.Delay);

@@ -47,6 +47,7 @@ namespace JsonRpc.Standard.Client
         /// <param name="paramValues">Parameters, in the order of expected parameter order.</param>
         /// <exception cref="JsonRpcRemoteException">An error has occurred on the remote-side.</exception>
         /// <exception cref="JsonRpcContractException">An error has occurred when generating the request or parsing the response.</exception>
+        /// <exception cref="OperationCanceledException">The operation has been cancelled.</exception>
         /// <returns>The response.</returns>
         protected async Task<TResult> SendAsync<TResult>(int methodIndex, IList paramValues)
         {

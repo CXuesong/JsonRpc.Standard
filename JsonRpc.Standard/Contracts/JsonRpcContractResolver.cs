@@ -127,6 +127,8 @@ namespace JsonRpc.Standard.Contracts
             inst.Parameters = method.GetParameters()
                 .Select(p => CreateParameter(serviceType, p, attr, scopeAttribute))
                 .ToList();
+            //inst.Cancellable = attr?.Cancellable
+            //                   ?? inst.Parameters.Any(p => p.ParameterType == typeof(CancellationToken));
             inst.Invoker = new ReflectionJsonRpcMethodInvoker(serviceType, method);
             return inst;
         }

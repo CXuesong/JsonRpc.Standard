@@ -32,13 +32,6 @@ namespace JsonRpc.Standard
             return -1;
         }
 
-        public static bool ValidateRequestId(object id)
-        {
-            return id == null || id is string
-                   || id is byte || id is short || id is int || id is long
-                   || id is sbyte || id is ushort || id is uint || id is ulong;
-        }
-
         public static Type GetTaskResultType(Type taskType)
         {
             if (taskType == null) throw new ArgumentNullException(nameof(taskType));

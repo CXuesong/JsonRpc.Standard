@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading;
 using Newtonsoft.Json;
 
 namespace JsonRpc.Standard.Contracts
@@ -99,14 +100,28 @@ namespace JsonRpc.Standard.Contracts
         public string MethodName { get; }
 
         /// <summary>
-        /// Used in the client stub. Indicates whether the method is a notification request.
+        /// Indicates whether the method is a notification request.
         /// </summary>
+        /// <remarks>
+        /// This property is currently used in the client stub, and it's highly recommended that
+        /// this property be set for the server-side JSON RPC methods.
+        /// </remarks>
         public bool IsNotification { get; set; }
         
         /// <summary>
         /// Used in the server. Whether allows extra parameters on this method when matching signature.
         /// </summary>
         public bool AllowExtensionData { get; set; }
+
+        ///// <summary>
+        ///// Whether the method is cancellable.
+        ///// </summary>
+        ///// <value>
+        ///// <c>true</c> if the method can be cancelled via a <see cref="CancellationToken"/>.
+        ///// <c>false</c> otherwise.
+        ///// <c>null</c> to infer from the parameters. (e.g. there is an argument that accepts <see cref="CancellationToken"/>.)
+        ///// </value>
+        //public bool? Cancellable { get; set; }
 
         /// <summary>
         /// The <see cref="Type"/> of the <see cref="JsonRpcNamingStrategy"/> applied to the methods in this scope.

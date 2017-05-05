@@ -61,9 +61,13 @@ namespace JsonRpc.Standard.Server
 
         internal IJsonRpcMethodBinder MethodBinder { get; set; }
 
-        internal IList<Func<RequestContext, Func<Task>, Task>> interceptionHandlers { get; set; }
+        internal IList<Func<RequestContext, Func<Task>, Task>> InterceptionHandlers { get; set; }
 
         internal ILogger Logger { get; set; }
+
+        // Persists the CTS for all the currently processing, cancellable requests.
+        private readonly Dictionary<MessageId, CancellationTokenSource> requestCtsDict =
+            new Dictionary<MessageId, CancellationTokenSource>();
 
         /// <inheritdoc />
         public IDisposable Attach(ISourceBlock<Message> source, ITargetBlock<ResponseMessage> target)
@@ -75,6 +79,15 @@ namespace JsonRpc.Standard.Server
             var d2 = Propagator.LinkTo(target, new DataflowLinkOptions {PropagateCompletion = true},
                 m => m != null);
             return Utility.CombineDisposable(d1, d2);
+        }
+
+        /// <inheritdoc />
+        public bool TryCancelRequest(MessageId id)
+        {
+            CancellationTokenSource cts;
+            lock (requestCtsDict) if (!requestCtsDict.TryGetValue(id, out cts)) return false;
+            cts.Cancel();
+            return true;
         }
 
         private async Task<ResponseMessage> ReaderAction(Message message)
@@ -93,14 +106,30 @@ namespace JsonRpc.Standard.Server
 
         private async Task<ResponseMessage> InvokePipeline(GeneralRequestMessage request)
         {
-            var ct = CancellationToken.None;
-            if (ct.IsCancellationRequested) return null;
             // TODO provides a way to cancel the request from inside JsonRpcService.
-            var context = new RequestContext(this, Session, request, ct);
-            var pipeline = Utility.Bind(DispatchRpcMethod, context);
-            if (interceptionHandlers != null)
+            CancellationTokenSource cts = null;
+            var requestId = MessageId.Empty;        // Preserve the id, in case request has been changed in the pipeline.
+            if (request is RequestMessage req)
             {
-                foreach (var handler in interceptionHandlers.Reverse())
+                requestId = req.Id;
+                cts = new CancellationTokenSource();
+                try
+                {
+                    lock (requestCtsDict) requestCtsDict.Add(requestId, cts);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    Logger.LogWarning(1001, ex, "Duplicate request id for client detected: Id = {id}",
+                        requestId);
+                    cts.Dispose();
+                    cts = null;
+                }
+            }
+            var context = new RequestContext(this, Session, request, cts?.Token ?? CancellationToken.None);
+            var pipeline = Utility.Bind(DispatchRpcMethod, context);
+            if (InterceptionHandlers != null)
+            {
+                foreach (var handler in InterceptionHandlers.Reverse())
                 {
                     pipeline = Utility.Bind(handler, context, pipeline);
                 }
@@ -118,6 +147,14 @@ namespace JsonRpc.Standard.Server
                     context.Response.Result = null;
                     context.Response.Error = new ResponseError(JsonRpcErrorCode.InternalError,
                         "Unhandled exception while processing the request.");
+                }
+            }
+            finally
+            {
+                if (cts != null)
+                {
+                    lock (requestCtsDict) requestCtsDict.Remove(requestId);
+                    cts.Dispose();
                 }
             }
             return context.Response;
@@ -180,6 +217,13 @@ namespace JsonRpc.Standard.Server
                 TrySetErrorResponse(context, JsonRpcErrorCode.InvalidParams,
                     $"Cannot find method \"{context.Request.Method}\" with matching signature.");
                 return;
+            }
+            // Cancallation
+            CancellationTokenSource cts = null;
+            if (context.Request is RequestMessage request && method.Cancellable)
+            {
+                cts = new CancellationTokenSource();
+
             }
             // Parse the arguments
             object[] args;
