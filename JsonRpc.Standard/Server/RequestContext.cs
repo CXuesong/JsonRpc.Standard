@@ -9,15 +9,15 @@ namespace JsonRpc.Standard.Server
     public class RequestContext
     {
         public RequestContext(IJsonRpcServiceHost serviceHost, ISession session,
-            GeneralRequestMessage request, CancellationToken cancellationToken)
+            RequestMessage request, CancellationToken cancellationToken)
         {
             if (serviceHost == null) throw new ArgumentNullException(nameof(serviceHost));
             if (request == null) throw new ArgumentNullException(nameof(request));
             ServiceHost = serviceHost;
             Session = session;
             Request = request;
-            if (request is RequestMessage req)
-                Response = new ResponseMessage(req.Id);
+            if (!request.IsNotification)
+                Response = new ResponseMessage(request.Id);
             CancellationToken = cancellationToken;
         }
 
@@ -34,7 +34,7 @@ namespace JsonRpc.Standard.Server
         /// <summary>
         /// Gets the request message.
         /// </summary>
-        public GeneralRequestMessage Request { get; }
+        public RequestMessage Request { get; }
 
         /// <summary>
         /// The response message to be sent. If this property is not <c>null</c>,

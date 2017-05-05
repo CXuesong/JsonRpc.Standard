@@ -73,7 +73,7 @@ namespace JsonRpc.Standard.Client
         {
             Options = options;
             requestIdPrefix = RuntimeHelpers.GetHashCode(this) + "#";
-            OutBufferBlock = new BufferBlock<GeneralRequestMessage>();
+            OutBufferBlock = new BufferBlock<RequestMessage>();
             InBufferBlock = new ActionBlock<Message>(message =>
             {
                 var resp = message as ResponseMessage;
@@ -104,7 +104,7 @@ namespace JsonRpc.Standard.Client
         /// <summary>
         /// The output buffer used to emit requests.
         /// </summary>
-        protected BufferBlock<GeneralRequestMessage> OutBufferBlock { get; }
+        protected BufferBlock<RequestMessage> OutBufferBlock { get; }
 
         /// <summary>
         /// Attaches the client to the specific source block and target block.
@@ -143,7 +143,7 @@ namespace JsonRpc.Standard.Client
         public MessageId NextRequestId()
         {
             var ct = Interlocked.Increment(ref requestIdCounter);
-            return requestIdPrefix + ct;
+            return new MessageId(requestIdPrefix + ct);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace JsonRpc.Standard.Client
         public Task<ResponseMessage> SendNotificationAsync(string methodName, JToken parameters, CancellationToken cancellationToken)
         {
             if (methodName == null) throw new ArgumentNullException(nameof(methodName));
-            return SendAsync(new NotificationMessage(methodName, parameters), cancellationToken);
+            return SendAsync(new RequestMessage(methodName, parameters), cancellationToken);
         }
 
         /// <summary>
@@ -178,20 +178,21 @@ namespace JsonRpc.Standard.Client
         /// <summary>
         /// Asynchronously send a JSON RPC request or notification message.
         /// </summary>
-        /// <param name="message">The request message to be sent.</param>
+        /// <param name="request">The request message to be sent.</param>
         /// <param name="cancellationToken">A token used to cancel the operation.</param>
         /// <returns>A task contains the response of the request, or that contains <c>null</c> if the specified request does not need a response.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="message"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="request"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">A <paramref name="request"/> with the same id has been sent. You need to try with a different id.</exception>
         /// <exception cref="OperationCanceledException">(Can be <see cref="TaskCanceledException"/>.) The operation has been cancelled.</exception>
-        public async Task<ResponseMessage> SendAsync(GeneralRequestMessage message, CancellationToken cancellationToken)
+        public async Task<ResponseMessage> SendAsync(RequestMessage request, CancellationToken cancellationToken)
         {
-            if (message == null) throw new ArgumentNullException(nameof(message));
+            if (request == null) throw new ArgumentNullException(nameof(request));
             cancellationToken.ThrowIfCancellationRequested();
-            var request = message as RequestMessage;
             TaskCompletionSource<ResponseMessage> tcs = null;
             CancellationTokenRegistration ctr;
-            if (request != null)
+            if (!request.IsNotification)
             {
+                // We need to monitor the response.
                 tcs = new TaskCompletionSource<ResponseMessage>();
                 lock (impendingRequestDict) impendingRequestDict.Add(request.Id, tcs);
                 ctr = cancellationToken.Register(o =>
@@ -226,20 +227,20 @@ namespace JsonRpc.Standard.Client
             }
             try
             {
-                OnMessageSending(message);
-                await OutBufferBlock.SendAsync(message, cancellationToken).ConfigureAwait(false);
+                OnMessageSending(request);
+                await OutBufferBlock.SendAsync(request, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception)
             {
                 // Exception when sending the request…
-                if (request != null)
+                if (!request.IsNotification)
                 {
                     ctr.Dispose();
                     lock (impendingRequestDict) impendingRequestDict.Remove(request.Id);
                 }
                 throw;
             }
-            if (request == null) return null;
+            if (request.IsNotification) return null;
             // Now wait for the response.
             try
             {
@@ -254,7 +255,7 @@ namespace JsonRpc.Standard.Client
         /// <summary>
         /// Raises <see cref="MessageSending"/> event.
         /// </summary>
-        protected virtual void OnMessageSending(GeneralRequestMessage message)
+        protected virtual void OnMessageSending(RequestMessage message)
         {
             if (MessageSending != null)
             {

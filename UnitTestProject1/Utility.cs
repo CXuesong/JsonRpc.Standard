@@ -38,6 +38,7 @@ namespace UnitTestProject1
                 });
             }
             builder.LoggerFactory = owner.LoggerFactory;
+            builder.Options = JsonRpcServiceHostOptions.ConsistentResponseSequence;
             return builder.Build();
         }
 

@@ -56,23 +56,43 @@ namespace JsonRpc.Standard
         }
     }
 
-    public abstract class GeneralRequestMessage : Message
+    public sealed class RequestMessage : Message
     {
-        internal GeneralRequestMessage() : this(null, null)
+
+        public RequestMessage() : this(MessageId.Empty, null, null)
         {
-            
+
         }
 
-        internal GeneralRequestMessage(string method) : this(method, null)
+        public RequestMessage(string method) : this(MessageId.Empty, method, null)
         {
-            
+
         }
 
-        internal GeneralRequestMessage(string method, JToken parameters)
+        public RequestMessage(string method, JToken parameters) : this(new MessageId(), method, parameters)
         {
+        }
+
+        public RequestMessage(MessageId id) : this(id, null, null)
+        {
+        }
+
+        public RequestMessage(MessageId id, string method) : this(id, method, null)
+        {
+        }
+
+        internal RequestMessage(MessageId id, string method, JToken parameters)
+        {
+            Id = id;
             Method = method;
             Parameters = parameters;
         }
+
+        /// <summary>
+        /// A unique ID given to the request/response session. The request creator is responsible for assigning this value.
+        /// </summary>
+        [JsonProperty("id", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public MessageId Id { get; set; }
 
         /// <summary>
         /// The method to invoke on the receiver.
@@ -87,56 +107,16 @@ namespace JsonRpc.Standard
         [JsonProperty("params", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public JToken Parameters { get; set; }
 
-        public CancellationToken CancellationToken { get; set; }
-    }
-
-    /// <summary>
-    /// An <see cref="Message" /> implementation representing a JSON-RPC request.
-    /// </summary>
-    public sealed class RequestMessage : GeneralRequestMessage
-    {
-
-        public RequestMessage() : this(MessageId.Empty, null, null)
-        {
-        }
-
-        public RequestMessage(MessageId id) : this(id, null, null)
-        {
-        }
-
-        public RequestMessage(MessageId id, string method) : this(id, method, null)
-        {
-        }
-
-        public RequestMessage(MessageId id, string method, JToken parameters) : base(method, parameters)
-        {
-            Id = id;
-        }
-
         /// <summary>
-        /// A unique ID given to the request/response session. The request creator is responsible for assigning this value.
+        /// Determines whether this Request object is a Notification.
         /// </summary>
-        [JsonProperty]
-        public MessageId Id { get; set; }
-    }
-
-    /// <summary>
-    /// An <see cref="Message" /> implementation representing a JSON-RPC notification.
-    /// </summary>
-    public sealed class NotificationMessage : GeneralRequestMessage
-    {
-        public NotificationMessage() : this(null, null)
-        {
-        }
-
-        public NotificationMessage(string method) : this(method, null)
-        {
-        }
-
-        public NotificationMessage(string method, JToken parameters) : base(method, parameters)
-        {
-
-        }
+        /// <remarks>
+        /// A Notification is a Request object without an "id" member.  A Request object that is a Notification
+        /// signifies the Client's lack of interest in the corresponding Response object, and as such no Response
+        /// object needs to be returned to the client. The Server MUST NOT reply to a Notification, including
+        /// those that are within a batch request.
+        /// </remarks>
+        public bool IsNotification => Id == MessageId.Empty;
     }
 
     /// <summary>
@@ -220,23 +200,24 @@ namespace JsonRpc.Standard
     [JsonConverter(typeof(MessageIdJsonConverter))]
     public struct MessageId : IEquatable<MessageId>
     {
-        // null, string, int, or long
 
-        /// <summary>
-        /// The underlying value of the Id.
-        /// </summary>
-        public object Value { get; }
+        public MessageId(int id) : this((object) id)
+        {
+        }
 
-        /// <summary>
-        /// Represents an empty MessageId.
-        /// </summary>
-        public static readonly MessageId Empty = default(MessageId);
+        public MessageId(long id) : this((object) id)
+        {
+        }
+
+        public MessageId(string id) : this((object) id)
+        {
+        }
 
         /// <summary>
         /// Constructs a new instance from an underlying id value.
         /// </summary>
         /// <param name="id">Either null, string, or integer is acceptable.</param>
-        public MessageId(object id)
+        private MessageId(object id)
         {
             switch (id)
             {
@@ -289,22 +270,33 @@ namespace JsonRpc.Standard
             }
         }
 
+        /// <summary>
+        /// Represents an empty MessageId.
+        /// </summary>
+        public static readonly MessageId Empty = default(MessageId);
+
+        /// <summary>
+        /// The underlying value of the Id.
+        /// </summary>
+        /// <value>null, string, int, or long value.</value>
+        public object Value { get; }
+
         private static Exception MakeInvalidCastException()
         {
             return new InvalidOperationException("Specified MessageId cannot be cast into the target type.");
         }
 
-        public static implicit operator MessageId(string str)
+        public static explicit operator MessageId(string str)
         {
             return new MessageId(str);
         }
 
-        public static implicit operator MessageId(int x)
+        public static explicit operator MessageId(int x)
         {
             return new MessageId(x);
         }
 
-        public static implicit operator MessageId(long x)
+        public static explicit operator MessageId(long x)
         {
             return new MessageId(x);
         }
@@ -379,7 +371,8 @@ namespace JsonRpc.Standard
         }
 
         /// <inheritdoc />
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+            JsonSerializer serializer)
         {
             if (objectType != typeof(MessageId) && objectType != typeof(object)) throw new NotSupportedException();
             if (reader.TokenType == JsonToken.Integer)

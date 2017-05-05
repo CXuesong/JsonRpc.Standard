@@ -55,6 +55,8 @@ namespace UnitTestProject1
             Assert.Equal(new Complex(100, 200), await proxy.MakeComplex(100, 200));
         }
 
+        // You should see something linke this in the output
+        // {"method":"cancelRequest","params":{"id":"46361581#1"},"jsonrpc":"2.0"}
         [Fact]
         public async Task ProxyCancellationTest()
         {
@@ -62,7 +64,7 @@ namespace UnitTestProject1
             using (var cts = new CancellationTokenSource(500))
             {
                 await Assert.ThrowsAnyAsync<OperationCanceledException>(
-                    () => proxy.DelayAsync(TimeSpan.FromMilliseconds(2000), cts.Token));
+                    () => proxy.DelayAsync(TimeSpan.FromMilliseconds(1000), cts.Token));
             }
             await Task.Delay(500);
         }

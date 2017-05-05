@@ -52,20 +52,20 @@ namespace JsonRpc.Standard.Client
         protected async Task<TResult> SendAsync<TResult>(int methodIndex, IList paramValues)
         {
             var method = MethodTable[methodIndex];
-            GeneralRequestMessage message;
+            MarshaledRequest marshaled;
             try
             {
-                message = method.Marshal(paramValues);
+                marshaled = method.Marshal(paramValues);
             }
             catch (Exception ex)
             {
                 throw new JsonRpcContractException("An exception occured while marshalling the request. " + ex.Message,
                     ex);
             }
-            message.CancellationToken.ThrowIfCancellationRequested();
+            marshaled.CancellationToken.ThrowIfCancellationRequested();
             // Send the request
-            if (message is RequestMessage request) request.Id = Client.NextRequestId();
-            var response = await Client.SendAsync(message, message.CancellationToken).ConfigureAwait(false);
+            if (!method.IsNotification) marshaled.Message.Id = Client.NextRequestId();
+            var response = await Client.SendAsync(marshaled.Message, marshaled.CancellationToken).ConfigureAwait(false);
             // For notification, we do not have a response.
             if (response != null)
             {
@@ -90,7 +90,7 @@ namespace JsonRpc.Standard.Client
                     {
                         throw new JsonRpcContractException(
                             "An exception occured while unmarshalling the response. " + ex.Message,
-                            message, ex);
+                            marshaled.Message, ex);
                     }
                 }
             }

@@ -44,9 +44,9 @@ namespace JsonRpc.Standard.Contracts
             return $"{MethodName}({Parameters.Count})";
         }
 
-        internal GeneralRequestMessage Marshal(IList arguments)
+        internal MarshaledRequest Marshal(IList arguments)
         {
-            CancellationToken ct = CancellationToken.None;
+            var ct = CancellationToken.None;
             // Parse parameters
             JObject jargs = null;
             if (this.Parameters.Count > 0)
@@ -67,23 +67,20 @@ namespace JsonRpc.Standard.Contracts
                     }
                     if (thisParam.ParameterType == typeof(CancellationToken))
                     {
-                        ct = (CancellationToken)argv;
+                        ct = (CancellationToken) argv;
                         continue;
                     }
                     var value = thisParam.Converter.ValueToJson(argv);
                     jargs.Add(thisParam.ParameterName, value);
                 }
             }
-            if (this.IsNotification)
-                return new NotificationMessage(this.MethodName, jargs) { CancellationToken = ct };
-            else
-                return new RequestMessage(null, this.MethodName, jargs) { CancellationToken = ct };
+            return new MarshaledRequest(new RequestMessage(this.MethodName, jargs), ct);
         }
 
         /// <inheritdoc />
-        internal object[] UnmarshalArguments(GeneralRequestMessage message)
+        internal object[] UnmarshalArguments(MarshaledRequest request)
         {
-            if (message == null) throw new ArgumentNullException(nameof(message));
+            if (request.Message == null) throw new ArgumentNullException(nameof(request));
             if (this.Parameters.Count == 0) return null;
             var argv = new object[this.Parameters.Count];
             for (int i = 0; i < this.Parameters.Count; i++)
@@ -91,11 +88,11 @@ namespace JsonRpc.Standard.Contracts
                 // Resolve cancellation token
                 if (this.Parameters[i].ParameterType == typeof(CancellationToken))
                 {
-                    argv[i] = message.CancellationToken;
+                    argv[i] = request.CancellationToken;
                     continue;
                 }
                 // Resolve other parameters, considering the optional
-                var jarg = message.Parameters?[this.Parameters[i].ParameterName];
+                var jarg = request.Message.Parameters?[this.Parameters[i].ParameterName];
                 if (jarg == null)
                 {
                     if (this.Parameters[i].IsOptional)
@@ -111,5 +108,18 @@ namespace JsonRpc.Standard.Contracts
             }
             return argv;
         }
+    }
+
+    internal struct MarshaledRequest
+    {
+        public MarshaledRequest(RequestMessage message, CancellationToken cancellationToken)
+        {
+            Message = message;
+            CancellationToken = cancellationToken;
+        }
+
+        public RequestMessage Message { get; }
+
+        public CancellationToken CancellationToken { get; }
     }
 }
