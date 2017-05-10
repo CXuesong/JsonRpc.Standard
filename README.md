@@ -12,9 +12,9 @@ This package focuses on the implementation of [JSON RPC 2.0](http://www.jsonrpc.
 
 This package is based on .NET Standard 1.3. You may need .NET Framework 4.6 or .NET Core to consume it.
 
-For an example based on two `BufferBlock`s, please dive into `ConsoleTestApp`. For the (WIP) implementation of [Mircosoft Language Server Protocol](https://github.com/Microsoft/language-server-protocol/blob/master/protocol.md) on the top of this library, please take a look at [CXuesong/LanguageServer.NET](https://github.com/CXuesong/LanguageServer.NET).
+For an example based on two `BufferBlock`s, please dive into `ConsoleTestApp`. For the (WIP) implementation of [Mircosoft Language Server Protocol](https://github.com/Microsoft/language-server-protocol/blob/master/protocol.md) on the top of this library, please take a look at [CXuesong/LanguageServer.NET](https://github.com/CXuesong/LanguageServer.NET). And a step further, for a WIP [Wikitext](https://en.wikipedia.org/wiki/Wiki_markup) language server, please take a look at [CXuesong/MwLanguageServer](https://github.com/CXuesong/MwLanguageServer).
 
-## Server
+## Server-side
 
 Let's take a look at the service implementation first.
 
@@ -74,7 +74,7 @@ It's somewhat like the implementation of a `Controller` in ASP.NET. Derive a cla
 *   The default JSON RPC method name is the CLR method name. You can specify `CamelCaseJsonRpcNamingStrategy` in the attribute or in `JsonRpcContractResolver.NamingStrategy`
 *   You can either implement your method synchronously or asynchronously.
 *   `CancellationToken` in the parameters is a synonym of `RequestContext.CancellationToken`.
-    *   Still, there is no built-in way to cancel a method from the client. This might be implemented in the future.
+    *   For a simple server-side implementation of operation cancellation, please take a look at `TestJsonRpcService.CancelRequest` in `UnitTestProject1`. As for `$/cancelRequest` implementation in Language Server, see [`InitializaionService.CancelRequest` in CXuesong/LanguageServer.NET](https://github.com/CXuesong/LanguageServer.NET/blob/master/DemoLanguageServer/Services/InitializaionService.cs).
 *   Optional parameters are supported.
 *   You may specify `AllowExtensionData = true` in the attribute to allow extra parameters passed to the method. You can later extract the parameters from `RequestContext.Request` property.
 *   Method-overloading is supported by distingushing the method parameter count and type (Number/String/Array/Object).
@@ -146,7 +146,7 @@ There are other `SourceBlock`/`TargetBlock` available.
 
 *   You may well derive your own SourceBlock/TargetBlock, or even just use some predefined TPL Dataflow blocks such as `BufferBlock`. The example project and the unit test project use `BufferBlock` to connect the service host with the client.
 
-## Client
+## Client-side
 
 First of all, you may well use `JsonRpcClient` to send requests & notifications to the server via attached `SourceBlock`/`TargetBlock`.
 
