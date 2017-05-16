@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+#if NET45
+using System.Runtime.Serialization;
+#endif
 using Newtonsoft.Json.Linq;
 
 namespace JsonRpc.Standard
@@ -7,6 +10,9 @@ namespace JsonRpc.Standard
     /// <summary>
     /// An exception that indicates an general JSON RPC error.
     /// </summary>
+#if NET45
+    [Serializable]
+#endif
     public class JsonRpcException : Exception
     {
 
@@ -50,9 +56,25 @@ namespace JsonRpc.Standard
             Error = error;
         }
 
+#if NET45
+        public JsonRpcException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            Error = (ResponseError)info.GetValue("Error", typeof(ResponseError));
+        }
+#endif
+
         /// <summary>
         /// JSON RPC error object.
         /// </summary>
         public ResponseError Error { get; }
+
+#if NET45
+        /// <inheritdoc />
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("Error", Error);
+        }
+#endif
     }
 }

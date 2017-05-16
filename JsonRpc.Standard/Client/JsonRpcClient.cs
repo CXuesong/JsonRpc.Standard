@@ -189,7 +189,7 @@ namespace JsonRpc.Standard.Client
             if (request == null) throw new ArgumentNullException(nameof(request));
             cancellationToken.ThrowIfCancellationRequested();
             TaskCompletionSource<ResponseMessage> tcs = null;
-            CancellationTokenRegistration ctr;
+            CancellationTokenRegistration ctr = default(CancellationTokenRegistration);
             if (!request.IsNotification)
             {
                 // We need to monitor the response.
