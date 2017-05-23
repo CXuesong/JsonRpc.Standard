@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using JsonRpc.Dataflow;
@@ -23,6 +24,7 @@ namespace ConsoleTestApp
 
         static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
             // Here we use two buffers to simulate the console I/O
             var serverBuffer = new BufferBlock<Message>();      // server --> client
             var clientBuffer = new BufferBlock<Message>();      // client --> server
