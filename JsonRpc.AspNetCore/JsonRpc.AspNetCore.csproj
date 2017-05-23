@@ -2,14 +2,38 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DebugType>full</DebugType>
+
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>0.3.0</Version>
+    <Authors>CXuesong</Authors>
+    <Company />
+    <PackageId>CXuesong.JsonRpc.AspNetCore</PackageId>
+    <Description>ASP.NET Core support for CXuesong.JsonRpc.Standard.</Description>
+    <PackageTags>json rpc json-rpc json-rpc-server json-rpc-client asp.net asp.net-core</PackageTags>
+    <PackageProjectUrl>https://github.com/CXuesong/JsonRpc.Standard</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/CXuesong/JsonRpc.Standard</RepositoryUrl>
+    <NeutralLanguage>en-us</NeutralLanguage>
+    <PackageReleaseNotes>See https://github.com/CXuesong/JsonRpc.Standard/releases .</PackageReleaseNotes>
+    <Copyright>Copyright 2017 CXuesong</Copyright>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
+    <FileVersion>0.3.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\JsonRpc.Standard\JsonRpc.Standard.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.1.1.0\lib\netstandard1.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

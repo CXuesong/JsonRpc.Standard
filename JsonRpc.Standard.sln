@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonRpc.Dataflow", "JsonRpc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonRpc.AspNetCore", "JsonRpc.AspNetCore\JsonRpc.AspNetCore.csproj", "{AC24E3C2-E5DA-4F7F-89D9-510390E619C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTestApplication", "WebTestApplication\WebTestApplication.csproj", "{AC2EF87E-E04F-4917-9A0F-FD59254AA4E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{AC24E3C2-E5DA-4F7F-89D9-510390E619C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC24E3C2-E5DA-4F7F-89D9-510390E619C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC24E3C2-E5DA-4F7F-89D9-510390E619C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC2EF87E-E04F-4917-9A0F-FD59254AA4E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC2EF87E-E04F-4917-9A0F-FD59254AA4E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC2EF87E-E04F-4917-9A0F-FD59254AA4E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC2EF87E-E04F-4917-9A0F-FD59254AA4E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -10,7 +10,7 @@
     <Authors>CXuesong</Authors>
     <Company />
     <PackageId>CXuesong.JsonRpc.Dataflow</PackageId>
-    <Description>TPL Dataflow sources and sinks support, along with Dataflow-based Stream sources and sinks support for CXuesong.JsonRpc.Dataflow.</Description>
+    <Description>TPL Dataflow sources and sinks support, along with Dataflow-based Stream sources and sinks support for CXuesong.JsonRpc.Standard.</Description>
     <PackageTags>json rpc json-rpc json-rpc-server json-rpc-client tpl tpl-dataflow</PackageTags>
     <PackageProjectUrl>https://github.com/CXuesong/JsonRpc.Standard</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CXuesong/JsonRpc.Standard</RepositoryUrl>
