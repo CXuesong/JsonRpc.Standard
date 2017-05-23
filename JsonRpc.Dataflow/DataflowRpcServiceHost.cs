@@ -90,8 +90,14 @@ namespace JsonRpc.Dataflow
             }
         }
 
+        /// <summary>
+        /// Gets the undelying <see cref="IJsonRpcServiceHost"/>.
+        /// </summary>
         public IJsonRpcServiceHost RpcServiceHost { get; }
 
+        /// <summary>
+        /// Gets the PropagatorBlock used to process the requests.
+        /// </summary>
         protected IPropagatorBlock<Message, ResponseMessage> Propagator { get; }
 
         /// <summary>
