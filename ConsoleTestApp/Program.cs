@@ -44,13 +44,12 @@ namespace ConsoleTestApp
             clientTask.GetAwaiter().GetResult();
         }
 
-        private static IJsonRpcServiceHost BuildServiceHost(ISession session)
+        private static DataflowRpcServiceHost BuildServiceHost(ISession session)
         {
             var builder = new ServiceHostBuilder
             {
                 ContractResolver = myContractResolver,
                 Session = session,
-                Options = JsonRpcServiceHostOptions.ConsistentResponseSequence,
             };
             // Register all the services (public classes) found in the assembly
             builder.Register(typeof(Program).GetTypeInfo().Assembly);
@@ -61,7 +60,8 @@ namespace ConsoleTestApp
                 await next();
                 Console.WriteLine("< {0}", context.Response);
             });
-            return builder.Build();
+            var host = builder.Build();
+            return new DataflowRpcServiceHost(host, DataflowRpcServiceHostOptions.ConsistentResponseSequence);
         }
 
         private static void ClientWriteLine(object s)

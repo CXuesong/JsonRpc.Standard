@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
+using JsonRpc.Standard.Dataflow;
 using JsonRpc.Standard.Server;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -20,7 +21,7 @@ namespace UnitTestProject1
 {
     public class ClientTest : UnitTestBase
     {
-        private readonly IJsonRpcServiceHost host;
+        private readonly DataflowRpcServiceHost host;
         private readonly JsonRpcClient client;
         private readonly IDisposable hostLifetime, clientLifetime;
         private readonly JsonRpcProxyBuilder proxyBuilder;

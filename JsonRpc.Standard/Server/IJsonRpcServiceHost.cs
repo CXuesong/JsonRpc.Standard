@@ -6,29 +6,19 @@ using System.Threading.Tasks.Dataflow;
 namespace JsonRpc.Standard.Server
 {
     /// <summary>
-    /// Used to control the lifecycle of a JSON RPC service host.
+    /// Provides methods to dispatch and invoke the specified JSON RPC methods.
     /// </summary>
     public interface IJsonRpcServiceHost
     {
         /// <summary>
-        /// The factory that creates the JSON RPC service instances to handle the requests.
+        /// Invokes the JSON RPC method.
         /// </summary>
-        IServiceFactory ServiceFactory { get; }
-
-        /// <summary>
-        /// Attaches the host to the specific source block and target block.
-        /// </summary>
-        /// <param name="source">The source block used to retrieve the requests.</param>
-        /// <param name="target">The target block used to emit the responses.</param>
-        /// <returns>A <see cref="IDisposable"/> used to disconnect the source and target blocks.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="source"/> or <paramref name="target"/> is <c>null</c>.</exception>
-        IDisposable Attach(ISourceBlock<Message> source, ITargetBlock<ResponseMessage> target);
-
-        /// <summary>
-        /// Tries to cancel the request with specified request id.
-        /// </summary>
-        /// <param name="id">The message id to cancel.</param>
-        /// <returns><c>true</c>, if the request has been successfully cancelled; <c>false</c> otherwise.</returns>
-        bool TryCancelRequest(MessageId id);
+        /// <param name="request">The JSON RPC request.</param>
+        /// <param name="features">The features provided along with the request. Use <c>null</c> to indicate default features set.</param>
+        /// <param name="cancellationToken">The token used to cancel the request.</param>
+        /// <returns>JSON RPC response, or <c>null</c> for JSON RPC notifications.</returns>
+        /// <remarks>For cancelled requests, no exception will be thrown, but a response containing <see cref="OperationCanceledException"/> CLR exception will be returned.</remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="request"/> is <c>null</c>.</exception>
+        Task<ResponseMessage> InvokeAsync(RequestMessage request, IFeatureCollection features, CancellationToken cancellationToken);
     }
 }

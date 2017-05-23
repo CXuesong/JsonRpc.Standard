@@ -10,6 +10,7 @@ using System.Threading.Tasks.Dataflow;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
+using JsonRpc.Standard.Dataflow;
 using JsonRpc.Standard.Server;
 using Newtonsoft.Json.Linq;
 
@@ -23,7 +24,7 @@ namespace UnitTestProject1
             ParameterValueConverter = new CamelCaseJsonValueConverter()
         };
 
-        public static IJsonRpcServiceHost CreateJsonRpcHost(UnitTestBase owner)
+        public static DataflowRpcServiceHost CreateJsonRpcHost(UnitTestBase owner)
         {
             var builder = new ServiceHostBuilder();
             builder.Register(typeof(Utility).Assembly);
@@ -38,12 +39,11 @@ namespace UnitTestProject1
                 });
             }
             builder.LoggerFactory = owner.LoggerFactory;
-            builder.Options = JsonRpcServiceHostOptions.ConsistentResponseSequence;
-            return builder.Build();
+            return new DataflowRpcServiceHost(builder.Build(), DataflowRpcServiceHostOptions.ConsistentResponseSequence);
         }
 
         public static
-            (IJsonRpcServiceHost Host, JsonRpcClient Client, IDisposable HostLifetime, IDisposable ClientLifetime)
+            (DataflowRpcServiceHost Host, JsonRpcClient Client, IDisposable HostLifetime, IDisposable ClientLifetime)
             CreateJsonRpcHostClient(UnitTestBase owner)
         {
             var server = CreateJsonRpcHost(owner);

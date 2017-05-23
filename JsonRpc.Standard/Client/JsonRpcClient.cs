@@ -56,8 +56,7 @@ namespace JsonRpc.Standard.Client
         /// Raises when a JSON RPC call is to be cancelled.
         /// </summary>
         public event EventHandler<RequestCancellingEventArgs> RequestCancelling;
-
-
+        
         /// <summary>
         /// Initializes a JSON RPC client.
         /// </summary>

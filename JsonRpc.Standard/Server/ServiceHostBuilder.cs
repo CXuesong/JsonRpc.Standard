@@ -29,12 +29,7 @@ namespace JsonRpc.Standard.Server
         /// User-defined session object.
         /// </summary>
         public ISession Session { get; set; }
-
-        /// <summary>
-        /// Service host options.
-        /// </summary>
-        public JsonRpcServiceHostOptions Options { get; set; }
-
+ 
         /// <summary>
         /// The factory that creates the JSON RPC service instances to handle the requests.
         /// </summary>
@@ -129,7 +124,7 @@ namespace JsonRpc.Standard.Server
         {
             var cr = ContractResolver ?? JsonRpcContractResolver.Default;
             var contract = cr.CreateServerContract(serviceTypes);
-            var host = new JsonRpcServiceHost(contract, Options)
+            var host = new JsonRpcServiceHost(contract)
             {
                 ServiceFactory = ServiceFactory ?? DefaultServiceFactory.Default,
                 Session = Session,

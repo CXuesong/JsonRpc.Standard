@@ -52,7 +52,7 @@ namespace JsonRpc.Standard.Contracts
         /// <inheritdoc />
         public async Task<object> InvokeAsync(RequestContext context, object[] arguments)
         {
-            var inst = context.ServiceHost.ServiceFactory.CreateService(serviceType, context);
+            var inst = context.ServiceFactory.CreateService(serviceType, context);
             inst.RequestContext = context;
             object result;
             try
@@ -74,7 +74,7 @@ namespace JsonRpc.Standard.Contracts
                 var resultMethod = taskResult.GetType().GetRuntimeProperty("Result");
                 result = resultMethod?.GetValue(taskResult);
             }
-            context.ServiceHost.ServiceFactory.ReleaseService(inst);
+            context.ServiceFactory.ReleaseService(inst);
             return result;
         }
     }
