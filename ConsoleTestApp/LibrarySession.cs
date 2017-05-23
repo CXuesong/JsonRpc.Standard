@@ -4,7 +4,8 @@ using JsonRpc.Standard.Server;
 
 namespace ConsoleTestApp
 {
-    public class LibrarySession : Session
+
+    public class LibrarySessionFeature
     {
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
 

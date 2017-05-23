@@ -24,11 +24,6 @@ namespace JsonRpc.Standard.Server
         {
 
         }
-
-        /// <summary>
-        /// User-defined session object.
-        /// </summary>
-        public ISession Session { get; set; }
  
         /// <summary>
         /// The factory that creates the JSON RPC service instances to handle the requests.
@@ -127,7 +122,6 @@ namespace JsonRpc.Standard.Server
             var host = new JsonRpcServiceHost(contract)
             {
                 ServiceFactory = ServiceFactory ?? DefaultServiceFactory.Default,
-                Session = Session,
                 MethodBinder = MethodBinder ?? JsonRpcMethodBinder.Default,
                 Logger = (ILogger) LoggerFactory?.CreateLogger<JsonRpcServiceHost>() ?? NullLogger.Instance
             };

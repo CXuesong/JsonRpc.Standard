@@ -31,7 +31,7 @@ namespace ConsoleTestApp
             // Let's start the test client first.
             var clientTask = RunClientAsync(serverBuffer, clientBuffer);
             // Configure & build service host
-            var session = new LibrarySession();
+            var session = new LibrarySessionFeature();
             var host = BuildServiceHost(session);
             // Connect the datablocks
             // If we want server to stop, just stop the source
@@ -46,12 +46,11 @@ namespace ConsoleTestApp
             clientTask.GetAwaiter().GetResult();
         }
 
-        private static DataflowRpcServiceHost BuildServiceHost(ISession session)
+        private static DataflowRpcServiceHost BuildServiceHost(LibrarySessionFeature session)
         {
             var builder = new ServiceHostBuilder
             {
                 ContractResolver = myContractResolver,
-                Session = session,
             };
             // Register all the services (public classes) found in the assembly
             builder.Register(typeof(Program).GetTypeInfo().Assembly);
@@ -63,7 +62,11 @@ namespace ConsoleTestApp
                 Console.WriteLine("< {0}", context.Response);
             });
             var host = builder.Build();
-            return new DataflowRpcServiceHost(host, DataflowRpcServiceHostOptions.ConsistentResponseSequence);
+            var features = new FeatureCollection();
+            // Though it's suggested that all feature types be interface types, for sake of
+            // simplicity, here we just use a concrete class.
+            features.Set<LibrarySessionFeature>(session);
+            return new DataflowRpcServiceHost(host, features);
         }
 
         private static void ClientWriteLine(object s)

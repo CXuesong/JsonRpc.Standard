@@ -24,8 +24,6 @@ namespace JsonRpc.Standard.Server
             Contract = contract;
         }
 
-        internal ISession Session { get; set; }
-
         internal JsonRpcServerContract Contract { get; }
 
         public IServiceFactory ServiceFactory { get; set; }
@@ -47,7 +45,7 @@ namespace JsonRpc.Standard.Server
         /// <inheritdoc />
         public async Task<ResponseMessage> InvokeAsync(RequestMessage request, IFeatureCollection features, CancellationToken cancellationToken)
         {
-            var context = new RequestContext(this, ServiceFactory, new FeatureCollection(features), Session,
+            var context = new RequestContext(this, ServiceFactory, new FeatureCollection(features),
                 request, cancellationToken);
             try
             {

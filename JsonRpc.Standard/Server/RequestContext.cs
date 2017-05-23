@@ -8,14 +8,13 @@ namespace JsonRpc.Standard.Server
     /// </summary>
     public class RequestContext
     {
-        public RequestContext(IJsonRpcServiceHost serviceHost, IServiceFactory serviceFactory, IFeatureCollection features,
-            ISession session, RequestMessage request, CancellationToken cancellationToken)
+        public RequestContext(IJsonRpcServiceHost serviceHost, IServiceFactory serviceFactory,
+            IFeatureCollection features, RequestMessage request, CancellationToken cancellationToken)
         {
             if (serviceHost == null) throw new ArgumentNullException(nameof(serviceHost));
             if (request == null) throw new ArgumentNullException(nameof(request));
             ServiceHost = serviceHost;
             ServiceFactory = serviceFactory;
-            Session = session;
             Request = request;
             Features = features;
             if (!request.IsNotification)
@@ -37,11 +36,6 @@ namespace JsonRpc.Standard.Server
         /// The features provided with the request.
         /// </summary>
         public IFeatureCollection Features { get; }
-
-        /// <summary>
-        /// Gets the service host or user defined session object.
-        /// </summary>
-        public ISession Session { get; }
 
         /// <summary>
         /// Gets the request message.

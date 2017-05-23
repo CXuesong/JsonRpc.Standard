@@ -14,7 +14,7 @@ namespace ConsoleTestApp
 
         // The service instance is transcient. You cannot persist state in such a class.
         // So we need session.
-        private LibrarySession Session => (LibrarySession) RequestContext.Session;
+        private LibrarySessionFeature Session => RequestContext.Features.Get<LibrarySessionFeature>();
 
         [JsonRpcMethod]
         public Book GetBook(string isbn, bool required = false)

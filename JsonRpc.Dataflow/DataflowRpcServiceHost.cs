@@ -37,22 +37,32 @@ namespace JsonRpc.Dataflow
 
         private readonly ILogger logger;
 
-        private readonly FeatureCollection defaultFeatures = new FeatureCollection();
+        private readonly FeatureCollection defaultFeatures;
 
-        public DataflowRpcServiceHost(IJsonRpcServiceHost rpcServiceHost) : this(rpcServiceHost, null, DataflowRpcServiceHostOptions.None)
+
+        public DataflowRpcServiceHost(IJsonRpcServiceHost rpcServiceHost) : this(rpcServiceHost, null, null, DataflowRpcServiceHostOptions.None)
         {
         }
 
-        public DataflowRpcServiceHost(IJsonRpcServiceHost rpcServiceHost, DataflowRpcServiceHostOptions options) : this(rpcServiceHost, null, options)
+        public DataflowRpcServiceHost(IJsonRpcServiceHost rpcServiceHost, DataflowRpcServiceHostOptions options) : this(rpcServiceHost, null, null, options)
         {
         }
 
-        public DataflowRpcServiceHost(IJsonRpcServiceHost rpcServiceHost, ILoggerFactory loggerFactory, DataflowRpcServiceHostOptions options)
+        public DataflowRpcServiceHost(IJsonRpcServiceHost rpcServiceHost, IFeatureCollection defaultFeatures) : this(rpcServiceHost, defaultFeatures, null, DataflowRpcServiceHostOptions.None)
+        {
+        }
+
+        public DataflowRpcServiceHost(IJsonRpcServiceHost rpcServiceHost, IFeatureCollection defaultFeatures, DataflowRpcServiceHostOptions options) : this(rpcServiceHost, defaultFeatures, null, options)
+        {
+        }
+
+        public DataflowRpcServiceHost(IJsonRpcServiceHost rpcServiceHost, IFeatureCollection defaultFeatures, ILoggerFactory loggerFactory, DataflowRpcServiceHostOptions options)
         {
             if (rpcServiceHost == null) throw new ArgumentNullException(nameof(rpcServiceHost));
             RpcServiceHost = rpcServiceHost;
-            logger = (ILogger) loggerFactory?.CreateLogger<DataflowRpcServiceHost>() ?? NullLogger.Instance;
+            this.defaultFeatures = new FeatureCollection(defaultFeatures);
             defaultFeatures.Set<IRequestCancellationFeature>(new RequestCancellationFeature(this));
+            logger = (ILogger) loggerFactory?.CreateLogger<DataflowRpcServiceHost>() ?? NullLogger.Instance;
             Propagator = new TransformBlock<Message, ResponseMessage>(
                 (Func<Message, Task<ResponseMessage>>) ReaderAction,
                 new ExecutionDataflowBlockOptions
