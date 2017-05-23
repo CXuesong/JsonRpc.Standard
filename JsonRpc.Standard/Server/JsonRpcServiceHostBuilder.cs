@@ -13,14 +13,14 @@ namespace JsonRpc.Standard.Server
     /// <summary>
     /// A builder for <see cref="IJsonRpcServiceHost"/>.
     /// </summary>
-    public sealed class ServiceHostBuilder
+    public sealed class JsonRpcServiceHostBuilder
     {
         private readonly IList<Type> serviceTypes = new List<Type>();
 
         private readonly IList<Func<RequestHandler, RequestHandler>> interceptions =
             new List<Func<RequestHandler, RequestHandler>>();
 
-        public ServiceHostBuilder()
+        public JsonRpcServiceHostBuilder()
         {
 
         }

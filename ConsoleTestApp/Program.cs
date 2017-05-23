@@ -48,7 +48,7 @@ namespace ConsoleTestApp
 
         private static DataflowRpcServiceHost BuildServiceHost(LibrarySessionFeature session)
         {
-            var builder = new ServiceHostBuilder
+            var builder = new JsonRpcServiceHostBuilder
             {
                 ContractResolver = myContractResolver,
             };

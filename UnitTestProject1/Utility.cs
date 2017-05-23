@@ -26,7 +26,7 @@ namespace UnitTestProject1
 
         public static DataflowRpcServiceHost CreateJsonRpcHost(UnitTestBase owner)
         {
-            var builder = new ServiceHostBuilder();
+            var builder = new JsonRpcServiceHostBuilder();
             builder.Register(typeof(Utility).Assembly);
             builder.ContractResolver = DefaultContractResolver;
             if (owner.Output != null)

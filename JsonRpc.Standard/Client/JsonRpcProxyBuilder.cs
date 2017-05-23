@@ -89,7 +89,7 @@ namespace JsonRpc.Standard.Client
         /// <param name="stubType">The stub type (or contract) to be implemented. Should be an interface type.</param>
         /// <exception cref="ArgumentNullException"><paramref name="client"/> or <paramref name="stubType"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentException"><paramref name="stubType"/> is not a Type of interface.</exception>
-        /// <returns>The implemented proxy instance, which can be casted to <see cref="stubType"/> afterwards.</returns>
+        /// <returns>The implemented proxy instance, which can be casted to <paramref name="stubType"/> afterwards.</returns>
         public object CreateProxy(JsonRpcClient client, Type stubType)
         {
             if (client == null) throw new ArgumentNullException(nameof(client));
