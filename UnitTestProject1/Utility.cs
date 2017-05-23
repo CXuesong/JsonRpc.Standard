@@ -7,10 +7,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using JsonRpc.Dataflow;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
-using JsonRpc.Standard.Dataflow;
 using JsonRpc.Standard.Server;
 using Newtonsoft.Json.Linq;
 

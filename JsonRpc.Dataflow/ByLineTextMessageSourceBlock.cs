@@ -3,8 +3,9 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JsonRpc.Standard;
 
-namespace JsonRpc.Standard.Dataflow
+namespace JsonRpc.Dataflow
 {
     /// <summary>
     /// Represents a message reader that parses the message line-by-line from <see cref="TextReader"/>.
@@ -65,7 +66,7 @@ namespace JsonRpc.Standard.Dataflow
                         line = await Reader.ReadLineAsync().ConfigureAwait(false);
                         if (line == null) return null;
                     } while (string.IsNullOrWhiteSpace(line));
-                    return RpcSerializer.DeserializeMessage(line);
+                    return Message.LoadJson(line);
                 }
                 else
                 {
@@ -78,7 +79,7 @@ namespace JsonRpc.Standard.Dataflow
                         if (!string.IsNullOrWhiteSpace(line)) builder.AppendLine(line);
                     } while (line != null);
                     if (builder.Length == 0) return null;
-                    return RpcSerializer.DeserializeMessage(builder.ToString());
+                    return Message.LoadJson(builder.ToString());
                 }
             }
             catch (ObjectDisposedException)

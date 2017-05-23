@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using JsonRpc.Dataflow;
 using JsonRpc.Standard;
-using JsonRpc.Standard.Dataflow;
 using JsonRpc.Standard.Server;
 using Xunit;
 using Xunit.Abstractions;

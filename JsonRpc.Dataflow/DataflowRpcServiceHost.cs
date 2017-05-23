@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using JsonRpc.Standard;
 using JsonRpc.Standard.Server;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace JsonRpc.Standard.Dataflow
+namespace JsonRpc.Dataflow
 {
 
     /// <summary>

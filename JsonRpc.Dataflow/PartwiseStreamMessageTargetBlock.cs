@@ -3,8 +3,9 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JsonRpc.Standard;
 
-namespace JsonRpc.Standard.Dataflow
+namespace JsonRpc.Dataflow
 {
     /// <summary>
     /// Writes JSON RPC messages to a <see cref="Stream"/>,
@@ -42,7 +43,7 @@ namespace JsonRpc.Standard.Dataflow
             {
                 using (var writer = new StreamWriter(ms, Encoding, 4096, true))
                 {
-                    RpcSerializer.SerializeMessage(writer, message);
+                    message.WriteJson(writer);
                 }
                 cancellationToken.ThrowIfCancellationRequested();
                 try

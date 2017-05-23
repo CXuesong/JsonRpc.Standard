@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\JsonRpc.Dataflow\JsonRpc.Dataflow.csproj" />
     <ProjectReference Include="..\JsonRpc.Standard\JsonRpc.Standard.csproj" />
   </ItemGroup>
 

@@ -3,10 +3,10 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using JsonRpc.Dataflow;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
-using JsonRpc.Standard.Dataflow;
 using JsonRpc.Standard.Server;
 
 namespace ConsoleTestApp

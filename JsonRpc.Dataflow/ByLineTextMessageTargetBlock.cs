@@ -2,8 +2,9 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using JsonRpc.Standard;
 
-namespace JsonRpc.Standard.Dataflow
+namespace JsonRpc.Dataflow
 {
     /// <summary>
     /// Represents a message writer that writes the message line-by-line to <see cref="TextWriter"/>.
@@ -55,7 +56,7 @@ namespace JsonRpc.Standard.Dataflow
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
             cancellationToken.ThrowIfCancellationRequested();
-            var content = RpcSerializer.SerializeMessage(message);
+            var content = message.ToString();
             try
             {
                 await Writer.WriteLineAsync(content).ConfigureAwait(false);

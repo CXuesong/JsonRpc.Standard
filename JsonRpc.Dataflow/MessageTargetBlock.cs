@@ -2,8 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using JsonRpc.Standard;
 
-namespace JsonRpc.Standard.Dataflow
+namespace JsonRpc.Dataflow
 {
     /// <summary>
     /// A buffered target dataflow block that continuously retrieve <see cref="Message"/>s.

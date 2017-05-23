@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JsonRpc.Standard;
 
-namespace JsonRpc.Standard.Dataflow
+namespace JsonRpc.Dataflow
 {
     /// <summary>
     /// Reads JSON RPC messages from a <see cref="Stream"/>,
@@ -125,13 +126,12 @@ namespace JsonRpc.Standard.Dataflow
                     throw;
                 }
             }
-            // Release the semaphore ASAP.
             // Deserialization
             using (var ms = new MemoryStream(contentBuffer))
             {
                 using (var sr = new StreamReader(ms, Encoding))
                 {
-                    return RpcSerializer.DeserializeMessage(sr);
+                    return Message.LoadJson(sr);
                 }
             }
         }

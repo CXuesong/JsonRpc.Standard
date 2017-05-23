@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -35,7 +36,7 @@ namespace JsonRpc.Standard
         /// <param name="jsonContent">JSON content.</param>
         /// <returns>A subclass of <see cref="Message"/>.</returns>
         /// <exception cref="ArgumentException"><paramref name="jsonContent"/> doesn't contain valid JSON RPC message.</exception>
-        public static Message FromJson(string jsonContent)
+        public static Message LoadJson(string jsonContent)
         {
             try
             {
@@ -45,6 +46,33 @@ namespace JsonRpc.Standard
             {
                 throw new ArgumentException("jsonContent doesn't contain valid JSON RPC message.", nameof(jsonContent));
             }
+        }
+
+        /// <summary>
+        /// Converts a string containing JSON RPC message into <see cref="Message"/>.
+        /// </summary>
+        /// <param name="textReader">JSON content.</param>
+        /// <returns>A subclass of <see cref="Message"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="textReader"/> doesn't contain valid JSON RPC message.</exception>
+        public static Message LoadJson(TextReader textReader)
+        {
+            try
+            {
+                return RpcSerializer.DeserializeMessage(textReader);
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is JsonSerializationException)
+            {
+                throw new ArgumentException("jsonContent doesn't contain valid JSON RPC message.", nameof(textReader));
+            }
+        }
+
+        /// <summary>
+        /// Writes the JSON RPC string into specified <see cref="TextWriter"/>.
+        /// </summary>
+        /// <param name="textWriter">The destination to write json content to.</param>
+        public void WriteJson(TextWriter textWriter)
+        {
+            RpcSerializer.SerializeMessage(textWriter, this);
         }
 
         /// <summary>
