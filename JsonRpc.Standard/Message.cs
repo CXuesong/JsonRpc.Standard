@@ -395,7 +395,8 @@ namespace JsonRpc.Standard
                 return;
             }
             var id = (MessageId) value;
-            writer.WriteValue(id.Value);
+            if (id == MessageId.Empty) writer.WriteNull();
+            else writer.WriteValue(id.Value);
         }
 
         /// <inheritdoc />
@@ -403,9 +404,16 @@ namespace JsonRpc.Standard
             JsonSerializer serializer)
         {
             if (objectType != typeof(MessageId) && objectType != typeof(object)) throw new NotSupportedException();
-            if (reader.TokenType == JsonToken.Integer)
-                return new MessageId(Convert.ToInt64(reader.Value));
-            return new MessageId(Convert.ToString(reader.Value));
+            switch (reader.TokenType)
+            {
+                case JsonToken.Null:
+                case JsonToken.Undefined:
+                    return MessageId.Empty;
+                case JsonToken.Integer:
+                    return new MessageId(Convert.ToInt64(reader.Value));
+                default:
+                    return new MessageId(Convert.ToString(reader.Value));
+            }
         }
 
         /// <inheritdoc />
