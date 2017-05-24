@@ -46,7 +46,7 @@ namespace ConsoleTestApp
             clientTask.GetAwaiter().GetResult();
         }
 
-        private static DataflowRpcServiceHost BuildServiceHost(LibrarySessionFeature session)
+        private static DataflowRpcServerHandler BuildServiceHost(LibrarySessionFeature session)
         {
             var builder = new JsonRpcServiceHostBuilder
             {
@@ -66,7 +66,7 @@ namespace ConsoleTestApp
             // Though it's suggested that all feature types be interface types, for sake of
             // simplicity, here we just use a concrete class.
             features.Set<LibrarySessionFeature>(session);
-            return new DataflowRpcServiceHost(host, features);
+            return new DataflowRpcServerHandler(host) {DefaultFeatures = features};
         }
 
         private static void ClientWriteLine(object s)

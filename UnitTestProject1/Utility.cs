@@ -24,7 +24,7 @@ namespace UnitTestProject1
             ParameterValueConverter = new CamelCaseJsonValueConverter()
         };
 
-        public static DataflowRpcServiceHost CreateJsonRpcHost(UnitTestBase owner)
+        public static DataflowRpcServerHandler CreateJsonRpcHost(UnitTestBase owner)
         {
             var builder = new JsonRpcServiceHostBuilder();
             builder.Register(typeof(Utility).Assembly);
@@ -39,11 +39,11 @@ namespace UnitTestProject1
                 });
             }
             builder.LoggerFactory = owner.LoggerFactory;
-            return new DataflowRpcServiceHost(builder.Build(), DataflowRpcServiceHostOptions.ConsistentResponseSequence);
+            return new DataflowRpcServerHandler(builder.Build(), DataflowRpcServiceHostOptions.ConsistentResponseSequence);
         }
 
         public static
-            (DataflowRpcServiceHost Host, JsonRpcClient Client, IDisposable HostLifetime, IDisposable ClientLifetime)
+            (DataflowRpcServerHandler Host, JsonRpcClient Client, IDisposable HostLifetime, IDisposable ClientLifetime)
             CreateJsonRpcHostClient(UnitTestBase owner)
         {
             var server = CreateJsonRpcHost(owner);

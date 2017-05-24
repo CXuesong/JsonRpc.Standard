@@ -29,7 +29,7 @@ namespace JsonRpc.Dataflow
         ConsistentResponseSequence,
 
         /// <summary>
-        /// Enables request-cancellation with <see cref="DataflowRpcServiceHost.TryCancelRequest"/>.
+        /// Enables request-cancellation with <see cref="DataflowRpcServerHandler.TryCancelRequest"/>.
         /// </summary>
         SupportsRequestCancellation
     }
@@ -37,36 +37,32 @@ namespace JsonRpc.Dataflow
     /// <summary>
     /// Pumps JSON RPC requests from TPL Dataflow blocks and dispatches them.
     /// </summary>
-    public class DataflowRpcServiceHost
+    public class DataflowRpcServerHandler : JsonRpcServerHandler
     {
 
         private readonly ILogger logger;
 
         private readonly FeatureCollection defaultFeatures;
 
-        public DataflowRpcServiceHost(IJsonRpcServiceHost rpcServiceHost) : this(rpcServiceHost, null, null, DataflowRpcServiceHostOptions.None)
+        public DataflowRpcServerHandler(IJsonRpcServiceHost rpcServiceHost) : this(rpcServiceHost, null, DataflowRpcServiceHostOptions.None)
         {
         }
 
-        public DataflowRpcServiceHost(IJsonRpcServiceHost rpcServiceHost, DataflowRpcServiceHostOptions options) : this(rpcServiceHost, null, null, options)
+        public DataflowRpcServerHandler(IJsonRpcServiceHost rpcServiceHost, ILoggerFactory loggerFactory) : this(rpcServiceHost, loggerFactory, DataflowRpcServiceHostOptions.None)
         {
         }
 
-        public DataflowRpcServiceHost(IJsonRpcServiceHost rpcServiceHost, IFeatureCollection defaultFeatures) : this(rpcServiceHost, defaultFeatures, null, DataflowRpcServiceHostOptions.None)
+
+        public DataflowRpcServerHandler(IJsonRpcServiceHost rpcServiceHost, DataflowRpcServiceHostOptions options) : this(rpcServiceHost, null, options)
         {
         }
 
-        public DataflowRpcServiceHost(IJsonRpcServiceHost rpcServiceHost, IFeatureCollection defaultFeatures, DataflowRpcServiceHostOptions options) : this(rpcServiceHost, defaultFeatures, null, options)
-        {
-        }
-
-        public DataflowRpcServiceHost(IJsonRpcServiceHost rpcServiceHost, IFeatureCollection defaultFeatures,
-            ILoggerFactory loggerFactory, DataflowRpcServiceHostOptions options)
+        public DataflowRpcServerHandler(IJsonRpcServiceHost rpcServiceHost, ILoggerFactory loggerFactory,
+            DataflowRpcServiceHostOptions options) : base(rpcServiceHost)
         {
             if (rpcServiceHost == null) throw new ArgumentNullException(nameof(rpcServiceHost));
-            RpcServiceHost = rpcServiceHost;
             this.defaultFeatures = new FeatureCollection(defaultFeatures);
-            logger = (ILogger) loggerFactory?.CreateLogger<DataflowRpcServiceHost>() ?? NullLogger.Instance;
+            logger = (ILogger) loggerFactory?.CreateLogger<DataflowRpcServerHandler>() ?? NullLogger.Instance;
             Propagator = new TransformBlock<Message, ResponseMessage>(
                 (Func<Message, Task<ResponseMessage>>) ReaderAction,
                 new ExecutionDataflowBlockOptions
@@ -89,11 +85,6 @@ namespace JsonRpc.Dataflow
                 requestCtsDict = null;
             }
         }
-
-        /// <summary>
-        /// Gets the undelying <see cref="IJsonRpcServiceHost"/>.
-        /// </summary>
-        public IJsonRpcServiceHost RpcServiceHost { get; }
 
         /// <summary>
         /// Gets the PropagatorBlock used to process the requests.
@@ -160,8 +151,8 @@ namespace JsonRpc.Dataflow
             }
             try
             {
-                var pipelineTask =
-                    RpcServiceHost.InvokeAsync(request, defaultFeatures, cts?.Token ?? CancellationToken.None);
+                var pipelineTask = ServiceHost.InvokeAsync(request, defaultFeatures,
+                    cts?.Token ?? CancellationToken.None);
                 // For notification, we just forget it… Don't want to choke the pipeline.
                 if (request.IsNotification) return null;
                 // We need to wait for an response
@@ -179,9 +170,9 @@ namespace JsonRpc.Dataflow
 
         private class RequestCancellationFeature : IRequestCancellationFeature
         {
-            private readonly DataflowRpcServiceHost _Owner;
+            private readonly DataflowRpcServerHandler _Owner;
 
-            public RequestCancellationFeature(DataflowRpcServiceHost owner)
+            public RequestCancellationFeature(DataflowRpcServerHandler owner)
             {
                 Debug.Assert(owner != null);
                 _Owner = owner;
