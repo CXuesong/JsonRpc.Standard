@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>JsonRpc.Standard ASP.NET Core Test Page</title>
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="js/jsonrpc.js"></script>
+    <script>
+        var cp = { client: new JsonRpcClient("/api/jsonrpc") };
+        cp.send = function (methodName, parameters, isRequest) {
+            this.client.send(methodName, parameters, isRequest ? undefined : null)
+                .always(function (result, httpCode) {
+                    var text = "HTTP " + httpCode + "\n\n" + JSON.stringify(result);
+                    if (!isRequest) {
+                        text += "\n\n(This is a JSON RPC Notification.)";
+                    }
+                    $("#resultContainer").text(text);
+                });
+        };
+        cp.request = function (methodName, parameters) {
+            this.send(methodName, parameters, true);
+        }
+        cp.notify = function (methodName, parameters) {
+            this.send(methodName, parameters, false);
+        }
+        cp.getValue = function (id) {
+            this.request("getValue", id ? { id: id } : null);
+        }
+        cp.callNotify = function () {
+            this.notify("notify");
+        }
+        cp.getCounter = function () {
+            this.request("getCounter");
+        }
+        cp.nonexistentMethod = function () {
+            this.request("nonexistentMethod");
+        }
+    </script>
+</head>
+<body>
+    <h1>JsonRpc.AspNetCore</h1>
+    <h2>ASP.NET Core Test Page</h2>
+    <hr />
+    <div>
+        <input type="button" value="getValue()" onclick="cp.getValue();" />
+        <input type="button" value="getValue(10)" onclick="cp.getValue(10);" />
+        <input type="button" value="getValue(-1)" onclick="cp.getValue(-1);" />
+        <input type="button" value="nonexistentMethod()" onclick="cp.nonexistentMethod();" />
+    </div>
+    <div>
+        <p>Click on "notify" some times; then "getCounter".</p>
+        <input type="button" value="notify()" onclick="cp.callNotify();" />
+        <input type="button" value="getCounter()" onclick="cp.getCounter();" />
+    </div>
+<pre id="resultContainer" style="white-space: pre-wrap; background-color: beige;"></pre>
+</body>
+</html>

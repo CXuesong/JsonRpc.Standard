@@ -21,6 +21,7 @@ namespace WebTestApplication.Services
         [JsonRpcMethod]
         public object GetValue(int id)
         {
+            if (id < 0) throw new ArgumentOutOfRangeException(nameof(id), "Id should be a non-negative integer.");
             return "value of " + id;
         }
 

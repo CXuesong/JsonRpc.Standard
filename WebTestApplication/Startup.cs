@@ -32,6 +32,8 @@ namespace WebTestApplication
         {
             // Add framework services.
             services.AddMvc();
+            services.AddMemoryCache();
+            services.AddSession();
             services.AddJsonRpc(builder =>
             {
                 builder.ContractResolver = new JsonRpcContractResolver
@@ -49,8 +51,10 @@ namespace WebTestApplication
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            app.UseSession();
             app.UseMvc();
             app.UseJsonRpc("/api/jsonrpc");
+            app.UseStaticFiles();
         }
     }
 }
