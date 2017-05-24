@@ -89,9 +89,12 @@ namespace JsonRpc.AspNetCore
                     }
                     context.RequestAborted.ThrowIfCancellationRequested();
                     var features = new AspNetCoreFeatureCollection(context);
-                    response = await host.InvokeAsync(message, features, context.RequestAborted).ConfigureAwait(false);
+                    var task = host.InvokeAsync(message, features, context.RequestAborted);
+                    // For notification, we don't wait for the task.
+                    response = message.IsNotification ? null : await task.ConfigureAwait(false);
                     WRITE_RESPONSE:
                     context.RequestAborted.ThrowIfCancellationRequested();
+                    if (response == null) return;
                     context.Response.ContentType = "application/json";
                     var responseContent = response.ToString();
                     if (response.Error != null)
