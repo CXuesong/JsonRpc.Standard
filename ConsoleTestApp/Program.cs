@@ -79,13 +79,14 @@ namespace ConsoleTestApp
         public static async Task RunClientAsync(BufferBlock<Message> inBuffer, BufferBlock<Message> outBuffer)
         {
             await Task.Yield(); // We want this task to run on another thread.
-            var client = new JsonRpcClient();
+            var clientHandler = new DataflowRpcClientHandler();
+            var client = new JsonRpcClient(clientHandler);
             var builder = new JsonRpcProxyBuilder
             {
                 ContractResolver = myContractResolver
             };
             var proxy = builder.CreateProxy<ILibraryService>(client);
-            client.Attach(inBuffer, outBuffer);
+            clientHandler.Attach(inBuffer, outBuffer);
             ClientWriteLine("Add books…");
             await proxy.PutBookAsync(new Book("Somewhere Within the Shadows", "Juan Díaz Canales & Juanjo Guarnido",
                 new DateTime(2004, 1, 1),

@@ -47,7 +47,8 @@ namespace UnitTestProject1
             CreateJsonRpcHostClient(UnitTestBase owner)
         {
             var server = CreateJsonRpcHost(owner);
-            var client = new JsonRpcClient();
+            var clientHandler = new DataflowRpcClientHandler();
+            var client = new JsonRpcClient(clientHandler);
             client.RequestCancelling += (_, e) =>
             {
                 ((JsonRpcClient) _).SendNotificationAsync("cancelRequest", JToken.FromObject(new {id = e.RequestId}),
@@ -56,7 +57,7 @@ namespace UnitTestProject1
             var serverBuffer = new BufferBlock<Message>();
             var clientBuffer = new BufferBlock<Message>();
             var lifetime1 = server.Attach(clientBuffer, serverBuffer);
-            var lifetime2 = client.Attach(serverBuffer, clientBuffer);
+            var lifetime2 = clientHandler.Attach(serverBuffer, clientBuffer);
             return (server, client, lifetime1, lifetime2);
         }
     }
