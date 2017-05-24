@@ -15,7 +15,7 @@ namespace JsonRpc.Dataflow
     /// Provides options for <see cref="JsonRpcClient"/>.
     /// </summary>
     [Flags]
-    public enum JsonRpcClientOptions
+    public enum DataflowRpcClientOptions
     {
         /// <summary>
         /// No special configurations.
@@ -38,11 +38,11 @@ namespace JsonRpc.Dataflow
         private readonly Dictionary<MessageId, TaskCompletionSource<ResponseMessage>> impendingRequestDict
             = new Dictionary<MessageId, TaskCompletionSource<ResponseMessage>>();
 
-        public DataflowRpcClientHandler() : this(JsonRpcClientOptions.None)
+        public DataflowRpcClientHandler() : this(DataflowRpcClientOptions.None)
         {
         }
 
-        public DataflowRpcClientHandler(JsonRpcClientOptions options)
+        public DataflowRpcClientHandler(DataflowRpcClientOptions options)
         {
             Options = options;
             OutBufferBlock = new BufferBlock<RequestMessage>();
@@ -66,7 +66,7 @@ namespace JsonRpc.Dataflow
         /// <summary>
         /// Client options.
         /// </summary>
-        public JsonRpcClientOptions Options { get; }
+        public DataflowRpcClientOptions Options { get; }
 
         /// <summary>
         /// The input buffer used to receive responses.
@@ -99,8 +99,8 @@ namespace JsonRpc.Dataflow
                     if (!tcs1.TrySetCanceled()) return;
                     // Note that server might still send the response after cancellation on the client.
                     // If we are going to keep all "foreign" responses, we need to be able to recgnize it later.
-                    var keepRequestIdInMind = (Options & JsonRpcClientOptions.PreserveForeignResponses) ==
-                                              JsonRpcClientOptions.PreserveForeignResponses;
+                    var keepRequestIdInMind = (Options & DataflowRpcClientOptions.PreserveForeignResponses) ==
+                                              DataflowRpcClientOptions.PreserveForeignResponses;
                     if (keepRequestIdInMind)
                     {
 #pragma warning disable 4014
@@ -170,8 +170,8 @@ namespace JsonRpc.Dataflow
                 var resp = m as ResponseMessage;
                 if (resp == null) return false;
                 // Discard foreign responses, if any.
-                if ((Options & JsonRpcClientOptions.PreserveForeignResponses) !=
-                    JsonRpcClientOptions.PreserveForeignResponses) return true;
+                if ((Options & DataflowRpcClientOptions.PreserveForeignResponses) !=
+                    DataflowRpcClientOptions.PreserveForeignResponses) return true;
                 // Or we will check if we're wating for this response.
                 lock (impendingRequestDict) return impendingRequestDict.ContainsKey(resp.Id);
             });
