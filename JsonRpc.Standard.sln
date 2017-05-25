@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTestApp", "ConsoleTestApp\ConsoleTestApp.csproj", "{A222E38E-FDBE-4D45-B6EC-C370F4FF2122}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonRpc.Dataflow", "JsonRpc.Dataflow\JsonRpc.Dataflow.csproj", "{DE82AD57-E69C-43B0-82A5-414758F60776}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonRpc.AspNetCore", "JsonRpc.AspNetCore\JsonRpc.AspNetCore.csproj", "{AC24E3C2-E5DA-4F7F-89D9-510390E619C1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTestApplication", "WebTestApplication\WebTestApplication.csproj", "{AC2EF87E-E04F-4917-9A0F-FD59254AA4E3}"
@@ -35,10 +33,6 @@ Global
 		{A222E38E-FDBE-4D45-B6EC-C370F4FF2122}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A222E38E-FDBE-4D45-B6EC-C370F4FF2122}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A222E38E-FDBE-4D45-B6EC-C370F4FF2122}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DE82AD57-E69C-43B0-82A5-414758F60776}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE82AD57-E69C-43B0-82A5-414758F60776}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DE82AD57-E69C-43B0-82A5-414758F60776}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DE82AD57-E69C-43B0-82A5-414758F60776}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AC24E3C2-E5DA-4F7F-89D9-510390E619C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AC24E3C2-E5DA-4F7F-89D9-510390E619C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC24E3C2-E5DA-4F7F-89D9-510390E619C1}.Release|Any CPU.ActiveCfg = Release|Any CPU

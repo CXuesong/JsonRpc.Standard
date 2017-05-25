@@ -134,12 +134,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JsonRpcDirectHandler.cs" />
     <Compile Include="JsonRpcStreamsTests.cs" />
-    <Compile Include="ServerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceHostTests.cs" />
     <Compile Include="TestJsonRpcService.cs" />
-    <Compile Include="ClientTest.cs" />
+    <Compile Include="ClientTests.cs" />
     <Compile Include="TestLogger.cs" />
     <Compile Include="TestRoutines.cs" />
     <Compile Include="UnitTestBase.cs" />
@@ -152,10 +152,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JsonRpc.Dataflow\JsonRpc.Dataflow.csproj">
-      <Project>{de82ad57-e69c-43b0-82a5-414758f60776}</Project>
-      <Name>JsonRpc.Dataflow</Name>
-    </ProjectReference>
     <ProjectReference Include="..\JsonRpc.Standard\JsonRpc.Standard.csproj">
       <Project>{f8154ef9-1cce-4d88-88c5-0f6be293482c}</Project>
       <Name>JsonRpc.Standard</Name>

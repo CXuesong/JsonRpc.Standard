@@ -142,7 +142,7 @@ namespace JsonRpc.Streams
 
         private async Task ProcessRequestAsync(RequestMessage message, CancellationToken ct, Task waitFor)
         {
-            var invokeTask = ServiceHost.InvokeAsync(message, null, ct);
+            var invokeTask = ServiceHost.InvokeAsync(message, DefaultFeatures, ct);
             var result = await invokeTask.ConfigureAwait(false);
             if (result == null) return;
             // Wait for the previous task to finish.

@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
-using JsonRpc.Dataflow;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
@@ -49,43 +48,6 @@ namespace UnitTestProject1
             }
             builder.LoggerFactory = owner.LoggerFactory;
             return builder.Build();
-        }
-
-        public static DataflowRpcServerHandler CreateJsonRpcHost(UnitTestBase owner)
-        {
-            var builder = new JsonRpcServiceHostBuilder();
-            builder.Register(typeof(Utility).Assembly);
-            builder.ContractResolver = DefaultContractResolver;
-            if (owner.Output != null)
-            {
-                builder.Intercept(async (context, next) =>
-                {
-                    owner.Output.WriteLine("> {0}", context.Request);
-                    await next();
-                    owner.Output.WriteLine("< {0}", context.Response);
-                });
-            }
-            builder.LoggerFactory = owner.LoggerFactory;
-            return new DataflowRpcServerHandler(builder.Build(), DataflowRpcServiceHostOptions.ConsistentResponseSequence);
-        }
-
-        public static
-            (DataflowRpcServerHandler Host, JsonRpcClient Client, IDisposable HostLifetime, IDisposable ClientLifetime)
-            CreateJsonRpcHostClient(UnitTestBase owner)
-        {
-            var server = CreateJsonRpcHost(owner);
-            var clientHandler = new DataflowRpcClientHandler();
-            var client = new JsonRpcClient(clientHandler);
-            client.RequestCancelling += (_, e) =>
-            {
-                ((JsonRpcClient) _).SendNotificationAsync("cancelRequest", JToken.FromObject(new {id = e.RequestId}),
-                    CancellationToken.None);
-            };
-            var serverBuffer = new BufferBlock<Message>();
-            var clientBuffer = new BufferBlock<Message>();
-            var lifetime1 = server.Attach(clientBuffer, serverBuffer);
-            var lifetime2 = clientHandler.Attach(serverBuffer, clientBuffer);
-            return (server, client, lifetime1, lifetime2);
         }
 
         public static async Task<int> WaitUntilAsync(Func<bool> condition, int maxMilliseconds)

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
-using JsonRpc.Dataflow;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
@@ -19,41 +18,38 @@ using Xunit.Abstractions;
 
 namespace UnitTestProject1
 {
-    public class ClientTest : UnitTestBase
+    public class ClientTests : UnitTestBase
     {
-        private readonly DataflowRpcServerHandler host;
-        private readonly JsonRpcClient client;
-        private readonly IDisposable hostLifetime, clientLifetime;
+        private readonly JsonRpcDirectHandler handler;
+        private readonly IJsonRpcServiceHost serviceHost;
         private readonly JsonRpcProxyBuilder proxyBuilder;
+        private readonly JsonRpcClient client;
 
-        public ClientTest(ITestOutputHelper output) : base(output)
+        public ClientTests(ITestOutputHelper output) : base(output)
         {
-            (host, client, hostLifetime, clientLifetime) = Utility.CreateJsonRpcHostClient(this);
+            serviceHost = Utility.CreateJsonRpcServiceHost(this);
+            handler = new JsonRpcDirectHandler(serviceHost);
+            client = new JsonRpcClient(handler);
+            client.RequestCancelling += (_, e) =>
+            {
+                ((JsonRpcClient) _).SendNotificationAsync("cancelRequest", JToken.FromObject(new {id = e.RequestId}),
+                    CancellationToken.None);
+            };
             proxyBuilder = new JsonRpcProxyBuilder {ContractResolver = Utility.DefaultContractResolver};
-        }
-
-        /// <inheritdoc />
-        public override void Dispose()
-        {
-            hostLifetime.Dispose();
-            clientLifetime.Dispose();
         }
 
         [Fact]
         public async Task ProxyTest()
         {
             var proxy = proxyBuilder.CreateProxy<ITestRpcContract>(client);
-            proxy.Delay();
-            proxy.Delay(TimeSpan.FromMilliseconds(100));
-            Assert.Equal(1, proxy.One());
-            Assert.Equal(1, proxy.One(false));
-            Assert.Equal(-1, proxy.One(true));
-            Assert.Equal(2, proxy.Two());
-            Assert.Equal(2, proxy.Two(false));
-            Assert.Equal(-2, proxy.Two(true));
-            Assert.Equal(100, proxy.Add(73, 27));
-            Assert.Equal("abcdef", proxy.Add("ab", "cdef"));
-            Assert.Equal(new Complex(100, 200), await proxy.MakeComplex(100, 200));
+            await TestRoutines.TestStubAsync(proxy);
+        }
+
+        [Fact]
+        public async Task ProxyExceptionTest()
+        {
+            var proxy = proxyBuilder.CreateProxy<ITestRpcExceptionContract>(client);
+            await TestRoutines.TestStubAsync(proxy);
         }
 
         // You should see something linke this in the output
@@ -92,13 +88,5 @@ namespace UnitTestProject1
             }
         }
 
-        [Fact]
-        public async Task ProxyExceptionTest()
-        {
-            var proxy = proxyBuilder.CreateProxy<ITestRpcExceptionContract>(client);
-            var ex = Assert.Throws<JsonRpcRemoteException>(() => proxy.ThrowException());
-            Output.WriteLine(await Assert.ThrowsAsync<JsonRpcRemoteException>(() => proxy.ThrowExceptionAsync()) + "");
-            await Assert.ThrowsAsync<JsonRpcContractException>(proxy.ContractViolatingMethodAsync);
-        }
     }
 }

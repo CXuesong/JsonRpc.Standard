@@ -11,6 +11,8 @@ namespace JsonRpc.Standard.Server
     /// </summary>
     public abstract class JsonRpcServerHandler
     {
+        private IFeatureCollection _DefaultFeatures;
+
         public JsonRpcServerHandler(IJsonRpcServiceHost serviceHost)
         {
             if (serviceHost == null) throw new ArgumentNullException(nameof(serviceHost));
@@ -25,6 +27,14 @@ namespace JsonRpc.Standard.Server
         /// <summary>
         /// Gets/sets the default features applied to the <see cref="RequestContext"/>.
         /// </summary>
-        public IFeatureCollection DefaultFeatures { get; set; }
+        public IFeatureCollection DefaultFeatures
+        {
+            get
+            {
+                if (_DefaultFeatures == null) _DefaultFeatures = new FeatureCollection();
+                return _DefaultFeatures;
+            }
+            set { _DefaultFeatures = value; }
+        }
     }
 }

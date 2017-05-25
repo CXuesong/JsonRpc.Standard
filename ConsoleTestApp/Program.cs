@@ -4,11 +4,12 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
-using JsonRpc.Dataflow;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
 using JsonRpc.Standard.Server;
+using JsonRpc.Streams;
+using Nerdbank;
 
 namespace ConsoleTestApp
 {
@@ -25,18 +26,24 @@ namespace ConsoleTestApp
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
-            // Here we use two buffers to simulate the console I/O
-            var serverBuffer = new BufferBlock<Message>();      // server --> client
-            var clientBuffer = new BufferBlock<Message>();      // client --> server
+            // Here we use two connected streams to simulate the console I/O
+            // Content written to streams.Item1 will be read from streams.Item2, vice versa.
+            var streams = FullDuplexStream.CreateStreams();
             // Let's start the test client first.
-            var clientTask = RunClientAsync(serverBuffer, clientBuffer);
+            var clientTask = RunClientAsync(streams.Item2);
             // Configure & build service host
+            var host = BuildServiceHost();
+            // Messages come from Stream
+            var serverHandler = new StreamRpcServerHandler(host);
+            // Though it's suggested that all feature types be interface types, for sake of
+            // simplicity, here we just use a concrete class.
             var session = new LibrarySessionFeature();
-            var host = BuildServiceHost(session);
+            serverHandler.DefaultFeatures.Set(session);
             // Connect the datablocks
             // If we want server to stop, just stop the source
-            using (host.Attach(clientBuffer, serverBuffer))
-            using (session.CancellationToken.Register(() => clientBuffer.Complete()))
+            using (var reader = new ByLineTextMessageReader(streams.Item1))
+            using (var writer = new ByLineTextMessageWriter(streams.Item1))
+            using (serverHandler.Attach(reader, writer))
             {
                 // Wait for exit
                 session.CancellationToken.WaitHandle.WaitOne();
@@ -46,7 +53,7 @@ namespace ConsoleTestApp
             clientTask.GetAwaiter().GetResult();
         }
 
-        private static DataflowRpcServerHandler BuildServiceHost(LibrarySessionFeature session)
+        private static IJsonRpcServiceHost BuildServiceHost()
         {
             var builder = new JsonRpcServiceHostBuilder
             {
@@ -61,12 +68,7 @@ namespace ConsoleTestApp
                 await next();
                 Console.WriteLine("< {0}", context.Response);
             });
-            var host = builder.Build();
-            var features = new FeatureCollection();
-            // Though it's suggested that all feature types be interface types, for sake of
-            // simplicity, here we just use a concrete class.
-            features.Set<LibrarySessionFeature>(session);
-            return new DataflowRpcServerHandler(host) {DefaultFeatures = features};
+            return builder.Build();
         }
 
         private static void ClientWriteLine(object s)
@@ -76,51 +78,55 @@ namespace ConsoleTestApp
             Console.ResetColor();
         }
 
-        public static async Task RunClientAsync(BufferBlock<Message> inBuffer, BufferBlock<Message> outBuffer)
+        public static async Task RunClientAsync(Stream clientStream)
         {
             await Task.Yield(); // We want this task to run on another thread.
-            var clientHandler = new DataflowRpcClientHandler();
-            var client = new JsonRpcClient(clientHandler);
-            var builder = new JsonRpcProxyBuilder
+            var clientHandler = new StreamRpcClientHandler();
+            using (var reader = new ByLineTextMessageReader(clientStream))
+            using (var writer = new ByLineTextMessageWriter(clientStream))
+            using (clientHandler.Attach(reader, writer))
             {
-                ContractResolver = myContractResolver
-            };
-            var proxy = builder.CreateProxy<ILibraryService>(client);
-            clientHandler.Attach(inBuffer, outBuffer);
-            ClientWriteLine("Add books…");
-            await proxy.PutBookAsync(new Book("Somewhere Within the Shadows", "Juan Díaz Canales & Juanjo Guarnido",
-                new DateTime(2004, 1, 1),
-                "1596878177"));
-            await proxy.PutBookAsync(new Book("Arctic Nation", "Juan Díaz Canales & Juanjo Guarnido",
-                new DateTime(2004, 1, 1),
-                "0743479351"));
-            ClientWriteLine("Available books:");
-            foreach (var isbn in await proxy.EnumBooksIsbn())
-            {
-                var book = await proxy.GetBookAsync(isbn);
-                ClientWriteLine(book);
+                var client = new JsonRpcClient(clientHandler);
+                var builder = new JsonRpcProxyBuilder
+                {
+                    ContractResolver = myContractResolver
+                };
+                var proxy = builder.CreateProxy<ILibraryService>(client);
+                ClientWriteLine("Add books…");
+                await proxy.PutBookAsync(new Book("Somewhere Within the Shadows", "Juan Díaz Canales & Juanjo Guarnido",
+                    new DateTime(2004, 1, 1),
+                    "1596878177"));
+                await proxy.PutBookAsync(new Book("Arctic Nation", "Juan Díaz Canales & Juanjo Guarnido",
+                    new DateTime(2004, 1, 1),
+                    "0743479351"));
+                ClientWriteLine("Available books:");
+                foreach (var isbn in await proxy.EnumBooksIsbn())
+                {
+                    var book = await proxy.GetBookAsync(isbn);
+                    ClientWriteLine(book);
+                }
+                ClientWriteLine("Attempt to query for an inexistent ISBN…");
+                try
+                {
+                    await proxy.GetBookAsync("test", true);
+                }
+                catch (JsonRpcRemoteException ex)
+                {
+                    ClientWriteLine(ex);
+                }
+                ClientWriteLine("Attempt to pass some invalid argument…");
+                try
+                {
+                    await proxy.PutBookAsync(null);
+                }
+                catch (JsonRpcRemoteException ex)
+                {
+                    ClientWriteLine(ex);
+                }
+                ClientWriteLine("Will shut down server in 5 seconds…");
+                await Task.Delay(5000);
+                proxy.Terminate();
             }
-            ClientWriteLine("Attempt to query for an inexistent ISBN…");
-            try
-            {
-                await proxy.GetBookAsync("test", true);
-            }
-            catch (JsonRpcRemoteException ex)
-            {
-                ClientWriteLine(ex);
-            }
-            ClientWriteLine("Attempt to pass some invalid argument…");
-            try
-            {
-                await proxy.PutBookAsync(null);
-            }
-            catch (JsonRpcRemoteException ex)
-            {
-                ClientWriteLine(ex);
-            }
-            ClientWriteLine("Will shut down server in 5 seconds…");
-            await Task.Delay(5000);
-            proxy.Terminate();
         }
     }
 }
