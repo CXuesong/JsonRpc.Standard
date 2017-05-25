@@ -2,6 +2,23 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard1.1</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DebugType>full</DebugType>
+
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>0.3.0</Version>
+    <Authors>CXuesong</Authors>
+    <Company />
+    <PackageId>CXuesong.JsonRpc.Streams</PackageId>
+    <Description>Stream-based server and client handler for CXuesong.JsonRpc.Standard.</Description>
+    <PackageTags>json rpc json-rpc json-rpc-server json-rpc-client stream</PackageTags>
+    <PackageProjectUrl>https://github.com/CXuesong/JsonRpc.Standard</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/CXuesong/JsonRpc.Standard</RepositoryUrl>
+    <NeutralLanguage>en-us</NeutralLanguage>
+    <PackageReleaseNotes>See https://github.com/CXuesong/JsonRpc.Standard/releases .</PackageReleaseNotes>
+    <Copyright>Copyright 2017 CXuesong</Copyright>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
+    <FileVersion>0.3.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
