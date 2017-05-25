@@ -21,17 +21,24 @@ namespace JsonRpc.Streams
 
         private static readonly byte[] headerTerminationSequence = {0x0d, 0x0a, 0x0d, 0x0a};
 
-        public PartwiseStreamMessageReader(Stream stream) : this(stream, Encoding.UTF8)
+        private readonly bool leaveOpen;
+
+        public PartwiseStreamMessageReader(Stream stream) : this(stream, Encoding.UTF8, false)
         {
 
         }
 
-        public PartwiseStreamMessageReader(Stream stream, Encoding encoding)
+        public PartwiseStreamMessageReader(Stream stream, Encoding encoding) : this(stream, encoding, false)
+        {
+        }
+
+        public PartwiseStreamMessageReader(Stream stream, Encoding encoding, bool leaveOpen)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
             if (encoding == null) throw new ArgumentNullException(nameof(encoding));
             BaseStream = stream;
             Encoding = encoding;
+            this.leaveOpen = leaveOpen;
         }
 
         public Stream BaseStream { get; }
@@ -132,6 +139,13 @@ namespace JsonRpc.Streams
                 using (var sr = new StreamReader(ms, Encoding))
                     return Message.LoadJson(sr);
             }
+        }
+
+        /// <inheritdoc />
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (!leaveOpen) BaseStream.Dispose();
         }
     }
 }

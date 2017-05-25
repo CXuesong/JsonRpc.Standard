@@ -16,18 +16,25 @@ namespace JsonRpc.Streams
     {
         private static readonly UTF8Encoding UTF8NoBom = new UTF8Encoding(false, true);
 
+        private readonly bool leaveOpen;
+
         private readonly SemaphoreSlim streamSemaphore = new SemaphoreSlim(1, 1);
 
-        public PartwiseStreamMessageWriter(Stream stream) : this(stream, UTF8NoBom)
+        public PartwiseStreamMessageWriter(Stream stream) : this(stream, UTF8NoBom, false)
         {
         }
 
-        public PartwiseStreamMessageWriter(Stream stream, Encoding encoding)
+        public PartwiseStreamMessageWriter(Stream stream, Encoding encoding) : this(stream, encoding, false)
+        {
+        }
+
+        public PartwiseStreamMessageWriter(Stream stream, Encoding encoding, bool leaveOpen)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
             if (encoding == null) throw new ArgumentNullException(nameof(encoding));
             BaseStream = stream;
             Encoding = encoding;
+            this.leaveOpen = leaveOpen;
         }
 
         public Stream BaseStream { get; }
@@ -39,13 +46,14 @@ namespace JsonRpc.Streams
         /// <inheritdoc />
         public override async Task WriteAsync(Message message, CancellationToken cancellationToken)
         {
+            if (message == null) throw new ArgumentNullException(nameof(message));
             cancellationToken.ThrowIfCancellationRequested();
+            using (var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, DisposalToken))
             using (var ms = new MemoryStream())
             {
-                using (var writer = new StreamWriter(ms, Encoding, 4096, true))
-                    message.WriteJson(writer);
-                cancellationToken.ThrowIfCancellationRequested();
-                await streamSemaphore.WaitAsync(cancellationToken);
+                using (var writer = new StreamWriter(ms, Encoding, 4096, true)) message.WriteJson(writer);
+                linkedTokenSource.Token.ThrowIfCancellationRequested();
+                await streamSemaphore.WaitAsync(linkedTokenSource.Token);
                 try
                 {
                     using (var writer = new StreamWriter(BaseStream, Encoding, 4096, true))
@@ -59,12 +67,12 @@ namespace JsonRpc.Streams
                         await writer.FlushAsync();
                     }
                     ms.Seek(0, SeekOrigin.Begin);
-                    await ms.CopyToAsync(BaseStream, 81920, cancellationToken);
+                    await ms.CopyToAsync(BaseStream, 81920, linkedTokenSource.Token);
                 }
                 catch (ObjectDisposedException)
                 {
                     // Throws OperationCanceledException if the cancellation has already been requested.
-                    cancellationToken.ThrowIfCancellationRequested();
+                    linkedTokenSource.Token.ThrowIfCancellationRequested();
                     throw;
                 }
                 finally
@@ -72,6 +80,13 @@ namespace JsonRpc.Streams
                     streamSemaphore.Release();
                 }
             }
+        }
+
+        /// <inheritdoc />
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (!leaveOpen) BaseStream.Dispose();
         }
     }
 }

@@ -1,0 +1,201 @@
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using JsonRpc.Standard;
+using JsonRpc.Standard.Server;
+
+namespace JsonRpc.Streams
+{
+    /// <summary>
+    /// Provides options for <see cref="JsonRpcServiceHost"/>.
+    /// </summary>
+    [Flags]
+    public enum StreamRpcServiceHostOptions
+    {
+        /// <summary>
+        /// No options.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// Makes the response sequence consistent with the request order.
+        /// </summary>
+        ConsistentResponseSequence,
+
+        /// <summary>
+        /// Enables request-cancellation with <see cref="StreamRpcServerHandler.TryCancelRequest"/>.
+        /// </summary>
+        SupportsRequestCancellation
+    }
+
+    /// <summary>
+    /// Pumps JSON RPC requests from <see cref="MessageReader"/> and dispatches them.
+    /// </summary>
+    public class StreamRpcServerHandler : JsonRpcServerHandler
+    {
+        private MessageWriter writer;
+        private readonly ConcurrentDictionary<MessageId, CancellationTokenSource> requestCtsDict;
+        //private readonly Queue<ResponseSlot> responseQueue;
+        private readonly bool preserveResponseOrder;
+
+        public StreamRpcServerHandler(IJsonRpcServiceHost serviceHost) : this(serviceHost,
+            StreamRpcServiceHostOptions.None)
+        {
+        }
+
+        public StreamRpcServerHandler(IJsonRpcServiceHost serviceHost,
+            StreamRpcServiceHostOptions options) : base(serviceHost)
+        {
+            requestCtsDict = (options & StreamRpcServiceHostOptions.SupportsRequestCancellation) ==
+                             StreamRpcServiceHostOptions.SupportsRequestCancellation
+                ? new ConcurrentDictionary<MessageId, CancellationTokenSource>()
+                : null;
+            preserveResponseOrder = (options & StreamRpcServiceHostOptions.ConsistentResponseSequence) ==
+                                    StreamRpcServiceHostOptions.ConsistentResponseSequence;
+        }
+
+        public IDisposable Attach(MessageReader reader, MessageWriter writer)
+        {
+            if (reader == null && writer == null)
+                throw new ArgumentException("Either inStream or outStream should not be null.");
+            if (writer != null && this.writer != null)
+                throw new NotSupportedException("Attaching to multiple writer is not supported.");
+            if (writer != null) this.writer = writer;
+            var cts = new CancellationTokenSource();
+            var pumpTask = ReaderPumpAsync(reader, cts.Token);
+            return new MyDisposable(this, cts, writer);
+        }
+
+        /// <summary>
+        /// Tries to cancel the specified request by request id.
+        /// </summary>
+        /// <param name="id">Id of the request to cancel.</param>
+        /// <exception cref="NotSupportedException"><see cref="StreamRpcServerHandler.SupportsRequestCancellation"/> is not specified in the constructor, so cancellation is not supported.</exception>
+        /// <returns><c>true</c> if the specified request has been cancelled. <c>false</c> if the specified request id has not found.</returns>
+        /// <remarks>If cancellation is supported, you may cancel an arbitary request in the <see cref="JsonRpcService"/> via <see cref="IRequestCancellationFeature"/>.</remarks>
+        public bool TryCancelRequest(MessageId id)
+        {
+            if (requestCtsDict == null) throw new NotSupportedException("Request cancellation is not supported.");
+            CancellationTokenSource cts;
+            if (!requestCtsDict.TryRemove(id, out cts)) return false;
+            cts.Cancel();
+            return true;
+        }
+
+        private async Task ReaderPumpAsync(MessageReader reader, CancellationToken ct)
+        {
+            Task lastRequestTask = null;
+            while (true)
+            {
+                ct.ThrowIfCancellationRequested();
+                var request = (RequestMessage) await reader.ReadAsync(m => m is RequestMessage, ct);
+                CancellationTokenSource cts = null;
+                var requestId = request.Id; // Defensive copy, in case request has been changed in the pipeline.
+                if (requestCtsDict != null && !request.IsNotification)
+                {
+                    cts = new CancellationTokenSource();
+                    if (!requestCtsDict.TryAdd(requestId, cts))
+                    {
+                        //logger.LogWarning(1001, ex, "Duplicate request id for client detected: Id = {id}",
+                        //    requestId);
+                        cts.Dispose();
+                        cts = null;
+                    }
+                }
+                try
+                {
+                    var task = ProcessRequestAsync(request, cts?.Token ?? CancellationToken.None,
+                        lastRequestTask);
+                    if (preserveResponseOrder && !request.IsNotification) lastRequestTask = task;
+                }
+                finally
+                {
+                    if (cts != null)
+                    {
+                        lock (requestCtsDict) requestCtsDict.TryRemove(requestId, out _);
+                        cts.Dispose();
+                    }
+                }
+            }
+        }
+
+        private async Task ProcessRequestAsync(RequestMessage message, CancellationToken ct, Task waitFor)
+        {
+            var invokeTask = ServiceHost.InvokeAsync(message, null, ct);
+            var result = await invokeTask.ConfigureAwait(false);
+            if (result == null) return;
+            // Wait for the previous task to finish.
+            if (waitFor != null) await waitFor.ConfigureAwait(false);
+            if (writer != null) await writer.WriteAsync(result, ct);
+        }
+
+        private class MyDisposable : IDisposable
+        {
+            private StreamRpcServerHandler owner;
+            private CancellationTokenSource readerCts;
+            private MessageWriter writer;
+
+            public MyDisposable(StreamRpcServerHandler owner, CancellationTokenSource readerCts, MessageWriter writer)
+            {
+                Debug.Assert(owner != null);
+                Debug.Assert(readerCts != null || writer != null);
+                this.owner = owner;
+                this.readerCts = readerCts;
+                this.writer = writer;
+            }
+
+            /// <inheritdoc />
+            public void Dispose()
+            {
+                if (owner == null) return;
+                readerCts?.Cancel();
+                if (owner.writer == writer) owner.writer = null;
+                readerCts = null;
+                writer = null;
+                owner = null;
+            }
+        }
+
+        private class ResponseSlot
+        {
+            private readonly TaskCompletionSource<ResponseMessage> tcs = new TaskCompletionSource<ResponseMessage>();
+
+            public ResponseSlot(MessageId id)
+            {
+                Id = id;
+            }
+
+            public MessageId Id { get; }
+
+            public Task<ResponseMessage> ResponseTask => tcs.Task;
+
+            public bool TrySetResult(ResponseMessage message)
+            {
+                return tcs.TrySetResult(message);
+            }
+        }
+
+        private class RequestCancellationFeature : IRequestCancellationFeature
+        {
+            private readonly StreamRpcServerHandler _Owner;
+
+            public RequestCancellationFeature(StreamRpcServerHandler owner)
+            {
+                Debug.Assert(owner != null);
+                _Owner = owner;
+            }
+
+            /// <inheritdoc />
+            public bool TryCancel(MessageId id)
+            {
+                return _Owner.TryCancelRequest(id);
+            }
+        }
+
+    }
+}

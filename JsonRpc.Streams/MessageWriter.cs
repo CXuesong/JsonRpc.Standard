@@ -11,7 +11,7 @@ namespace JsonRpc.Streams
     /// <summary>
     /// Represents a JSON RPC message writer.
     /// </summary>
-    public abstract class MessageWriter
+    public abstract class MessageWriter : IDisposable
     {
         /// <summary>
         /// Asynchronously writes a message.
@@ -21,5 +21,40 @@ namespace JsonRpc.Streams
         /// <remarks>This method should be thread-safe.</remarks>
         /// <exception cref="ArgumentNullException"><paramref name="message"/> is <c>null</c>.</exception>
         public abstract Task WriteAsync(Message message, CancellationToken cancellationToken);
+
+        private readonly CancellationTokenSource disposalTokenSource = new CancellationTokenSource();
+
+        protected CancellationToken DisposalToken => disposalTokenSource.Token;
+
+        /// <inheritdoc />
+        protected virtual void Dispose(bool disposing)
+        {
+            // release unmanaged resources here
+            if (disposing)
+            {
+                try
+                {
+                    disposalTokenSource.Cancel();
+                }
+                catch (AggregateException)
+                {
+
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            if (disposalTokenSource.IsCancellationRequested) return;
+            Dispose(true);
+            // GC.SuppressFinalize(this);
+        }
+
+        ///// <inheritdoc />
+        //~MessageReader()
+        //{
+        //    Dispose(false);
+        //}
     }
 }
