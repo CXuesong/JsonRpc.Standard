@@ -25,7 +25,11 @@ namespace JsonRpc.Standard
         {
             Message message;
             JObject json;
-            using (var jreader = new JsonTextReader(reader)) json = JObject.Load(jreader);
+            using (var jreader = new JsonTextReader(reader))
+            {
+                jreader.CloseInput = false;
+                json = JObject.Load(jreader);
+            }
             if (json["jsonrpc"] == null)
                 throw new ArgumentException("Content is not a valid JSON-RPC message.", nameof(reader));
             if (json["method"] == null)
@@ -48,6 +52,7 @@ namespace JsonRpc.Standard
         {
             using (var jwriter = new JsonTextWriter(writer))
             {
+                jwriter.CloseOutput = false;
                 Serializer.Serialize(jwriter, message);
             }
         }

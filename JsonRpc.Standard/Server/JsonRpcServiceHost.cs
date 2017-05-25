@@ -141,14 +141,32 @@ namespace JsonRpc.Standard.Server
                 return;
             }
             // Call the method
-            // Let the exceptions bubble up. We will handle it in InvokePipeline.
-            var result = await method.Invoker.InvokeAsync(context, args).ConfigureAwait(false);
-            // Produce the response.
-            if (context.Response != null && context.Response.Result == null && context.Response.Error == null)
+            try
             {
-                context.Response.Result = method.ReturnParameter.Converter.ValueToJson(result);
-                Debug.Assert(context.Response.Result != null);
+                var result = await method.Invoker.InvokeAsync(context, args).ConfigureAwait(false);
+                // Produce the response.
+                if (context.Response != null && context.Response.Result == null && context.Response.Error == null)
+                {
+                    if (result is ResponseError err)
+                        context.Response.Error = err;
+                    else
+                    {
+                        context.Response.Result = method.ReturnParameter.Converter.ValueToJson(result);
+                        // JValue(null) is not `null`
+                        Debug.Assert(context.Response.Result != null);
+                    }
+                }
             }
+            catch (JsonRpcException ex)
+            {
+                if (context.Response != null)
+                {
+                    context.Response.Result = null;
+                    context.Response.Error = ex.Error;
+                }
+            }
+            // Let other exceptions bubble up. We will handle them in the pipe, or finally in InvokePipeline.
         }
     }
 }
+

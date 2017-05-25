@@ -57,9 +57,17 @@ namespace UnitTestProject1
         [JsonRpcMethod("throwException")]
         Task ThrowExceptionAsync();
 
-        [JsonRpcMethod]
-        Task<int> Delay();
+        [JsonRpcMethod("delay")]
+        Task<int> ContractViolatingMethodAsync();      // Server returns void, but client requires an int.
 
+        [JsonRpcMethod("sum")]
+        int MismatchedMethod();
+
+        [JsonRpcMethod]
+        string MissingMethod();
+
+        [JsonRpcMethod]
+        void ManualResponseError();
     }
 
     public class TestJsonRpcService : JsonRpcService
@@ -83,22 +91,17 @@ namespace UnitTestProject1
         }
 
         [JsonRpcMethod]
-        public Task<int> Sum(int x, int y, CancellationToken ct)
+        public int Add(int x, int y, CancellationToken ct)
         {
-            // For backward compatibility
-            return Add(x, y, ct);
-        }
-
-        [JsonRpcMethod]
-        public async Task<int> Add(int x, int y, CancellationToken ct)
-        {
-            await Task.Delay(500, ct);
             return x + y;
         }
 
-        [JsonRpcMethod]
-        public string Add(string a, string b)
+        [JsonRpcMethod("add")]
+        public async Task<string> AddAsync(string a, string b)
         {
+            // do some work asynchronously…
+            await Task.Yield();
+            // return the result.
             return a + b;
         }
 
@@ -112,6 +115,12 @@ namespace UnitTestProject1
         public Task ThrowException()
         {
             throw new InvalidOperationException("The operation is invalid.", new InvalidTimeZoneException());
+        }
+
+        [JsonRpcMethod]
+        public object ManualResponseError()
+        {
+            return new ResponseError(123456, "Error via ResponseError");
         }
 
         [JsonRpcMethod]

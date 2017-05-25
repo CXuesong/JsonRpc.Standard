@@ -48,6 +48,7 @@ namespace JsonRpc.Streams
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
             cancellationToken.ThrowIfCancellationRequested();
+            DisposalToken.ThrowIfCancellationRequested();
             using (var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, DisposalToken))
             using (var ms = new MemoryStream())
             {

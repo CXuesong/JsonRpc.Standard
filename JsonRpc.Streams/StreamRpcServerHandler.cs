@@ -15,7 +15,7 @@ namespace JsonRpc.Streams
     /// Provides options for <see cref="JsonRpcServiceHost"/>.
     /// </summary>
     [Flags]
-    public enum StreamRpcServiceHostOptions
+    public enum StreamRpcServerHandlerOptions
     {
         /// <summary>
         /// No options.
@@ -28,13 +28,14 @@ namespace JsonRpc.Streams
         ConsistentResponseSequence,
 
         /// <summary>
-        /// Enables request-cancellation with <see cref="StreamRpcServerHandler.TryCancelRequest"/>.
+        /// Enables request cancellation via <see cref="StreamRpcServerHandler.TryCancelRequest"/>.
         /// </summary>
         SupportsRequestCancellation
     }
 
     /// <summary>
-    /// Pumps JSON RPC requests from <see cref="MessageReader"/> and dispatches them.
+    /// A request server handler that uses <see cref="MessageReader"/> and <see cref="MessageWriter"/>
+    /// to receive the requests, dispatch them, and send the responses.
     /// </summary>
     public class StreamRpcServerHandler : JsonRpcServerHandler
     {
@@ -44,30 +45,44 @@ namespace JsonRpc.Streams
         private readonly bool preserveResponseOrder;
 
         public StreamRpcServerHandler(IJsonRpcServiceHost serviceHost) : this(serviceHost,
-            StreamRpcServiceHostOptions.None)
+            StreamRpcServerHandlerOptions.None)
         {
         }
 
         public StreamRpcServerHandler(IJsonRpcServiceHost serviceHost,
-            StreamRpcServiceHostOptions options) : base(serviceHost)
+            StreamRpcServerHandlerOptions options) : base(serviceHost)
         {
-            requestCtsDict = (options & StreamRpcServiceHostOptions.SupportsRequestCancellation) ==
-                             StreamRpcServiceHostOptions.SupportsRequestCancellation
+            Options = options;
+            requestCtsDict = (options & StreamRpcServerHandlerOptions.SupportsRequestCancellation) ==
+                             StreamRpcServerHandlerOptions.SupportsRequestCancellation
                 ? new ConcurrentDictionary<MessageId, CancellationTokenSource>()
                 : null;
-            preserveResponseOrder = (options & StreamRpcServiceHostOptions.ConsistentResponseSequence) ==
-                                    StreamRpcServiceHostOptions.ConsistentResponseSequence;
+            preserveResponseOrder = (options & StreamRpcServerHandlerOptions.ConsistentResponseSequence) ==
+                                    StreamRpcServerHandlerOptions.ConsistentResponseSequence;
         }
 
+        /// <summary>
+        /// Server options.
+        /// </summary>
+        public StreamRpcServerHandlerOptions Options { get; }
+
+        /// <summary>
+        /// Attaches <see cref="MessageReader"/> and/or <see cref="MessageWriter"/> to the handler.
+        /// </summary>
+        /// <returns>A <see cref="IDisposable"/> that detaches the handlers when disposed.</returns>
         public IDisposable Attach(MessageReader reader, MessageWriter writer)
         {
             if (reader == null && writer == null)
                 throw new ArgumentException("Either inStream or outStream should not be null.");
             if (writer != null && this.writer != null)
                 throw new NotSupportedException("Attaching to multiple writer is not supported.");
+            CancellationTokenSource cts = null;
+            if (reader != null)
+            {
+                cts = new CancellationTokenSource();
+                var pumpTask = ReaderPumpAsync(reader, cts.Token);
+            }
             if (writer != null) this.writer = writer;
-            var cts = new CancellationTokenSource();
-            var pumpTask = ReaderPumpAsync(reader, cts.Token);
             return new MyDisposable(this, cts, writer);
         }
 
@@ -94,6 +109,7 @@ namespace JsonRpc.Streams
             {
                 ct.ThrowIfCancellationRequested();
                 var request = (RequestMessage) await reader.ReadAsync(m => m is RequestMessage, ct);
+                if (request == null) return;        // EOF reached.
                 CancellationTokenSource cts = null;
                 var requestId = request.Id; // Defensive copy, in case request has been changed in the pipeline.
                 if (requestCtsDict != null && !request.IsNotification)

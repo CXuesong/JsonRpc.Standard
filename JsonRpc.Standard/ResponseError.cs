@@ -49,6 +49,12 @@ namespace JsonRpc.Standard
     [JsonObject(MemberSerialization.OptIn)]
     public class ResponseError
     {
+        [JsonConstructor]
+        public ResponseError()
+        {
+            
+        }
+
         public ResponseError(int code, string message) : this(code, message, null)
         {
         }

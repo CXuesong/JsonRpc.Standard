@@ -109,7 +109,7 @@ namespace JsonRpc.Standard
         {
         }
 
-        internal RequestMessage(MessageId id, string method, JToken parameters)
+        public RequestMessage(MessageId id, string method, JToken parameters)
         {
             Id = id;
             Method = method;
@@ -314,17 +314,17 @@ namespace JsonRpc.Standard
             return new InvalidOperationException("Specified MessageId cannot be cast into the target type.");
         }
 
-        public static explicit operator MessageId(string str)
+        public static implicit operator MessageId(string str)
         {
             return new MessageId(str);
         }
 
-        public static explicit operator MessageId(int x)
+        public static implicit operator MessageId(int x)
         {
             return new MessageId(x);
         }
 
-        public static explicit operator MessageId(long x)
+        public static implicit operator MessageId(long x)
         {
             return new MessageId(x);
         }

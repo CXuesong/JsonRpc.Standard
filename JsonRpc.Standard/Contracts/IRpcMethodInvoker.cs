@@ -53,29 +53,36 @@ namespace JsonRpc.Standard.Contracts
         public async Task<object> InvokeAsync(RequestContext context, object[] arguments)
         {
             var inst = context.ServiceFactory.CreateService(serviceType, context);
-            inst.RequestContext = context;
-            object result;
             try
             {
-                result = methodInfo.Invoke(inst, arguments);
+                inst.RequestContext = context;
+                object result;
+                try
+                {
+                    result = methodInfo.Invoke(inst, arguments);
+                }
+                catch (TargetInvocationException ex)
+                {
+                    // Expand the actual exception.
+                    ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+                    // We should never reach here.
+                    throw;
+                }
+                if (result is Task taskResult)
+                {
+                    // Wait for the task to complete.
+                    await taskResult;
+                    // Then collect the result of the task.
+                    var resultMethod = taskResult.GetType().GetRuntimeProperty("Result");
+                    result = resultMethod?.GetValue(taskResult);
+                }
+                return result;
             }
-            catch (TargetInvocationException ex)
+            finally
             {
-                // Expand the actual exception.
-                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
-                // We should never reach here.
-                throw;
+                inst.RequestContext = null;
+                context.ServiceFactory.ReleaseService(inst);
             }
-            if (result is Task taskResult)
-            {
-                // Wait for the task to complete.
-                await taskResult;
-                // Then collect the result of the task.
-                var resultMethod = taskResult.GetType().GetRuntimeProperty("Result");
-                result = resultMethod?.GetValue(taskResult);
-            }
-            context.ServiceFactory.ReleaseService(inst);
-            return result;
         }
     }
 }

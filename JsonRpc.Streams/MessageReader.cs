@@ -79,6 +79,7 @@ namespace JsonRpc.Streams
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
             cancellationToken.ThrowIfCancellationRequested();
+            DisposalToken.ThrowIfCancellationRequested();
             LinkedListNode<Message> lastNode = null;
             using (var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, DisposalToken))
                 while (true)
@@ -142,7 +143,7 @@ namespace JsonRpc.Streams
         /// <summary>
         /// When overridden in the derived class, directly asynchronously reads the next message.
         /// </summary>
-        /// <param name="cancellationToken">A token that cancels the operation.</param>
+        /// <param name="cancellationToken">A token that cancels the operation OR indicates the current instance has just been disposed.</param>
         /// <exception cref="OperationCanceledException">The operation has been canceled.</exception>
         protected abstract Task<Message> ReadDirectAsync(CancellationToken cancellationToken);
 

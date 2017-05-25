@@ -50,6 +50,9 @@
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
     </Reference>
+    <Reference Include="Nerdbank.FullDuplexStream, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cac503e1823ce71c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nerdbank.FullDuplexStream.1.0.9\lib\dotnet\Nerdbank.FullDuplexStream.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -114,6 +117,9 @@
     <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
     </Reference>
+    <Reference Include="Validation, Version=2.3.0.0, Culture=neutral, PublicKeyToken=2fc06f0d701809a7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Validation.2.3.7\lib\dotnet\Validation.dll</HintPath>
+    </Reference>
     <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
       <HintPath>..\packages\xunit.abstractions.2.0.1\lib\net35\xunit.abstractions.dll</HintPath>
     </Reference>
@@ -128,17 +134,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JsonRpcStreamsTests.cs" />
     <Compile Include="ServerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceHostTests.cs" />
     <Compile Include="TestJsonRpcService.cs" />
     <Compile Include="ClientTest.cs" />
     <Compile Include="TestLogger.cs" />
+    <Compile Include="TestRoutines.cs" />
     <Compile Include="UnitTestBase.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JsonRpc.Dataflow\JsonRpc.Dataflow.csproj">
@@ -148,6 +159,10 @@
     <ProjectReference Include="..\JsonRpc.Standard\JsonRpc.Standard.csproj">
       <Project>{f8154ef9-1cce-4d88-88c5-0f6be293482c}</Project>
       <Name>JsonRpc.Standard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JsonRpc.Streams\JsonRpc.Streams.csproj">
+      <Project>{08d888ae-4e02-4ee3-be7f-e832b0bfad3e}</Project>
+      <Name>JsonRpc.Streams</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
