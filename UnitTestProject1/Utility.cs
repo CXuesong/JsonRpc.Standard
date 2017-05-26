@@ -29,16 +29,17 @@ namespace UnitTestProject1
             var builder = new JsonRpcServiceHostBuilder();
             builder.Register(typeof(Utility).Assembly);
             builder.ContractResolver = DefaultContractResolver;
+            var globalSw = Stopwatch.StartNew();
             if (owner.Output != null)
             {
                 builder.Intercept(async (context, next) =>
                 {
                     var sw = Stopwatch.StartNew();
-                    owner.Output.WriteLine("> {0}", context.Request);
+                    owner.Output.WriteLine("{0}> {1}", globalSw.Elapsed, context.Request);
                     try
                     {
                         await next();
-                        owner.Output.WriteLine("< {0}", context.Response);
+                        owner.Output.WriteLine("{0}< {1}", globalSw.Elapsed, context.Response);
                     }
                     finally
                     {

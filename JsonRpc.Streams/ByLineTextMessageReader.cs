@@ -16,6 +16,8 @@ namespace JsonRpc.Streams
     {
         private readonly SemaphoreSlim readerSemaphore = new SemaphoreSlim(1, 1);
 
+        private Stream underlyingStream;
+
         /// <summary>
         /// Initialize a line-by-line message reader from <see cref="TextReader" />.
         /// </summary>
@@ -62,14 +64,15 @@ namespace JsonRpc.Streams
         public ByLineTextMessageReader(Stream stream, string delimiter)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
-            Reader = new StreamReader(stream);
+            underlyingStream = stream;
+            Reader = new StreamReader(stream, Utility.UTF8NoBom, false, 1024, true);
             Delimiter = delimiter;
         }
 
         /// <summary>
         /// The underlying text reader.
         /// </summary>
-        public TextReader Reader { get; }
+        public TextReader Reader { get; private set; }
 
         /// <summary>
         /// The indicator for the end of a message.
@@ -80,6 +83,12 @@ namespace JsonRpc.Streams
         /// should be treated a message.
         /// </remarks>
         public string Delimiter { get; }
+
+        /// <summary>
+        /// Whether to leave <see cref="Reader"/> or <see cref="Stream"/> (if this instance is initialized with a Stream)
+        /// open when disposing this instance.
+        /// </summary>
+        public bool LeaveReaderOpen { get; set; }
 
         /// <inheritdoc />
         protected override async Task<Message> ReadDirectAsync(CancellationToken cancellationToken)
@@ -121,7 +130,7 @@ namespace JsonRpc.Streams
             }
             finally
             {
-                readerSemaphore.Release();
+                if (!DisposalToken.IsCancellationRequested) readerSemaphore.Release();
             }
         }
 
@@ -129,7 +138,20 @@ namespace JsonRpc.Streams
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            Reader.Dispose();
+            if (Reader == null) return;
+            readerSemaphore.Dispose();
+            if (LeaveReaderOpen)
+            {
+                if (underlyingStream != null)
+                    Reader.Dispose();
+            }
+            else
+            {
+                underlyingStream?.Dispose();
+                Reader.Dispose();
+            }
+            underlyingStream = null;
+            Reader = null;
         }
     }
 }

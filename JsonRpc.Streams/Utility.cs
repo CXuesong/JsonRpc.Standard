@@ -8,6 +8,9 @@ namespace JsonRpc.Streams
 {
     internal static class Utility
     {
+
+        public static readonly UTF8Encoding UTF8NoBom = new UTF8Encoding(false, true);
+
         public static int IndexOf<T>(this IList<T> source, IList<T> match)
         {
             return IndexOf<T>(source, match, EqualityComparer<T>.Default);

@@ -21,32 +21,46 @@ namespace JsonRpc.Streams
 
         private static readonly byte[] headerTerminationSequence = {0x0d, 0x0a, 0x0d, 0x0a};
 
-        private readonly bool leaveOpen;
-
-        public PartwiseStreamMessageReader(Stream stream) : this(stream, Encoding.UTF8, false)
+        public PartwiseStreamMessageReader(Stream stream) : this(stream, Encoding.UTF8)
         {
 
         }
 
-        public PartwiseStreamMessageReader(Stream stream, Encoding encoding) : this(stream, encoding, false)
-        {
-        }
-
-        public PartwiseStreamMessageReader(Stream stream, Encoding encoding, bool leaveOpen)
+        public PartwiseStreamMessageReader(Stream stream, Encoding encoding)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
             if (encoding == null) throw new ArgumentNullException(nameof(encoding));
             BaseStream = stream;
             Encoding = encoding;
-            this.leaveOpen = leaveOpen;
         }
 
-        public Stream BaseStream { get; }
+        /// <summary>
+        /// The underlying stream to read messages from.
+        /// </summary>
+        public Stream BaseStream { get; private set; }
 
-        public Encoding Encoding { get; }
+        /// <summary>
+        /// Default encoding of the received messages.
+        /// </summary>
+        /// <remarks>
+        /// If "charset" part is detected in the header part of the message, the specified charset will be
+        /// tried first. If the reader cannot recognize the specified encoding, the default encoding will be used.
+        /// </remarks>
+        public Encoding Encoding
+        {
+            get => _Encoding;
+            set => _Encoding = value ?? Encoding.UTF8;
+        }
+
+        /// <summary>
+        /// Whether to leave <see cref="BaseStream"/> open when disposing this instance.
+        /// </summary>
+        public bool LeaveStreamOpen { get; set; }
 
         // Used to store the exceeded content during last read.
-        private readonly List<byte> headerBuffer = new List<byte>(headerBufferSize);
+        private List<byte> headerBuffer = new List<byte>(headerBufferSize);
+
+        private Encoding _Encoding;
 
         /// <inheritdoc />
         protected override async Task<Message> ReadDirectAsync(CancellationToken cancellationToken)
@@ -58,17 +72,7 @@ namespace JsonRpc.Streams
             {
                 // Read until \r\n\r\n is found.
                 var headerSubBuffer = new byte[headerBufferSize];
-                int readLength;
-                try
-                {
-                    readLength = await BaseStream.ReadAsync(headerSubBuffer, 0, headerBufferSize, cancellationToken);
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Throws OperationCanceledException if the cancellation has already been requested.
-                    cancellationToken.ThrowIfCancellationRequested();
-                    throw;
-                }
+                var readLength = await BaseStream.ReadAsync(headerSubBuffer, 0, headerBufferSize, cancellationToken);
                 if (readLength == 0)
                 {
                     if (headerBuffer.Count == 0)
@@ -115,24 +119,14 @@ namespace JsonRpc.Streams
                 headerBuffer.CopyTo(contentOffset, contentBuffer, 0, headerBuffer.Count - contentOffset);
                 var pos = headerBuffer.Count - contentOffset; // The position to put the next character.
                 headerBuffer.Clear();
-                try
+                while (pos < contentLength)
                 {
-                    while (pos < contentLength)
-                    {
-                        var length = BaseStream.Read(contentBuffer, pos,
-                            Math.Min(contentLength - pos, contentBufferSize));
-                        if (length == 0) throw new JsonRpcException("Unexpected EOF when reading content.");
-                        pos += length;
-                    }
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Throws OperationCanceledException if the cancellation has already been requested.
-                    cancellationToken.ThrowIfCancellationRequested();
-                    throw;
+                    var length = BaseStream.Read(contentBuffer, pos,
+                        Math.Min(contentLength - pos, contentBufferSize));
+                    if (length == 0) throw new JsonRpcException("Unexpected EOF when reading content.");
+                    pos += length;
                 }
             }
-            // Release the semaphore ASAP.
             // Deserialization
             using (var ms = new MemoryStream(contentBuffer))
             {
@@ -145,7 +139,10 @@ namespace JsonRpc.Streams
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            if (!leaveOpen) BaseStream.Dispose();
+            if (BaseStream == null) return;
+            if (!LeaveStreamOpen) BaseStream.Dispose();
+            BaseStream = null;
+            headerBuffer = null;
         }
     }
 }

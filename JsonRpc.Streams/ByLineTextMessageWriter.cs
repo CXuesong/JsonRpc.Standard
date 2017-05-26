@@ -15,6 +15,8 @@ namespace JsonRpc.Streams
     {
         private readonly SemaphoreSlim writerSemaphore = new SemaphoreSlim(1, 1);
 
+        private Stream underlyingStream;
+
         /// <summary>
         /// Initialize a line-by-line message writer to <see cref="TextWriter" />.
         /// </summary>
@@ -61,6 +63,7 @@ namespace JsonRpc.Streams
         public ByLineTextMessageWriter(Stream stream, string delimiter)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
+            underlyingStream = stream;
             Writer = new StreamWriter(stream);
             Delimiter = delimiter;
         }
@@ -69,7 +72,7 @@ namespace JsonRpc.Streams
         /// <summary>
         /// The underlying text writer.
         /// </summary>
-        public TextWriter Writer { get; }
+        public TextWriter Writer { get; private set; }
 
         /// <summary>
         /// The indicator for the end of a message.
@@ -81,10 +84,18 @@ namespace JsonRpc.Streams
         /// </remarks>
         public string Delimiter { get; }
 
+        /// <summary>
+        /// Whether to leave <see cref="Writer"/> or <see cref="Stream"/> (if this instance is initialized with a Stream)
+        /// open when disposing this instance.
+        /// </summary>
+        public bool LeaveWriterOpen { get; set; }
+
         /// <inheritdoc />
         public override async Task WriteAsync(Message message, CancellationToken cancellationToken)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
+            if (DisposalToken.IsCancellationRequested)
+                throw new ObjectDisposedException(nameof(ByLineTextMessageWriter));
             cancellationToken.ThrowIfCancellationRequested();
             DisposalToken.ThrowIfCancellationRequested();
             using (var linkedTokenSource =
@@ -106,7 +117,7 @@ namespace JsonRpc.Streams
                 }
                 finally
                 {
-                    writerSemaphore.Release();
+                    if (!DisposalToken.IsCancellationRequested) writerSemaphore.Release();
                 }
             }
         }
@@ -115,7 +126,19 @@ namespace JsonRpc.Streams
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            Writer.Dispose();
+            if (Writer == null) return;
+            if (LeaveWriterOpen)
+            {
+                if (underlyingStream != null)
+                    Writer.Dispose();
+            }
+            else
+            {
+                underlyingStream?.Dispose();
+                Writer.Dispose();
+            }
+            underlyingStream = null;
+            Writer = null;
         }
     }
 }

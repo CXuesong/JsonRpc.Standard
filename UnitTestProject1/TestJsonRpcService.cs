@@ -29,6 +29,9 @@ namespace UnitTestProject1
         [JsonRpcMethod]
         int Add(int x, int y);
 
+        [JsonRpcMethod("add")]
+        Task<int> AddAsync(int x, int y);
+
         [JsonRpcMethod]
         string Add(string a, string b);
 

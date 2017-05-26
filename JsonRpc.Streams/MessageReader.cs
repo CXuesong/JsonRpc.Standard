@@ -79,65 +79,92 @@ namespace JsonRpc.Streams
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
             cancellationToken.ThrowIfCancellationRequested();
-            DisposalToken.ThrowIfCancellationRequested();
+            if (DisposalToken.IsCancellationRequested)
+                throw new ObjectDisposedException(nameof(PartwiseStreamMessageReader));
             LinkedListNode<Message> lastNode = null;
-            using (var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, DisposalToken))
-                while (true)
+            using (var linkedTokenSource =
+                CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, DisposalToken))
+            {
+                try
                 {
-                    await messagesLock.WaitAsync(linkedTokenSource.Token);
-                    try
+                    while (true)
                     {
-                        // Check if there's a satisfying item in the queue.
-                        var node = lastNode?.Next == null ? messages.First : lastNode;
-                        while (node != null)
-                        {
-                            if (filter(node.Value))
-                            {
-                                messages.Remove(node);
-                                return node.Value;
-                            }
-                            node = node.Next;
-                        }
-                        lastNode = messages.Last;
-                    }
-                    finally
-                    {
-                        messagesLock.Release();
-                    }
-                    if (fetchMessagesLock.Wait(0))
-                    {
-                        // Fetch the next message, and decide whether it can pass the filter.
+                        await messagesLock.WaitAsync(linkedTokenSource.Token);
                         try
                         {
-                            var next = await ReadDirectAsync(linkedTokenSource.Token);
-                            if (next == null) return null; // EOF reached.
-                            if (filter(next)) return next; // We're lucky.
-                            // We still need to put the next item into the queue
-                            // ReSharper disable once MethodSupportsCancellation
-                            await messagesLock.WaitAsync(DisposalToken);
-                            try
+                            // Check if there's a satisfying item in the queue.
+                            var node = lastNode?.Next == null ? messages.First : lastNode;
+                            while (node != null)
                             {
-                                messages.AddLast(next);
+                                if (filter(node.Value))
+                                {
+                                    messages.Remove(node);
+                                    return node.Value;
+                                }
+                                node = node.Next;
                             }
-                            finally
-                            {
-                                messagesLock.Release();
-                            }
-                            // After that, we can check the cancellation
-                            linkedTokenSource.Token.ThrowIfCancellationRequested();
+                            lastNode = messages.Last;
                         }
                         finally
                         {
+                            messagesLock.Release();
+                        }
+                        if (fetchMessagesLock.Wait(0))
+                        {
+                            // Fetch the next message, and decide whether it can pass the filter.
+                            try
+                            {
+                                var next = await ReadDirectAsync(linkedTokenSource.Token);
+                                if (next == null) return null; // EOF reached.
+                                if (linkedTokenSource.IsCancellationRequested)
+                                {
+                                    // We don't want to lose any message because of cancellation…
+                                    await messagesLock.WaitAsync(DisposalToken);
+                                    try
+                                    {
+                                        messages.AddLast(next);
+                                    }
+                                    finally
+                                    {
+                                        messagesLock.Release();
+                                    }
+                                    linkedTokenSource.Token.ThrowIfCancellationRequested();
+                                }
+                                if (filter(next)) return next; // We're lucky.
+                                // We still need to put the next item into the queue
+                                // ReSharper disable once MethodSupportsCancellation
+                                await messagesLock.WaitAsync(DisposalToken);
+                                try
+                                {
+                                    messages.AddLast(next);
+                                }
+                                finally
+                                {
+                                    messagesLock.Release();
+                                }
+                                // After that, we can check the cancellation
+                                linkedTokenSource.Token.ThrowIfCancellationRequested();
+                            }
+                            finally
+                            {
+                                fetchMessagesLock.Release();
+                            }
+                        }
+                        else
+                        {
+                            // Or wait for the next message to come.
+                            linkedTokenSource.Token.ThrowIfCancellationRequested();
+                            await fetchMessagesLock.WaitAsync(linkedTokenSource.Token);
                             fetchMessagesLock.Release();
                         }
                     }
-                    else
-                    {
-                        // Or wait for the next message to come.
-                        await fetchMessagesLock.WaitAsync(linkedTokenSource.Token);
-                        fetchMessagesLock.Release();
-                    }
                 }
+                catch (ObjectDisposedException)
+                {
+                    linkedTokenSource.Token.ThrowIfCancellationRequested();
+                    throw;
+                }
+            }
         }
 
         /// <summary>

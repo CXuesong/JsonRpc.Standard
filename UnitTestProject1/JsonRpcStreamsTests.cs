@@ -81,6 +81,46 @@ namespace UnitTestProject1
                 await TestRoutines.TestStubAsync(client.ClientExceptionStub);
             }
         }
+        
+        [Fact]
+        public async Task ConsistentResponseSequenceTest()
+        {
+            (var ss, var cs) = FullDuplexStream.CreateStreams();
+            using (var clientReader = new ByLineTextMessageReader(cs))
+            using (var clientWriter = new ByLineTextMessageWriter(cs))
+            using (var serverReader = new ByLineTextMessageReader(ss))
+            using (var serverWriter = new ByLineTextMessageWriter(ss))
+            using (var client = new ClientTestHelper(clientReader, clientWriter))
+            {
+                using (var server = new ServerTestHelper(this, serverReader, serverWriter,
+                    StreamRpcServerHandlerOptions.None))
+                {
+                    // The responses are ordered by the time of completion.
+                    var delayTask =
+                        client.ClientStub.DelayAsync(TimeSpan.FromMilliseconds(200), CancellationToken.None);
+                    var addTask = client.ClientStub.AddAsync(3, -4);
+                    var result = await addTask;
+                    Assert.Equal(-1, result);
+                    // addTask completes first.
+                    Assert.False(delayTask.IsCompleted);
+                    await delayTask;
+                }
+                using (var server = new ServerTestHelper(this, serverReader, serverWriter,
+                    StreamRpcServerHandlerOptions.ConsistentResponseSequence))
+                {
+                    // The responses are in the same order as the requests.
+                    var delayTask =
+                        client.ClientStub.DelayAsync(TimeSpan.FromMilliseconds(200), CancellationToken.None);
+                    var addTask = client.ClientStub.AddAsync(10, 20);
+                    await Task.Delay(100);
+                    // addTask is held up.
+                    Assert.False(addTask.IsCompleted);
+                    await delayTask;
+                    var result = await addTask;
+                    Assert.Equal(30, result);
+                }
+            }
+        }
 
         public class ServerTestHelper : IDisposable
     {
@@ -95,9 +135,6 @@ namespace UnitTestProject1
             ServerMessageReader = reader;
             ServerMessageWriter = writer;
             disposables.Add(ServerHandler.Attach(ServerMessageReader, ServerMessageWriter));
-
-            disposables.Add(ServerMessageReader);
-            disposables.Add(ServerMessageWriter);
         }
 
         public IJsonRpcServiceHost ServiceHost { get; }
@@ -132,9 +169,6 @@ namespace UnitTestProject1
                 var proxyBuilder = new JsonRpcProxyBuilder {ContractResolver = Utility.DefaultContractResolver};
                 ClientStub = proxyBuilder.CreateProxy<ITestRpcContract>(Client);
                 ClientExceptionStub = proxyBuilder.CreateProxy<ITestRpcExceptionContract>(Client);
-
-                disposables.Add(ClientMessageReader);
-                disposables.Add(ClientMessageWriter);
             }
 
             public JsonRpcClient Client { get; }
