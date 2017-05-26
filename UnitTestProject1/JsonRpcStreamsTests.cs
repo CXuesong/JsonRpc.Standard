@@ -11,6 +11,7 @@ using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Server;
 using JsonRpc.Streams;
 using Nerdbank;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnitTestProject1;
 using Xunit;
@@ -25,6 +26,53 @@ namespace UnitTestProject1
         public JsonRpcStreamsTests(ITestOutputHelper output) : base(output)
         {
 
+        }
+
+        private readonly RequestMessage TestMessage = new RequestMessage(1, "test");
+
+        private readonly byte[] TestMessagePartwiseStreamContent =
+                Encoding.UTF8.GetBytes(
+                    "Content-Length: 40\r\nContent-Type: application/json-rpc;charset=utf-8\r\n\r\n{\"id\":1,\"method\":\"test\",\"jsonrpc\":\"2.0\"}")
+            ;
+
+        [Fact]
+        public async Task PartwiseStreamWriterTest()
+        {
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new PartwiseStreamMessageWriter(stream))
+                {
+                    writer.LeaveStreamOpen = true;
+                    await writer.WriteAsync(TestMessage, CancellationToken.None);
+                }
+                stream.Seek(0, SeekOrigin.Begin);
+                using (var reader = new StreamReader(stream))
+                {
+                    var text = reader.ReadToEnd();
+                    Output.WriteLine(text);
+                }
+                Assert.Equal(TestMessagePartwiseStreamContent, stream.ToArray());
+            }
+        }
+
+
+        [Fact]
+        public async Task PartwiseStreamReaderTest()
+        {
+            var buffer = TestMessagePartwiseStreamContent.Concat(TestMessagePartwiseStreamContent).ToArray();
+            using (var stream = new MemoryStream(buffer))
+            {
+                using (var reader = new PartwiseStreamMessageReader(stream))
+                {
+                    var message1 = await reader.ReadAsync(m => true, CancellationToken.None);
+                    Output.WriteLine(message1.ToString());
+                    var message2 = await reader.ReadAsync(m => true, CancellationToken.None);
+                    Output.WriteLine(message2.ToString());
+                    Assert.Null(await reader.ReadAsync(m => true, CancellationToken.None));
+                    Assert.Equal(JsonConvert.SerializeObject(TestMessage), JsonConvert.SerializeObject(message1));
+                    Assert.Equal(JsonConvert.SerializeObject(TestMessage), JsonConvert.SerializeObject(message2));
+                }
+            }
         }
 
         [Fact]
@@ -53,7 +101,7 @@ namespace UnitTestProject1
                     var response = await WaitForResponse();
                     Assert.Equal(messageId, response.Id);
                     Assert.Null(response.Error);
-                    Assert.Equal((int) response.Result, 55);
+                    Assert.Equal(55, (int) response.Result);
                     return response;
                 }
                 using (var server = new ServerTestHelper(this, serverReader, serverWriter,
@@ -81,7 +129,23 @@ namespace UnitTestProject1
                 await TestRoutines.TestStubAsync(client.ClientExceptionStub);
             }
         }
-        
+
+        [Fact]
+        public async Task PartwiseStreamCancellationTest()
+        {
+            (var ss, var cs) = FullDuplexStream.CreateStreams();
+            using (var clientReader = new ByLineTextMessageReader(cs))
+            using (var clientWriter = new ByLineTextMessageWriter(cs))
+            using (var serverReader = new ByLineTextMessageReader(ss))
+            using (var serverWriter = new ByLineTextMessageWriter(ss))
+            using (var server = new ServerTestHelper(this, serverReader, serverWriter,
+                StreamRpcServerHandlerOptions.SupportsRequestCancellation))
+            using (var client = new ClientTestHelper(clientReader, clientWriter))
+            {
+                await TestRoutines.TestCancellationAsync(client.ClientCancellationStub);
+            }
+        }
+
         [Fact]
         public async Task ConsistentResponseSequenceTest()
         {
@@ -169,6 +233,7 @@ namespace UnitTestProject1
                 var proxyBuilder = new JsonRpcProxyBuilder {ContractResolver = Utility.DefaultContractResolver};
                 ClientStub = proxyBuilder.CreateProxy<ITestRpcContract>(Client);
                 ClientExceptionStub = proxyBuilder.CreateProxy<ITestRpcExceptionContract>(Client);
+                ClientCancellationStub = proxyBuilder.CreateProxy<ITestRpcCancallationContract>(Client);
             }
 
             public JsonRpcClient Client { get; }
@@ -182,7 +247,9 @@ namespace UnitTestProject1
             public ITestRpcContract ClientStub { get; }
 
             public ITestRpcExceptionContract ClientExceptionStub { get; }
-            
+
+            public ITestRpcCancallationContract ClientCancellationStub { get; }
+
             /// <inheritdoc />
             public void Dispose()
             {

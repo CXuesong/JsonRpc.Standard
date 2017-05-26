@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
@@ -54,6 +55,18 @@ namespace UnitTestProject1
             }
             {
                 var ex = await Assert.ThrowsAsync<JsonRpcContractException>(stub.ContractViolatingMethodAsync);
+            }
+        }
+
+        public static async Task TestCancellationAsync(ITestRpcCancallationContract stub)
+        {
+            await stub.Delay(TimeSpan.FromMilliseconds(50));
+            Assert.True(await stub.IsLastDelayFinished());
+            using (var cts = new CancellationTokenSource(100))
+            {
+                await Assert.ThrowsAsync<TaskCanceledException>(
+                    () => stub.Delay(TimeSpan.FromSeconds(1), cts.Token));
+                Assert.False(await stub.IsLastDelayFinished());
             }
         }
     }

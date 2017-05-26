@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
@@ -27,9 +26,10 @@ namespace UnitTestProject1
         public static IJsonRpcServiceHost CreateJsonRpcServiceHost(UnitTestBase owner)
         {
             var builder = new JsonRpcServiceHostBuilder();
-            builder.Register(typeof(Utility).Assembly);
+            builder.Register(typeof(Utility).GetTypeInfo().Assembly);
             builder.ContractResolver = DefaultContractResolver;
             var globalSw = Stopwatch.StartNew();
+            var session = new SessionFeature();
             if (owner.Output != null)
             {
                 builder.Intercept(async (context, next) =>
@@ -38,6 +38,7 @@ namespace UnitTestProject1
                     owner.Output.WriteLine("{0}> {1}", globalSw.Elapsed, context.Request);
                     try
                     {
+                        context.Features.Set(session);
                         await next();
                         owner.Output.WriteLine("{0}< {1}", globalSw.Elapsed, context.Response);
                     }

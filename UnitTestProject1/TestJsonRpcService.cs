@@ -46,9 +46,6 @@ namespace UnitTestProject1
 
         [JsonRpcMethod]
         void Delay();
-
-        [JsonRpcMethod(IsNotification = true)]
-        void CancelRequest(MessageId id);
     }
 
     public interface ITestRpcExceptionContract
@@ -71,6 +68,23 @@ namespace UnitTestProject1
 
         [JsonRpcMethod]
         void ManualResponseError();
+    }
+
+    public interface ITestRpcCancallationContract
+    {
+
+        [JsonRpcMethod]
+        Task Delay(TimeSpan duration);
+
+        [JsonRpcMethod]
+        Task Delay(TimeSpan duration, CancellationToken cancellationToken);
+
+        [JsonRpcMethod]
+        Task<bool> IsLastDelayFinished();
+
+        [JsonRpcMethod(IsNotification = true)]
+        void CancelRequest(MessageId id);
+
     }
 
     public class TestJsonRpcService : JsonRpcService
@@ -127,15 +141,25 @@ namespace UnitTestProject1
         }
 
         [JsonRpcMethod]
-        public Task Delay(TimeSpan duration, CancellationToken ct)
+        public async Task Delay(TimeSpan duration, CancellationToken ct)
         {
-            return Task.Delay(duration, ct);
+            RequestContext.Features.Get<SessionFeature>().IsLastDelayFinished = false;
+            await Task.Delay(duration, ct);
+            RequestContext.Features.Get<SessionFeature>().IsLastDelayFinished = true;
         }
 
         [JsonRpcMethod]
         public void Delay(CancellationToken ct)
         {
+            RequestContext.Features.Get<SessionFeature>().IsLastDelayFinished = false;
             Task.Delay(100, ct).Wait(ct);
+            RequestContext.Features.Get<SessionFeature>().IsLastDelayFinished = true;
+        }
+
+        [JsonRpcMethod]
+        public bool IsLastDelayFinished()
+        {
+            return RequestContext.Features.Get<SessionFeature>().IsLastDelayFinished;
         }
 
         [JsonRpcMethod(IsNotification = true)]
