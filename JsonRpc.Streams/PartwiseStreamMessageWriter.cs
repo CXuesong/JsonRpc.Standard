@@ -8,38 +8,31 @@ using JsonRpc.Standard;
 namespace JsonRpc.Streams
 {
     /// <summary>
-    /// Writes JSON RPC messages to a <see cref="Stream"/>,
+    /// Writes JSON RPC messages to a <see cref="System.IO.Stream"/>,
     /// in the format specified in Microsoft Language Server Protocol
     /// (https://github.com/Microsoft/language-server-protocol/blob/master/protocol.md).
     /// </summary>
     public class PartwiseStreamMessageWriter : MessageWriter
     {
 
-        private readonly bool leaveOpen;
-
         private readonly SemaphoreSlim streamSemaphore = new SemaphoreSlim(1, 1);
         private Encoding _Encoding;
 
-        public PartwiseStreamMessageWriter(Stream stream) : this(stream, Utility.UTF8NoBom, false)
+        public PartwiseStreamMessageWriter(Stream stream) : this(stream, Utility.UTF8NoBom)
         {
         }
 
-        public PartwiseStreamMessageWriter(Stream stream, Encoding encoding) : this(stream, encoding, false)
-        {
-        }
-
-        public PartwiseStreamMessageWriter(Stream stream, Encoding encoding, bool leaveOpen)
+        public PartwiseStreamMessageWriter(Stream stream, Encoding encoding)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
-            BaseStream = stream;
+            Stream = stream;
             Encoding = encoding;
-            this.leaveOpen = leaveOpen;
         }
 
         /// <summary>
         /// The underlying stream to write messages into.
         /// </summary>
-        public Stream BaseStream { get; private set; }
+        public Stream Stream { get; private set; }
 
         /// <summary>
         /// Encoding of the emitted messages.
@@ -56,7 +49,7 @@ namespace JsonRpc.Streams
         public string ContentType { get; set; }
 
         /// <summary>
-        /// Whether to leave <see cref="BaseStream"/> open when disposing this instance.
+        /// Whether to leave <see cref="Stream"/> open when disposing this instance.
         /// </summary>
         public bool LeaveStreamOpen { get; set; }
 
@@ -77,7 +70,7 @@ namespace JsonRpc.Streams
                     await streamSemaphore.WaitAsync(linkedTokenSource.Token);
                     try
                     {
-                        using (var writer = new StreamWriter(BaseStream, Encoding, 4096, true))
+                        using (var writer = new StreamWriter(Stream, Encoding, 4096, true))
                         {
                             await writer.WriteAsync("Content-Length: ");
                             await writer.WriteAsync(ms.Length.ToString());
@@ -88,7 +81,7 @@ namespace JsonRpc.Streams
                             await writer.FlushAsync();
                         }
                         ms.Seek(0, SeekOrigin.Begin);
-                        await ms.CopyToAsync(BaseStream, 81920, linkedTokenSource.Token);
+                        await ms.CopyToAsync(Stream, 81920, linkedTokenSource.Token);
                     }
                     finally
                     {
@@ -108,9 +101,9 @@ namespace JsonRpc.Streams
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            if (BaseStream == null) return;
-            if (!leaveOpen) BaseStream.Dispose();
-            BaseStream = null;
+            if (Stream == null) return;
+            if (!LeaveStreamOpen) Stream.Dispose();
+            Stream = null;
         }
     }
 }
