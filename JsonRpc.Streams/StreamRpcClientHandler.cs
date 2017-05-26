@@ -94,6 +94,7 @@ namespace JsonRpc.Streams
                     ? reader.ReadAsync(m => m is ResponseMessage r && impendingRequestDict.ContainsKey(r.Id), ct)
                     : reader.ReadAsync(m => m is ResponseMessage, ct)).ConfigureAwait(false);
                 if (response == null) return;       // EOF reached.
+                OnMessageReceiving(response);
                 if (impendingRequestDict.TryRemove(response.Id, out var tcs)) tcs.TrySetResult(response);
             }
         }

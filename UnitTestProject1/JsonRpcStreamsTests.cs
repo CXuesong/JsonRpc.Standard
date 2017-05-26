@@ -125,6 +125,14 @@ namespace UnitTestProject1
                 StreamRpcServerHandlerOptions.None))
             using (var client = new ClientTestHelper(clientReader, clientWriter))
             {
+                var e = Assert.Raises<MessageEventArgs>(h => client.ClientHandler.MessageSending += h,
+                    h => client.ClientHandler.MessageSending -= h,
+                    () => client.ClientStub.One());
+                Assert.Equal("one", ((RequestMessage) e.Arguments.Message).Method);
+                e = Assert.Raises<MessageEventArgs>(h => client.ClientHandler.MessageReceiving += h,
+                    h => client.ClientHandler.MessageReceiving -= h,
+                    () => client.ClientStub.One());
+                Assert.Equal(new JValue(1), ((ResponseMessage) e.Arguments.Message).Result);
                 await TestRoutines.TestStubAsync(client.ClientStub);
                 await TestRoutines.TestStubAsync(client.ClientExceptionStub);
             }
