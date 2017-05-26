@@ -108,14 +108,14 @@ namespace JsonRpc.Streams
             while (true)
             {
                 ct.ThrowIfCancellationRequested();
-                var request = (RequestMessage) await reader.ReadAsync(m => m is RequestMessage, ct);
-                if (request == null) return;        // EOF reached.
+                var request = (RequestMessage) await reader.ReadAsync(m => m is RequestMessage, ct)
+                    .ConfigureAwait(false);
+                if (request == null) return; // EOF reached.
                 CancellationTokenSource cts = null;
-                var requestId = request.Id; // Defensive copy, in case request has been changed in the pipeline.
                 if (requestCtsDict != null && !request.IsNotification)
                 {
                     cts = new CancellationTokenSource();
-                    if (!requestCtsDict.TryAdd(requestId, cts))
+                    if (!requestCtsDict.TryAdd(request.Id, cts))
                     {
                         //logger.LogWarning(1001, ex, "Duplicate request id for client detected: Id = {id}",
                         //    requestId);
@@ -123,31 +123,34 @@ namespace JsonRpc.Streams
                         cts = null;
                     }
                 }
-                try
-                {
-                    var task = ProcessRequestAsync(request, cts?.Token ?? CancellationToken.None,
-                        lastRequestTask);
-                    if (preserveResponseOrder && !request.IsNotification) lastRequestTask = task;
-                }
-                finally
-                {
-                    if (cts != null)
-                    {
-                        lock (requestCtsDict) requestCtsDict.TryRemove(requestId, out _);
-                        cts.Dispose();
-                    }
-                }
+                var task = ProcessRequestAsync(request, cts, lastRequestTask);
+                if (preserveResponseOrder && !request.IsNotification) lastRequestTask = task;
             }
         }
 
-        private async Task ProcessRequestAsync(RequestMessage message, CancellationToken ct, Task waitFor)
+        private async Task ProcessRequestAsync(RequestMessage message, CancellationTokenSource clientCancellation, Task waitFor)
         {
-            var invokeTask = ServiceHost.InvokeAsync(message, DefaultFeatures, ct);
-            var result = await invokeTask.ConfigureAwait(false);
-            if (result == null) return;
-            // Wait for the previous task to finish.
-            if (waitFor != null) await waitFor.ConfigureAwait(false);
-            if (writer != null) await writer.WriteAsync(result, ct);
+            var ct = clientCancellation?.Token ?? CancellationToken.None;
+            var requestId = message.Id; // Defensive copy, in case request has been changed in the pipeline.
+            try
+            {
+                var result = await ServiceHost.InvokeAsync(message, DefaultFeatures, ct).ConfigureAwait(false);
+                if (result == null) return;
+                // Wait for the previous task to finish.
+                if (waitFor != null) await waitFor.ConfigureAwait(false);
+                // Note that cts only reflects client's cancellation request.
+                // We still need to write the whole response, if it exists.
+                if (writer != null) await writer.WriteAsync(result, ct).ConfigureAwait(false);
+            }
+            finally
+            {
+                if (clientCancellation != null)
+                {
+                    requestCtsDict.TryRemove(requestId, out var cts);
+                    Debug.Assert(clientCancellation == cts);
+                    clientCancellation.Dispose();
+                }
+            }
         }
 
         private class MyDisposable : IDisposable

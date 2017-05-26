@@ -92,7 +92,7 @@ namespace JsonRpc.Streams
                 var response = (ResponseMessage) await ((Options & StreamRpcClientOptions.PreserveForeignResponses) ==
                                                         StreamRpcClientOptions.PreserveForeignResponses
                     ? reader.ReadAsync(m => m is ResponseMessage r && impendingRequestDict.ContainsKey(r.Id), ct)
-                    : reader.ReadAsync(m => m is ResponseMessage, ct));
+                    : reader.ReadAsync(m => m is ResponseMessage, ct)).ConfigureAwait(false);
                 if (response == null) return;       // EOF reached.
                 if (impendingRequestDict.TryRemove(response.Id, out var tcs)) tcs.TrySetResult(response);
             }
@@ -149,7 +149,7 @@ namespace JsonRpc.Streams
             try
             {
                 OnMessageSending(request);
-                await writer.WriteAsync(request, cancellationToken);
+                await writer.WriteAsync(request, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception)
             {

@@ -46,7 +46,15 @@ namespace JsonRpc.Streams
         /// <summary>
         /// Content-Type header value of the emitted messages.
         /// </summary>
-        public string ContentType { get; set; }
+        /// <value>Content-Type header value, or <c>null</c> to supress Content-Type header.</value>
+        public string ContentType { get; set; } = "application/json-rpc";
+
+        /// <summary>
+        /// Whether to follow the <see cref="ContentType"/> with a "charset=xxx" part
+        /// when writing messages to the stream. This property has no effect if <see cref="ContentType"/>
+        /// is null.
+        /// </summary>
+        public bool EmitContentCharset { get; set; } = true;
 
         /// <summary>
         /// Whether to leave <see cref="Stream"/> open when disposing this instance.
@@ -56,6 +64,7 @@ namespace JsonRpc.Streams
         /// <inheritdoc />
         public override async Task WriteAsync(Message message, CancellationToken cancellationToken)
         {
+            // Ensure that a message is either written completely or not at all.
             if (message == null) throw new ArgumentNullException(nameof(message));
             cancellationToken.ThrowIfCancellationRequested();
             DisposalToken.ThrowIfCancellationRequested();
@@ -75,13 +84,23 @@ namespace JsonRpc.Streams
                             await writer.WriteAsync("Content-Length: ");
                             await writer.WriteAsync(ms.Length.ToString());
                             await writer.WriteAsync("\r\n");
-                            await writer.WriteAsync("Content-Type: ");
-                            await writer.WriteAsync(ContentType);
-                            await writer.WriteAsync("\r\n\r\n");
+                            if (ContentType != null)
+                            {
+                                await writer.WriteAsync("Content-Type: ");
+                                await writer.WriteAsync(ContentType);
+                                if (EmitContentCharset)
+                                {
+                                    await writer.WriteAsync(";charset=");
+                                    await writer.WriteAsync(Encoding.WebName);
+                                }
+                                await writer.WriteAsync("\r\n");
+                            }
+                            await writer.WriteAsync("\r\n");
                             await writer.FlushAsync();
                         }
                         ms.Seek(0, SeekOrigin.Begin);
-                        await ms.CopyToAsync(Stream, 81920, linkedTokenSource.Token);
+                        // ReSharper disable once MethodSupportsCancellation
+                        await ms.CopyToAsync(Stream, 81920 /*, linkedTokenSource.Token*/);
                     }
                     finally
                     {
