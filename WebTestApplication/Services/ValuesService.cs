@@ -6,11 +6,21 @@ using System.Threading.Tasks;
 using JsonRpc.AspNetCore;
 using JsonRpc.Standard.Contracts;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace WebTestApplication.Services
 {
     public class ValuesService : JsonRpcService
     {
+
+        private readonly ILogger logger;
+
+        public ValuesService(ILoggerFactory loggerFactory)
+        {
+            // Inject loggerFactory from constructor.
+            if (loggerFactory == null) throw new ArgumentNullException(nameof(loggerFactory));
+            logger = loggerFactory.CreateLogger<ValuesService>();
+        }
 
         [JsonRpcMethod]
         public object GetValue()
@@ -30,7 +40,9 @@ namespace WebTestApplication.Services
         {
             var session = RequestContext.GetHttpContext().Session;
             var ct = session.GetInt32("counter") ?? 0;
-            session.SetInt32("counter", ct + 1);
+            ct++;
+            session.SetInt32("counter", ct);
+            logger.LogInformation("Counter incresed: {counter}.", ct);
         }
 
         [JsonRpcMethod]

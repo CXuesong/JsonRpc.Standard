@@ -34,15 +34,7 @@ namespace WebTestApplication
             services.AddMvc();
             services.AddMemoryCache();
             services.AddSession();
-            services.AddJsonRpc(builder =>
-            {
-                builder.ContractResolver = new JsonRpcContractResolver
-                {
-                    NamingStrategy = new CamelCaseJsonRpcNamingStrategy(),
-                    ParameterValueConverter = new CamelCaseJsonValueConverter(),
-                };
-                builder.Register(typeof(Startup).GetTypeInfo().Assembly);
-            });
+            services.AddJsonRpc(options => options.UseCamelCaseContractResolver()).RegisterFromAssembly<Startup>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -40,15 +40,16 @@ namespace JsonRpc.Standard.Server
         {
             if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
             if (!typeof(IJsonRpcService).GetTypeInfo().IsAssignableFrom(serviceType.GetTypeInfo()))
-                throw new ArgumentException("serviceType is nto a derived type of IJsonRpcService.", nameof(serviceType));
+                throw new ArgumentException("serviceType is not a derived type of IJsonRpcService.", nameof(serviceType));
             var service = (IJsonRpcService) Activator.CreateInstance(serviceType);
-            service.RequestContext = context;
             return service;
         }
 
         /// <inheritdoc />
         public void ReleaseService(IJsonRpcService service)
         {
+            if (service == null) throw new ArgumentNullException(nameof(service));
+            // Basic cleanup.
             service.RequestContext = null;
             var disposable = service as IDisposable;
             disposable?.Dispose();

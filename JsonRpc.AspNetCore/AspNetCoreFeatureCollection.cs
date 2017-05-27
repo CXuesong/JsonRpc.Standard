@@ -8,15 +8,19 @@ namespace JsonRpc.AspNetCore
 {
     internal class AspNetCoreFeatureCollection : IFeatureCollection
     {
-        public HttpContext Context { get; }
 
         private IAspNetCoreFeature feature;
 
-        public AspNetCoreFeatureCollection(HttpContext context)
+        public AspNetCoreFeatureCollection(IFeatureCollection baseCollection, HttpContext context)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
+            BaseCollection = baseCollection;
             Context = context;
         }
+
+        public IFeatureCollection BaseCollection { get; }
+
+        public HttpContext Context { get; }
 
         /// <inheritdoc />
         public object Get(Type featureType)
@@ -26,7 +30,7 @@ namespace JsonRpc.AspNetCore
                 if (feature == null) feature = new AspNetCoreFeature(Context);
                 return feature;
             }
-            return null;
+            return BaseCollection?.Get(featureType);
         }
 
         /// <inheritdoc />

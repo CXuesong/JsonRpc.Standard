@@ -43,6 +43,7 @@ namespace JsonRpc.Standard.Server
         /// <summary>
         /// The logger factory used to get a logger for the service host.
         /// </summary>
+        /// <remarks>If you want to completely disable the logging, set this property to an empty LoggerFactory instance.</remarks>
         public ILoggerFactory LoggerFactory { get; set; }
 
         /// <summary>
@@ -136,4 +137,5 @@ namespace JsonRpc.Standard.Server
     /// <param name="context">Current request context.</param>
     /// <returns>A task.</returns>
     public delegate Task RequestHandler(RequestContext context);
+
 }
