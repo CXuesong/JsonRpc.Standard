@@ -30,7 +30,7 @@ namespace UnitTestProject1
             Assert.NotNull(response);
             Assert.Equal(123, response.Id);
             Assert.Null(response.Error);
-            Assert.Equal((int)response.Result, 55);
+            Assert.Equal(55, (int)response.Result);
             response = await host.InvokeAsync(
                 new RequestMessage("TEST", "add", JToken.FromObject(new { a = "abc", b = "def" })),
                 null,
@@ -38,7 +38,7 @@ namespace UnitTestProject1
             Assert.NotNull(response);
             Assert.Equal("TEST", response.Id);
             Assert.Null(response.Error);
-            Assert.Equal((string)response.Result, "abcdef");
+            Assert.Equal("abcdef", (string)response.Result);
             response = await host.InvokeAsync(
                 new RequestMessage(456, "throwException"),
                 null,

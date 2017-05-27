@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Contracts;
 using JsonRpc.Standard.Server;
 
-namespace UnitTestProject1
+namespace UnitTestProject1.Helpers
 {
 
     public interface ITestRpcContract

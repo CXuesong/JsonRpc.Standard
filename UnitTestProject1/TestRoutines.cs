@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
+using UnitTestProject1.Helpers;
 using Xunit;
 
 namespace UnitTestProject1

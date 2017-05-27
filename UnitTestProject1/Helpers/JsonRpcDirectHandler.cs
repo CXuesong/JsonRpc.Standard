@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Server;
 
-namespace UnitTestProject1
+namespace UnitTestProject1.Helpers
 {
     /// <summary>
     /// This handler directly connects server to the client.

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using UnitTestProject1.Helpers;
 using Xunit.Abstractions;
 
 namespace UnitTestProject1

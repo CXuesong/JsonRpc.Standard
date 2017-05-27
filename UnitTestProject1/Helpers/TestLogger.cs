@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
-namespace UnitTestProject1
+namespace UnitTestProject1.Helpers
 {
     public class TestLoggerProvider : ILoggerProvider
     {
