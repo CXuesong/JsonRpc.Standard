@@ -6,12 +6,12 @@
     <DebugType>full</DebugType>
 
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.3.0</Version>
+    <Version>0.3.1</Version>
     <Authors>CXuesong</Authors>
     <Company />
     <PackageId>CXuesong.JsonRpc.AspNetCore</PackageId>
     <Description>ASP.NET Core support for CXuesong.JsonRpc.Standard.</Description>
-    <PackageTags>json rpc json-rpc json-rpc-server json-rpc-client asp.net asp.net-core</PackageTags>
+    <PackageTags>json rpc json-rpc json-rpc-server asp.net asp.net-core</PackageTags>
     <PackageProjectUrl>https://github.com/CXuesong/JsonRpc.Standard</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CXuesong/JsonRpc.Standard</RepositoryUrl>
     <NeutralLanguage>en-us</NeutralLanguage>
