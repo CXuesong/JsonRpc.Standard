@@ -14,6 +14,7 @@ namespace UnitTestProject1
 {
     public static class TestRoutines
     {
+
         public static async Task TestStubAsync(ITestRpcContract stub)
         {
             Assert.Equal(1, stub.One());

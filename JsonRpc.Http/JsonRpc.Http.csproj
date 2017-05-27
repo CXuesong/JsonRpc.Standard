@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.1;net45</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DebugType>full</DebugType>
+
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>0.3.0</Version>
+    <Authors>CXuesong</Authors>
+    <Company />
+    <PackageId>CXuesong.JsonRpc.Http</PackageId>
+    <Description>HttpClient-based JsonRpcClientHandler for CXuesong.JsonRpc.Standard.</Description>
+    <PackageTags>json rpc json-rpc json-rpc-client http</PackageTags>
+    <PackageProjectUrl>https://github.com/CXuesong/JsonRpc.Standard</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/CXuesong/JsonRpc.Standard</RepositoryUrl>
+    <NeutralLanguage>en-us</NeutralLanguage>
+    <PackageReleaseNotes>See https://github.com/CXuesong/JsonRpc.Standard/releases .</PackageReleaseNotes>
+    <Copyright>Copyright 2017 CXuesong</Copyright>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
+    <FileVersion>0.3.0.0</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JsonRpc.Standard\JsonRpc.Standard.csproj" />
+  </ItemGroup>
+
+</Project>
