@@ -27,6 +27,8 @@ namespace JsonRpc.Standard.Client
         /// notification.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="request"/> is <c>null</c>.</exception>
+        /// <exception cref="JsonRpcClientException">An exception has occurred while transmitting the request.
+        /// Note that a JSON RPC Response with Error will be returned and no exception should be thrown.</exception>
         Task<ResponseMessage> SendAsync(RequestMessage request, CancellationToken cancellationToken);
     }
 
