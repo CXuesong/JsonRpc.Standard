@@ -53,9 +53,11 @@ namespace JsonRpc.AspNetCore
                 {
                     if (context.Request.Method != "POST")
                     {
+                        context.Response.StatusCode = 405;
                         context.Response.ContentType = "text/plain;charset=utf-8";
                         await context.Response.WriteAsync(
                             "Only HTTP POST method is supported.\r\n\r\n----------\r\nServed from CXuesong.JsonRpc.AspNetCore");
+                        return;
                     }
                     await serverHandlerFactory(context).ProcessRequestAsync(context);
                     return;
