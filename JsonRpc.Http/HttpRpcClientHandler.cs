@@ -12,24 +12,27 @@ namespace JsonRpc.Http
     /// <summary>
     /// Transmits JSON RPC calls in HTTP requests.
     /// </summary>
-    public class HttpRpcClientHandler : JsonRpcClientHandler
+    public class HttpRpcClientHandler : JsonRpcClientHandler, IDisposable
     {
-        private readonly HttpClient myClient;
+        private HttpClient myClient;
+        private readonly bool disposeClient;
         private Encoding _Encoding;
 
-        public HttpRpcClientHandler()
+        public HttpRpcClientHandler() : this((HttpClient) null)
         {
-            myClient = new HttpClient();
+
         }
 
         public HttpRpcClientHandler(HttpClient httpClient)
         {
             myClient = httpClient ?? new HttpClient();
+            disposeClient = httpClient == null;
         }
 
         public HttpRpcClientHandler(HttpMessageHandler handler)
         {
             myClient = new HttpClient(handler);
+            disposeClient = false;
         }
 
         /// <summary>
@@ -71,6 +74,7 @@ namespace JsonRpc.Http
             CancellationToken cancellationToken)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
+            if (myClient == null) throw new ObjectDisposedException(nameof(HttpRpcClientHandler));
             cancellationToken.ThrowIfCancellationRequested();
             OnMessageSending(request);
             var httpReq = GetHttpRequestMessage(request);
@@ -104,6 +108,14 @@ namespace JsonRpc.Http
             if (string.IsNullOrEmpty(result)) return null;
             var resp = Message.LoadJson(result);
             return (ResponseMessage) resp;
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            if (myClient == null) return;
+            if (disposeClient) myClient.Dispose();
+            myClient = null;
         }
     }
 }
