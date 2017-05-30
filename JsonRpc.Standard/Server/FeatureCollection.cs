@@ -105,4 +105,46 @@ namespace JsonRpc.Standard.Server
         }
 
     }
+
+    /// <summary>
+    /// A feature collection who owns only 1 feature instance.
+    /// </summary>
+    /// <typeparam name="TFeature">Feature type.</typeparam>
+    public class SingleFeatureCollection<TFeature> : IFeatureCollection
+    {
+        private readonly IFeatureCollection baseCollection;
+        private TFeature myFeature;
+
+        public SingleFeatureCollection() : this(null, default(TFeature))
+        {
+        }
+
+        public SingleFeatureCollection(TFeature feature) : this(null, feature)
+        {
+        }
+
+        public SingleFeatureCollection(IFeatureCollection baseCollection) : this(baseCollection, default(TFeature))
+        {
+        }
+
+        public SingleFeatureCollection(IFeatureCollection baseCollection, TFeature feature)
+        {
+            this.baseCollection = baseCollection;
+            myFeature = feature;
+        }
+
+        /// <inheritdoc />
+        public object Get(Type featureType)
+        {
+            if (featureType == typeof(TFeature) && myFeature != null) return myFeature;
+            return baseCollection.Get(featureType);
+        }
+
+        /// <inheritdoc />
+        public void Set(Type featureType, object instance)
+        {
+            if (featureType == typeof(TFeature)) myFeature = (TFeature) instance;
+            throw new NotSupportedException("Cannot set feature of a different type.");
+        }
+    }
 }

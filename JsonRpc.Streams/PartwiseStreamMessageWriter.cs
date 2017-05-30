@@ -16,17 +16,16 @@ namespace JsonRpc.Streams
     {
 
         private readonly SemaphoreSlim streamSemaphore = new SemaphoreSlim(1, 1);
-        private Encoding _Encoding;
+        private Encoding _Encoding = Utility.UTF8NoBom;
 
-        public PartwiseStreamMessageWriter(Stream stream) : this(stream, Utility.UTF8NoBom)
-        {
-        }
-
-        public PartwiseStreamMessageWriter(Stream stream, Encoding encoding)
+        /// <summary>
+        /// Initializes a message writer from <see cref="Stream"/>.
+        /// </summary>
+        /// <param name="stream">The stream to write messages to.</param>
+        public PartwiseStreamMessageWriter(Stream stream)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
             Stream = stream;
-            Encoding = encoding;
         }
 
         /// <summary>

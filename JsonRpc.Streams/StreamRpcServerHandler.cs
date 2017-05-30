@@ -41,8 +41,8 @@ namespace JsonRpc.Streams
     {
         private MessageWriter writer;
         private readonly ConcurrentDictionary<MessageId, CancellationTokenSource> requestCtsDict;
-        //private readonly Queue<ResponseSlot> responseQueue;
         private readonly bool preserveResponseOrder;
+        private readonly RequestCancellationFeature requestCancellationFeature;
 
         public StreamRpcServerHandler(IJsonRpcServiceHost serviceHost) : this(serviceHost,
             StreamRpcServerHandlerOptions.None)
@@ -53,10 +53,17 @@ namespace JsonRpc.Streams
             StreamRpcServerHandlerOptions options) : base(serviceHost)
         {
             Options = options;
-            requestCtsDict = (options & StreamRpcServerHandlerOptions.SupportsRequestCancellation) ==
-                             StreamRpcServerHandlerOptions.SupportsRequestCancellation
-                ? new ConcurrentDictionary<MessageId, CancellationTokenSource>()
-                : null;
+            if ((options & StreamRpcServerHandlerOptions.SupportsRequestCancellation) ==
+                StreamRpcServerHandlerOptions.SupportsRequestCancellation)
+            {
+                requestCtsDict = new ConcurrentDictionary<MessageId, CancellationTokenSource>();
+                requestCancellationFeature = new RequestCancellationFeature(this);
+            }
+            else
+            {
+                requestCtsDict = null;
+                requestCancellationFeature = null;
+            }
             preserveResponseOrder = (options & StreamRpcServerHandlerOptions.ConsistentResponseSequence) ==
                                     StreamRpcServerHandlerOptions.ConsistentResponseSequence;
         }
@@ -90,7 +97,7 @@ namespace JsonRpc.Streams
         /// Tries to cancel the specified request by request id.
         /// </summary>
         /// <param name="id">Id of the request to cancel.</param>
-        /// <exception cref="NotSupportedException"><see cref="StreamRpcServerHandler.SupportsRequestCancellation"/> is not specified in the constructor, so cancellation is not supported.</exception>
+        /// <exception cref="NotSupportedException"><see cref="StreamRpcServerHandlerOptions.SupportsRequestCancellation"/> is not specified in the constructor, so cancellation is not supported.</exception>
         /// <returns><c>true</c> if the specified request has been cancelled. <c>false</c> if the specified request id has not found.</returns>
         /// <remarks>If cancellation is supported, you may cancel an arbitary request in the <see cref="JsonRpcService"/> via <see cref="IRequestCancellationFeature"/>.</remarks>
         public bool TryCancelRequest(MessageId id)
@@ -134,7 +141,9 @@ namespace JsonRpc.Streams
             var requestId = message.Id; // Defensive copy, in case request has been changed in the pipeline.
             try
             {
-                var result = await ServiceHost.InvokeAsync(message, DefaultFeatures, ct).ConfigureAwait(false);
+                var result = await ServiceHost.InvokeAsync(message,
+                    new SingleFeatureCollection<RequestCancellationFeature>(DefaultFeatures,
+                        requestCancellationFeature), ct).ConfigureAwait(false);
                 if (result == null) return;
                 // Wait for the previous task to finish.
                 if (waitFor != null) await waitFor.ConfigureAwait(false);
@@ -177,25 +186,6 @@ namespace JsonRpc.Streams
                 readerCts = null;
                 writer = null;
                 owner = null;
-            }
-        }
-
-        private class ResponseSlot
-        {
-            private readonly TaskCompletionSource<ResponseMessage> tcs = new TaskCompletionSource<ResponseMessage>();
-
-            public ResponseSlot(MessageId id)
-            {
-                Id = id;
-            }
-
-            public MessageId Id { get; }
-
-            public Task<ResponseMessage> ResponseTask => tcs.Task;
-
-            public bool TrySetResult(ResponseMessage message)
-            {
-                return tcs.TrySetResult(message);
             }
         }
 

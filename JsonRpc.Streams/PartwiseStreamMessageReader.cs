@@ -22,17 +22,16 @@ namespace JsonRpc.Streams
 
         private static readonly byte[] headerTerminationSequence = {0x0d, 0x0a, 0x0d, 0x0a};
 
-        public PartwiseStreamMessageReader(Stream stream) : this(stream, Encoding.UTF8)
-        {
+        private Encoding _Encoding = Encoding.UTF8;
 
-        }
-
-        public PartwiseStreamMessageReader(Stream stream, Encoding encoding)
+        /// <summary>
+        /// Initializes a message reader from <see cref="Stream"/>.
+        /// </summary>
+        /// <param name="stream">The stream to read messages from.</param>
+        public PartwiseStreamMessageReader(Stream stream)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
-            if (encoding == null) throw new ArgumentNullException(nameof(encoding));
             Stream = stream;
-            Encoding = encoding;
         }
 
         /// <summary>
@@ -59,8 +58,6 @@ namespace JsonRpc.Streams
 
         // Used to store the exceeded content during last read.
         private List<byte> headerBuffer = new List<byte>(headerBufferSize);
-
-        private Encoding _Encoding;
 
         /// <summary>
         /// Directly reads a message out of the <see cref="Stream"/>.
