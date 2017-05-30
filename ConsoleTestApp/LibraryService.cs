@@ -12,45 +12,45 @@ namespace ConsoleTestApp
     public class LibraryService : JsonRpcService
     {
 
-        // The service instance is transcient. You cannot persist state in such a class.
-        // So we need session.
-        private LibrarySessionFeature Session => RequestContext.Features.Get<LibrarySessionFeature>();
+    // The service instance is transcient. You cannot persist state in such a class.
+    // So we need session.
+    private LibrarySessionFeature Session => RequestContext.Features.Get<LibrarySessionFeature>();
 
-        [JsonRpcMethod]
-        public Book GetBook(string isbn, bool required = false)
-        {
-            var book = Session.Books.FirstOrDefault(b => AreIsxnEqual(b.Isbn, isbn));
-            if (required && book == null)
-                throw new JsonRpcException(new ResponseError(1000, $"Cannot find book with ISBN:{isbn}."));
-            return book;
-        }
+    [JsonRpcMethod]
+    public Book GetBook(string isbn, bool required = false)
+    {
+        var book = Session.Books.FirstOrDefault(b => AreIsxnEqual(b.Isbn, isbn));
+        if (required && book == null)
+            throw new JsonRpcException(new ResponseError(1000, $"Cannot find book with ISBN:{isbn}."));
+        return book;
+    }
 
-        [JsonRpcMethod]
-        public ResponseError PutBook(Book book)
-        {
-            // Yes, you can just throw an ordinary Exception… Though it's not recommended.
-            if (book == null) throw new ArgumentNullException(nameof(book));
-            if (string.IsNullOrEmpty(book.Isbn))
-                return new ResponseError(1001, $"Missing Isbn field of the book: {book}.");
-            var index = Session.Books.FindIndex(b => AreIsxnEqual(b.Isbn, book.Isbn));
-            if (index > 0)
-                Session.Books[index] = book;
-            else
-                Session.Books.Add(book);
-            return null;
-        }
+    [JsonRpcMethod]
+    public ResponseError PutBook(Book book)
+    {
+        // Yes, you can just throw an ordinary Exception… Though it's not recommended.
+        if (book == null) throw new ArgumentNullException(nameof(book));
+        if (string.IsNullOrEmpty(book.Isbn))
+            return new ResponseError(1001, $"Missing Isbn field of the book: {book}.");
+        var index = Session.Books.FindIndex(b => AreIsxnEqual(b.Isbn, book.Isbn));
+        if (index > 0)
+            Session.Books[index] = book;
+        else
+            Session.Books.Add(book);
+        return null;
+    }
 
-        [JsonRpcMethod]
-        public IEnumerable<string> EnumBooksIsbn()
-        {
-            return Session.Books.Select(b => b.Isbn);
-        }
+    [JsonRpcMethod]
+    public IEnumerable<string> EnumBooksIsbn()
+    {
+        return Session.Books.Select(b => b.Isbn);
+    }
 
-        [JsonRpcMethod]
-        public void Terminate()
-        {
-            Session.StopServer();
-        }
+    [JsonRpcMethod(IsNotification = true)]
+    public void Terminate()
+    {
+        Session.StopServer();
+    }
 
         private bool AreIsxnEqual(string x, string y)
         {
