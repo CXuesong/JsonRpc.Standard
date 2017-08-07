@@ -29,8 +29,8 @@ namespace JsonRpc.Standard.Client
         internal const string DynamicAssemblyNamePrefix = "JsonRpc.Standard.Client._$ProxyImpl";
 
         private readonly Lazy<AssemblyBuilder> _AssemblyBuilder;
-
         private readonly Lazy<ModuleBuilder> _ModuleBuilder;
+
         private IJsonRpcContractResolver _ContractResolver = JsonRpcContractResolver.Default;
 
         public JsonRpcProxyBuilder()

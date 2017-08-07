@@ -1,21 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonRpc.Standard", "JsonRpc.Standard\JsonRpc.Standard.csproj", "{F8154EF9-1CCE-4D88-88C5-0F6BE293482C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonRpc.Standard", "JsonRpc.Standard\JsonRpc.Standard.csproj", "{F8154EF9-1CCE-4D88-88C5-0F6BE293482C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{4001216A-ED6F-415A-83C8-F13328A9141C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{4001216A-ED6F-415A-83C8-F13328A9141C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTestApp", "ConsoleTestApp\ConsoleTestApp.csproj", "{A222E38E-FDBE-4D45-B6EC-C370F4FF2122}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleTestApp", "ConsoleTestApp\ConsoleTestApp.csproj", "{A222E38E-FDBE-4D45-B6EC-C370F4FF2122}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonRpc.AspNetCore", "JsonRpc.AspNetCore\JsonRpc.AspNetCore.csproj", "{AC24E3C2-E5DA-4F7F-89D9-510390E619C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonRpc.AspNetCore", "JsonRpc.AspNetCore\JsonRpc.AspNetCore.csproj", "{AC24E3C2-E5DA-4F7F-89D9-510390E619C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTestApplication", "WebTestApplication\WebTestApplication.csproj", "{AC2EF87E-E04F-4917-9A0F-FD59254AA4E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebTestApplication", "WebTestApplication\WebTestApplication.csproj", "{AC2EF87E-E04F-4917-9A0F-FD59254AA4E3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonRpc.Streams", "JsonRpc.Streams\JsonRpc.Streams.csproj", "{08D888AE-4E02-4EE3-BE7F-E832B0BFAD3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonRpc.Http", "JsonRpc.Http\JsonRpc.Http.csproj", "{A2C5CFCF-A140-434A-86A6-A88E39F7A44B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonRpc.Http", "JsonRpc.Http\JsonRpc.Http.csproj", "{A2C5CFCF-A140-434A-86A6-A88E39F7A44B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFiles", "SolutionFiles", "{99877F6F-F25F-4CB6-AC28-0DBE8CC41365}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
