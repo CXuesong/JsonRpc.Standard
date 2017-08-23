@@ -82,6 +82,9 @@ namespace JsonRpc.Standard.Client
     /// <summary>
     /// The exception that indicates an error from remote RPC endpoint.
     /// </summary>
+#if NET45
+    [Serializable]
+#endif
     public class JsonRpcRemoteException : JsonRpcClientException
     {
         public JsonRpcRemoteException(string message, Exception innerException)
