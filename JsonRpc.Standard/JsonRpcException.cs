@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Security;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 #if NET45
 using System.Runtime.Serialization;
 #endif
-using Newtonsoft.Json.Linq;
 
 namespace JsonRpc.Standard
 {
@@ -57,9 +59,10 @@ namespace JsonRpc.Standard
         }
 
 #if NET45
-        public JsonRpcException(SerializationInfo info, StreamingContext context) : base(info, context)
+        [SecuritySafeCritical]
+        protected JsonRpcException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            Error = (ResponseError)info.GetValue("Error", typeof(ResponseError));
+            Error = JsonConvert.DeserializeObject<ResponseError>(info.GetString("Error"));
         }
 #endif
 
@@ -70,10 +73,11 @@ namespace JsonRpc.Standard
 
 #if NET45
         /// <inheritdoc />
+        [SecurityCritical]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("Error", Error);
+            info.AddValue("Error", JsonConvert.SerializeObject(Error));
         }
 #endif
     }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
+using System.Security;
 using System.Text;
+using Newtonsoft.Json;
 #if NET45
 using System.Runtime.Serialization;
 #endif
@@ -25,8 +27,9 @@ namespace JsonRpc.Standard.Client
             : base(message, innerException)
         {
         }
-        
+
 #if NET45
+        [SecuritySafeCritical]
         protected JsonRpcClientException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
@@ -58,9 +61,10 @@ namespace JsonRpc.Standard.Client
         }
 
 #if NET45
+        [SecuritySafeCritical]
         protected JsonRpcContractException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            RpcMessage = (Message)info.GetValue("RpcMessage", typeof(Message));
+            RpcMessage = JsonConvert.DeserializeObject<Message>(info.GetString("RpcMessage"));
         }
 #endif
 
@@ -71,10 +75,11 @@ namespace JsonRpc.Standard.Client
 
 #if NET45
         /// <inheritdoc />
+        [SecurityCritical]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("RpcMessage", RpcMessage);
+            info.AddValue("RpcMessage", JsonConvert.SerializeObject(RpcMessage));
         }
 #endif
     }
@@ -106,9 +111,10 @@ namespace JsonRpc.Standard.Client
         }
 
 #if NET45
+        [SecuritySafeCritical]
         protected JsonRpcRemoteException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            Error = (ResponseError)info.GetValue("Error", typeof(ResponseError));
+            Error = JsonConvert.DeserializeObject<ResponseError>(info.GetString("Error"));
             Initialize();
         }
 #endif
@@ -130,6 +136,16 @@ namespace JsonRpc.Standard.Client
         /// Remote CLR exception data, if available.
         /// </summary>
         public ClrExceptionErrorData RemoteException { get; private set; }
+
+#if NET45
+        /// <inheritdoc />
+        [SecurityCritical]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("Error", JsonConvert.SerializeObject(Error));
+        }
+#endif
 
         /// <inheritdoc />
         public override string ToString()
