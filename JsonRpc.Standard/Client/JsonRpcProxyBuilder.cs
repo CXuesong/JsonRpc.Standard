@@ -71,7 +71,7 @@ namespace JsonRpc.Standard.Client
         protected string ImplementedProxyNamespace { get; }
 
         protected string ImplementedProxyAssemblyName { get; }
-        
+
         protected AssemblyBuilder AssemblyBuilder => _AssemblyBuilder.Value;
 
         protected ModuleBuilder ModuleBuilder => _ModuleBuilder.Value;
@@ -118,7 +118,7 @@ namespace JsonRpc.Standard.Client
         /// <returns>The implemented proxy instance.</returns>
         public T CreateProxy<T>(JsonRpcClient client)
         {
-            return (T) CreateProxy(client, typeof(T));
+            return (T)CreateProxy(client, typeof(T));
         }
 
         private static readonly ConstructorInfo JsonRpcProxyBase_ctor =
@@ -128,19 +128,22 @@ namespace JsonRpc.Standard.Client
             typeof(JsonRpcProxyBase).GetRuntimeMethods().First(m => m.Name == "SendAsync");
 
         private static readonly MethodInfo JsonRpcProxyBase_Send =
-            typeof(JsonRpcProxyBase).GetRuntimeMethods().First(m => m.Name == "Send");
+            typeof(JsonRpcProxyBase).GetRuntimeMethods().First(m => m.Name == "Send" && m.IsGenericMethod);
 
-        private static readonly ConstructorInfo NotSupportedException_ctor1 =
-            typeof(NotSupportedException).GetTypeInfo().DeclaredConstructors.First(c => c.GetParameters().Length == 1);
+        private static readonly MethodInfo JsonRpcProxyBase_SendNotification =
+            typeof(JsonRpcProxyBase).GetRuntimeMethods().First(m => m.Name == "Send" && !m.IsGenericMethod);
+
+        private static readonly ConstructorInfo NotImplementedException_ctor1 =
+            typeof(NotImplementedException).GetTypeInfo().DeclaredConstructors.First(c => c.GetParameters().Length == 1);
 
         protected virtual ProxyBuilderEntry ImplementProxy(Type stubType)
         {
-            var contract = ContractResolver.CreateClientContract(new[] {stubType});
+            var contract = ContractResolver.CreateClientContract(new[] { stubType });
             var builder = ModuleBuilder.DefineType(NextProxyTypeName(), TypeAttributes.Class | TypeAttributes.Sealed,
-                typeof(JsonRpcProxyBase), new[] {stubType});
+                typeof(JsonRpcProxyBase), new[] { stubType });
             {
                 var ctor = builder.DefineConstructor(MethodAttributes.Public, CallingConventions.HasThis,
-                    new[] {typeof(JsonRpcClient), typeof(IList<JsonRpcMethod>)});
+                    new[] { typeof(JsonRpcClient), typeof(IList<JsonRpcMethod>) });
                 var gen = ctor.GetILGenerator();
                 gen.Emit(OpCodes.Ldarg_0); // this
                 gen.Emit(OpCodes.Ldarg_1); // client
@@ -172,11 +175,11 @@ namespace JsonRpc.Standard.Client
                     {
                         var gen = impl.GetILGenerator();
                         gen.Emit(OpCodes.Ldstr, $"\"{method.Name}\" is not implemented as a JSON RPC method.");
-                        gen.Emit(OpCodes.Newobj, NotSupportedException_ctor1);
+                        gen.Emit(OpCodes.Newobj, NotImplementedException_ctor1);
                         gen.Emit(OpCodes.Throw);
                     }
                 }
-                else if(member is PropertyInfo property)
+                else if (member is PropertyInfo property)
                 {
                     throw new InvalidOperationException($"Cannot implement property member in \"{stubType}\".");
                 }
@@ -209,18 +212,34 @@ namespace JsonRpc.Standard.Client
                     gen.Emit(OpCodes.Stelem_Ref);
                 }
             }
-            var TResult = rpcMethod.ReturnParameter.ParameterType == typeof(void)
-                ? typeof(bool)
-                : rpcMethod.ReturnParameter.ParameterType;
+            var TResult = rpcMethod.ReturnParameter.ParameterType;
             if (rpcMethod.ReturnParameter.IsTask)
             {
-                gen.Emit(OpCodes.Call, JsonRpcProxyBase_SendAsync.MakeGenericMethod(TResult));
+                gen.Emit(OpCodes.Call, JsonRpcProxyBase_SendAsync.MakeGenericMethod(
+                    TResult == typeof(void) ? typeof(object) : TResult));
             }
             else
             {
-                gen.Emit(OpCodes.Call, JsonRpcProxyBase_Send.MakeGenericMethod(TResult));
-                if (rpcMethod.ReturnParameter.ParameterType == typeof(void))
-                    gen.Emit(OpCodes.Pop);
+                if (rpcMethod.IsNotification)
+                {
+                    // Notification. invoke and forget.
+                    if (rpcMethod.ReturnParameter.ParameterType != typeof(void))
+                        throw new InvalidOperationException("Notification method can only return void or Task.");
+                    gen.Emit(OpCodes.Call, JsonRpcProxyBase_SendNotification);
+                }
+                else
+                {
+                    // Message. invoke and wait.
+                    if (TResult == typeof(void))
+                    {
+                        gen.Emit(OpCodes.Call, JsonRpcProxyBase_Send.MakeGenericMethod(typeof(object)));
+                        gen.Emit(OpCodes.Pop);
+                    }
+                    else
+                    {
+                        gen.Emit(OpCodes.Call, JsonRpcProxyBase_Send.MakeGenericMethod(TResult));
+                    }
+                }
             }
             gen.Emit(OpCodes.Ret);
         }
@@ -234,7 +253,7 @@ namespace JsonRpc.Standard.Client
                 ProxyType = proxyType;
                 MethodTable = methodTable;
             }
-            
+
             public Type ProxyType { get; }
 
             public IList<JsonRpcMethod> MethodTable { get; }

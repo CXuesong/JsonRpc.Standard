@@ -2,14 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
-using Newtonsoft.Json.Linq;
 
 namespace JsonRpc.Standard.Client
 {
@@ -19,6 +13,7 @@ namespace JsonRpc.Standard.Client
     [Browsable(false)]
     public class JsonRpcProxyBase
     {
+
         protected JsonRpcProxyBase(JsonRpcClient client, IList<JsonRpcMethod> methodTable)
         {
             if (client == null) throw new ArgumentNullException(nameof(client));
@@ -37,6 +32,14 @@ namespace JsonRpc.Standard.Client
         protected TResult Send<TResult>(int methodIndex, IList paramValues)
         {
             return SendAsync<TResult>(methodIndex, paramValues).GetAwaiter().GetResult();
+        }
+
+        /// <summary>
+        /// Infrastructure. Sends the notification; do not wait for the response.
+        /// </summary>
+        protected void Send(int methodIndex, IList paramValues)
+        {
+            var forgetit = SendAsync<object>(methodIndex, paramValues);
         }
 
         /// <summary>
