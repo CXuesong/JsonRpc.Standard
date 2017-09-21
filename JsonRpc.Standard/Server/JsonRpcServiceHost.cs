@@ -125,7 +125,7 @@ namespace JsonRpc.Standard.Server
             object[] args;
             try
             {
-                args = method.UnmarshalArguments(new MarshaledRequest(context.Request, context.CancellationToken));
+                args = MethodBinder.BindParameters(method.Parameters, context);
             }
             catch (Exception ex)
             {

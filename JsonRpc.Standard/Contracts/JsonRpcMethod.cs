@@ -76,40 +76,6 @@ namespace JsonRpc.Standard.Contracts
             }
             return new MarshaledRequest(new RequestMessage(this.MethodName, jargs), ct);
         }
-
-        /// <inheritdoc />
-        internal object[] UnmarshalArguments(MarshaledRequest request)
-        {
-            if (request.Message == null) throw new ArgumentNullException(nameof(request));
-            if (this.Parameters.Count == 0) return null;
-            var argv = new object[this.Parameters.Count];
-            for (int i = 0; i < this.Parameters.Count; i++)
-            {
-                // Resolve cancellation token
-                if (this.Parameters[i].ParameterType == typeof(CancellationToken))
-                {
-                    argv[i] = request.CancellationToken;
-                    continue;
-                }
-                // Resolve other parameters, considering the optional
-                var jarg = request.Message.Parameters.Type == JTokenType.Object
-                    ? request.Message.Parameters?[this.Parameters[i].ParameterName]
-                    : request.Message.Parameters?[i];
-                if (jarg == null)
-                {
-                    if (this.Parameters[i].IsOptional)
-                        argv[i] = Type.Missing;
-                    else
-                        throw new InvalidOperationException(
-                            $"Required parameter \"{Parameters[i].ParameterName}\" is missing for \"{MethodName}\".");
-                }
-                else
-                {
-                    argv[i] = this.Parameters[i].Converter.JsonToValue(jarg, this.Parameters[i].ParameterType);
-                }
-            }
-            return argv;
-        }
     }
 
     internal struct MarshaledRequest

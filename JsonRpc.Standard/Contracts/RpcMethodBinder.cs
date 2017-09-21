@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using JsonRpc.Standard.Server;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -21,8 +22,18 @@ namespace JsonRpc.Standard.Contracts
         /// <param name="candidates">The methods to choose from.</param>
         /// <param name="context">The request context.</param>
         /// <returns>Target RPC method information, or <c>null</c> if no suitable method exists.</returns>
+        /// <exception cref="ArgumentNullException">Either <paramref name="candidates"/> or <paramref name="context"/> is null.</exception>
         /// <exception cref="AmbiguousMatchException">More than one method is found with that suits the specified request.</exception>
         JsonRpcMethod TryBindToMethod(ICollection<JsonRpcMethod> candidates, RequestContext context);
+
+        /// <summary>
+        /// Binds the parameters contained in the specified JSON RPC request to the specified a parameter list.
+        /// </summary>
+        /// <param name="parameters">The target JSON RPC method parameters.</param>
+        /// <param name="context">The request context containing the parameters to be converted.</param>
+        /// <returns>An array of parameter values that will be used to invoke the actual CLR method.</returns>
+        /// <exception cref="ArgumentNullException">Either <paramref name="parameters"/> or <paramref name="context"/> is null.</exception>
+        object[] BindParameters(IList<JsonRpcParameter> parameters, RequestContext context);
     }
 
     internal class JsonRpcMethodBinder : IJsonRpcMethodBinder
@@ -30,22 +41,75 @@ namespace JsonRpc.Standard.Contracts
 
         public static readonly JsonRpcMethodBinder Default = new JsonRpcMethodBinder();
 
+        private static readonly object[] emptyObjectArray = { };
+
         /// <inheritdoc />
         public JsonRpcMethod TryBindToMethod(ICollection<JsonRpcMethod> candidates, RequestContext context)
         {
+            if (candidates == null) throw new ArgumentNullException(nameof(candidates));
+            if (context == null) throw new ArgumentNullException(nameof(context));
+            var contextParams = context.Request.Parameters;
             // context.Request.Parameters can be: {}, [], null (JValue), null
             // Parameters MAY be omitted.
-            if (context.Request.Parameters == null || context.Request.Parameters.Type == JTokenType.Null)
+            if (contextParams == null || contextParams.Type == JTokenType.Null)
                 return TryBindToParameterlessMethod(candidates);
             // by-name
-            if (context.Request.Parameters is JObject paramsObj)
+            if (contextParams is JObject paramsObj)
                 return TryBindToMethod(candidates, paramsObj);
             // by-position
-            if (context.Request.Parameters is JArray paramsArray)
+            if (contextParams is JArray paramsArray)
                 return TryBindToMethod(candidates, paramsArray);
             // Other invalid cases, e.g., naked JValue.
             return null;
         }
+
+        /// <inheritdoc />
+        public object[] BindParameters(IList<JsonRpcParameter> parameters, RequestContext context)
+        {
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+            if (context == null) throw new ArgumentNullException(nameof(context));
+            // Assume the parameters and context corresponds here.
+            var contextParams = context.Request.Parameters;
+            if (parameters.Count == 0) return emptyObjectArray;
+            var argv = new object[parameters.Count];
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                // Resolve cancellation token
+                if (parameters[i].ParameterType == typeof(CancellationToken))
+                {
+                    argv[i] = context.CancellationToken;
+                    continue;
+                }
+                // Resolve other parameters, considering the optional
+                JToken jarg;
+                switch (contextParams?.Type)
+                {
+                    case JTokenType.Object:
+                        jarg = contextParams[parameters[i].ParameterName];
+                        break;
+                    case JTokenType.Array:
+                        jarg = contextParams[i];
+                        break;
+                    default:
+                        jarg = null;
+                        break;
+                }
+                if (jarg == null)
+                {
+                    if (parameters[i].IsOptional)
+                        argv[i] = Type.Missing;
+                    else
+                        throw new InvalidOperationException(
+                            $"Required parameter \"{parameters[i].ParameterName}\" is missing.");
+                }
+                else
+                {
+                    argv[i] = parameters[i].Converter.JsonToValue(jarg, parameters[i].ParameterType);
+                }
+            }
+            return argv;
+        }
+
 
         private JsonRpcMethod TryBindToParameterlessMethod(ICollection<JsonRpcMethod> candidates)
         {
