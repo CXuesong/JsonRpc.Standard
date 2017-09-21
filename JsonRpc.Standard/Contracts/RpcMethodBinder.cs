@@ -94,7 +94,8 @@ namespace JsonRpc.Standard.Contracts
                         jarg = null;
                         break;
                 }
-                if (jarg == null)
+                // The argument is missing (or undefined)
+                if (jarg == null || jarg.Type == JTokenType.Undefined)
                 {
                     if (parameters[i].IsOptional)
                         argv[i] = parameters[i].DefaultValue;
@@ -138,8 +139,8 @@ namespace JsonRpc.Standard.Contracts
                 }
                 foreach (var p in m.Parameters)
                 {
-                    var jp = paramsObj?[p.ParameterName];
-                    if (jp == null)
+                    var jp = paramsObj[p.ParameterName];
+                    if (jp == null || jp.Type == JTokenType.Undefined)
                     {
                         if (!p.IsOptional) goto NEXT;
                         else continue;
@@ -168,7 +169,7 @@ namespace JsonRpc.Standard.Contracts
                 {
                     var param = m.Parameters[i];
                     var jparam = i < paramsArray.Count ? paramsArray[i] : null;
-                    if (jparam == null)
+                    if (jparam == null || jparam.Type == JTokenType.Undefined)
                     {
                         if (!param.IsOptional) goto NEXT;
                         else continue;
