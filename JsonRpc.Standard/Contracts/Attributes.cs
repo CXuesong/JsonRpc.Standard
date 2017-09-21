@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Threading;
-using Newtonsoft.Json;
 
 namespace JsonRpc.Standard.Contracts
 {
@@ -186,6 +184,7 @@ namespace JsonRpc.Standard.Contracts
     public sealed class JsonRpcParameterAttribute : Attribute
     {
         private Type _ValueConverterType;
+        private object _DefaultValue;
 
         /// <summary>
         /// Creates a default attribute instance.
@@ -201,12 +200,41 @@ namespace JsonRpc.Standard.Contracts
         public JsonRpcParameterAttribute(string parameterName)
         {
             ParameterName = parameterName;
+            IsOptional = null;
         }
 
         /// <summary>
         /// The name of the parameter. <c>null</c> to use the applied Parameter name.
         /// </summary>
         public string ParameterName { get; }
+
+        /// <summary>
+        /// Whether the parameter is optional.
+        /// </summary>
+        /// <value>
+        /// If the value is <c>null</c>, the default behavior (whether CLR parameter is optional or not)
+        /// will be used.
+        /// </value>
+        public bool? IsOptional { get; set; }
+
+        /// <summary>
+        /// The default value for the optional parameter.
+        /// </summary>
+        /// <remarks>
+        /// This value is in effect only if <see cref="IsOptional"/> is <c>true</c>.
+        /// Setting this value will automatically set <see cref="IsOptional"/> to <c>true</c>.
+        /// If you are setting both <see cref="IsOptional"/> and this property, the resulting
+        /// behavior is undefined.
+        /// </remarks>
+        public object DefaultValue
+        {
+            get { return _DefaultValue; }
+            set
+            {
+                _DefaultValue = value;
+                IsOptional = true;
+            }
+        }
 
         /// <summary>
         /// The <see cref="Type"/> of <see cref="IJsonValueConverter"/> that applies to this parameter.

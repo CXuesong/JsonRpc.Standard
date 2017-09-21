@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,6 +32,9 @@ namespace UnitTestProject1.Helpers
 
         [JsonRpcMethod]
         string Add(string a, string b);
+
+        [JsonRpcMethod("addMany")]
+        int AddToSix();
 
         [JsonRpcMethod]
         Task<Complex> MakeComplex(double real, double imaginary);
@@ -102,6 +106,12 @@ namespace UnitTestProject1.Helpers
         public int Two(bool negative = false)
         {
             return negative ? -2 : 2;
+        }
+
+        [JsonRpcMethod]
+        public int AddMany([JsonRpcParameter(DefaultValue = new[] {1, 2, 3})] int[] values)
+        {
+            return values.Sum();
         }
 
         [JsonRpcMethod]

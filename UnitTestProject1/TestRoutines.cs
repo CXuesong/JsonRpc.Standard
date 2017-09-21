@@ -25,6 +25,7 @@ namespace UnitTestProject1
             Assert.Equal(-2, stub.Two(true));
             Assert.Equal(100, stub.Add(73, 27));
             Assert.Equal("abcdef", stub.Add("ab", "cdef"));
+            Assert.Equal(6, stub.AddToSix());
             Assert.Equal(new Complex(100, 200), await stub.MakeComplex(100, 200));
         }
 

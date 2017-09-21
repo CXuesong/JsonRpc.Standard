@@ -147,11 +147,15 @@ namespace JsonRpc.Standard.Contracts
             var attr = parameter.GetCustomAttribute<JsonRpcParameterAttribute>();
             var inst = new JsonRpcParameter
             {
-                IsOptional = parameter.IsOptional,
+                IsOptional = attr?.IsOptional ?? parameter.IsOptional,
                 ParameterType = parameter.ParameterType,
                 Converter = attr?.GetValueConverter() ?? methodAttribute?.GetValueConverter()
                             ?? scopeAttribute?.GetValueConverter() ?? ParameterValueConverter
             };
+            if (inst.IsOptional)
+            {
+                inst.DefaultValue = attr?.IsOptional == true ? attr.DefaultValue : parameter.DefaultValue;
+            }
             var localNamingStrategy = methodAttribute?.GetNamingStrategy() ?? scopeAttribute?.GetNamingStrategy()
                                       ?? NamingStrategy;
             if (attr?.ParameterName == null)
@@ -167,6 +171,7 @@ namespace JsonRpc.Standard.Contracts
             }
             // This argument will always be injected by the invoker,
             // so we don't want it to interfere with method resolution.
+            // TODO Take care of CancellationToken in method binders.
             if (inst.ParameterType == typeof(CancellationToken)) inst.IsOptional = true;
             return inst;
         }

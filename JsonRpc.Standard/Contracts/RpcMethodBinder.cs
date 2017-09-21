@@ -82,13 +82,13 @@ namespace JsonRpc.Standard.Contracts
                 }
                 // Resolve other parameters, considering the optional
                 JToken jarg;
-                switch (contextParams?.Type)
+                switch (contextParams)
                 {
-                    case JTokenType.Object:
+                    case JObject _:
                         jarg = contextParams[parameters[i].ParameterName];
                         break;
-                    case JTokenType.Array:
-                        jarg = contextParams[i];
+                    case JArray arr:
+                        jarg = i < arr.Count ? arr[i] : null;
                         break;
                     default:
                         jarg = null;
@@ -97,10 +97,9 @@ namespace JsonRpc.Standard.Contracts
                 if (jarg == null)
                 {
                     if (parameters[i].IsOptional)
-                        argv[i] = Type.Missing;
+                        argv[i] = parameters[i].DefaultValue;
                     else
-                        throw new InvalidOperationException(
-                            $"Required parameter \"{parameters[i].ParameterName}\" is missing.");
+                        throw new InvalidOperationException($"Required parameter \"{parameters[i].ParameterName}\" is missing.");
                 }
                 else
                 {

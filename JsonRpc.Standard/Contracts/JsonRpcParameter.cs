@@ -28,6 +28,11 @@ namespace JsonRpc.Standard.Contracts
         public bool IsOptional { get; set; }
 
         /// <summary>
+        /// The default value for the specified optional parameter.
+        /// </summary>
+        public object DefaultValue { get; set; }
+
+        /// <summary>
         /// Whether the parameter is a Task or Task&lt;ParameterType&gt; instead of ParameterType itself.
         /// </summary>
         public bool IsTask { get; set; }
