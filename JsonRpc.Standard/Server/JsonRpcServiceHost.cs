@@ -127,12 +127,6 @@ namespace JsonRpc.Standard.Server
             {
                 args = method.UnmarshalArguments(new MarshaledRequest(context.Request, context.CancellationToken));
             }
-            catch (ArgumentException ex)
-            {
-                // Signature not match. This is not likely to happen. Still there might be problem with binder.
-                TrySetErrorResponse(context, JsonRpcErrorCode.InvalidParams, ex.Message);
-                return;
-            }
             catch (Exception ex)
             {
                 TrySetErrorResponse(context, JsonRpcErrorCode.InvalidParams, ex.Message);

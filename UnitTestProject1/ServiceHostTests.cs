@@ -17,8 +17,7 @@ namespace UnitTestProject1
         public ServiceHostTests(ITestOutputHelper output) : base(output)
         {
         }
-
-
+        
         [Fact]
         public async Task BasicServiceHostTest()
         {
@@ -50,5 +49,26 @@ namespace UnitTestProject1
             Assert.Equal(JsonRpcErrorCode.UnhandledClrException, (JsonRpcErrorCode) response.Error.Code);
         }
 
+        [Fact]
+        public async Task InvokeWithPositionalArgumentsTest()
+        {
+            var host = Utility.CreateJsonRpcServiceHost(this);
+            var response = await host.InvokeAsync(
+                new RequestMessage(123, "add", JToken.FromObject(new[] {20, 35})),
+                null,
+                CancellationToken.None);
+            Assert.NotNull(response);
+            Assert.Equal(123, response.Id);
+            Assert.Null(response.Error);
+            Assert.Equal(55, (int)response.Result);
+            response = await host.InvokeAsync(
+                new RequestMessage("TEST", "add", JToken.FromObject(new[] {"abc", "def"})),
+                null,
+                CancellationToken.None);
+            Assert.NotNull(response);
+            Assert.Equal("TEST", response.Id);
+            Assert.Null(response.Error);
+            Assert.Equal("abcdef", (string)response.Result);
+        }
     }
 }

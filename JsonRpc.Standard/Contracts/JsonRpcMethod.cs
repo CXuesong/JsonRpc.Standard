@@ -92,7 +92,9 @@ namespace JsonRpc.Standard.Contracts
                     continue;
                 }
                 // Resolve other parameters, considering the optional
-                var jarg = request.Message.Parameters?[this.Parameters[i].ParameterName];
+                var jarg = request.Message.Parameters.Type == JTokenType.Object
+                    ? request.Message.Parameters?[this.Parameters[i].ParameterName]
+                    : request.Message.Parameters?[i];
                 if (jarg == null)
                 {
                     if (this.Parameters[i].IsOptional)
