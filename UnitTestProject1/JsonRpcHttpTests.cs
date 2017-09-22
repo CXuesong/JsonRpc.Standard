@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JsonRpc.DynamicProxy.Client;
 using JsonRpc.Http;
 using JsonRpc.Standard.Client;
 using UnitTestProject1.Helpers;

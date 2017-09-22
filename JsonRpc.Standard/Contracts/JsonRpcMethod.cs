@@ -43,51 +43,5 @@ namespace JsonRpc.Standard.Contracts
         {
             return $"{MethodName}({Parameters.Count})";
         }
-
-        internal MarshaledRequest Marshal(IList arguments)
-        {
-            var ct = CancellationToken.None;
-            // Parse parameters
-            JObject jargs = null;
-            if (this.Parameters.Count > 0)
-            {
-                if (arguments == null) throw new ArgumentNullException(nameof(arguments));
-                jargs = new JObject();
-                // Parameter check
-                for (int i = 0; i < this.Parameters.Count; i++)
-                {
-                    var argv = i < arguments.Count ? arguments[i] : Type.Missing;
-                    var thisParam = this.Parameters[i];
-                    if (argv == Type.Missing)
-                    {
-                        if (!thisParam.IsOptional)
-                            throw new ArgumentException($"Parameter \"{thisParam}\" is required.",
-                                nameof(arguments));
-                        continue;
-                    }
-                    if (thisParam.ParameterType == typeof(CancellationToken))
-                    {
-                        ct = (CancellationToken) argv;
-                        continue;
-                    }
-                    var value = thisParam.Converter.ValueToJson(argv);
-                    jargs.Add(thisParam.ParameterName, value);
-                }
-            }
-            return new MarshaledRequest(new RequestMessage(this.MethodName, jargs), ct);
-        }
-    }
-
-    internal struct MarshaledRequest
-    {
-        public MarshaledRequest(RequestMessage message, CancellationToken cancellationToken)
-        {
-            Message = message;
-            CancellationToken = cancellationToken;
-        }
-
-        public RequestMessage Message { get; }
-
-        public CancellationToken CancellationToken { get; }
     }
 }

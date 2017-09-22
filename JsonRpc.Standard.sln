@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonRpc.Standard", "JsonRpc.Standard\JsonRpc.Standard.csproj", "{F8154EF9-1CCE-4D88-88C5-0F6BE293482C}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonRpc.Http", "JsonRpc.Http\JsonRpc.Http.csproj", "{A2C5CFCF-A140-434A-86A6-A88E39F7A44B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFiles", "SolutionFiles", "{99877F6F-F25F-4CB6-AC28-0DBE8CC41365}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonRpc.DynamicProxy", "JsonRpc.DynamicProxy\JsonRpc.DynamicProxy.csproj", "{2CFA9A4E-4A39-4CEA-B142-3359C67086E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,8 +55,15 @@ Global
 		{A2C5CFCF-A140-434A-86A6-A88E39F7A44B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2C5CFCF-A140-434A-86A6-A88E39F7A44B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2C5CFCF-A140-434A-86A6-A88E39F7A44B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CFA9A4E-4A39-4CEA-B142-3359C67086E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CFA9A4E-4A39-4CEA-B142-3359C67086E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CFA9A4E-4A39-4CEA-B142-3359C67086E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CFA9A4E-4A39-4CEA-B142-3359C67086E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CA2EA32D-AA29-45AE-A4E2-FAF8C117A1A1}
 	EndGlobalSection
 EndGlobal

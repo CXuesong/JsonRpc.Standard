@@ -1,17 +1,14 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
 using System.Threading;
+using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
-using Newtonsoft.Json;
 
-namespace JsonRpc.Standard.Client
+namespace JsonRpc.DynamicProxy.Client
 {
     /// <summary>
     /// A builder class that at runtime implements the server-side methods
@@ -31,7 +28,11 @@ namespace JsonRpc.Standard.Client
         private readonly Lazy<AssemblyBuilder> _AssemblyBuilder;
         private readonly Lazy<ModuleBuilder> _ModuleBuilder;
 
-        private IJsonRpcContractResolver _ContractResolver = JsonRpcContractResolver.Default;
+        private static readonly JsonRpcContractResolver defaultContractResolver = new JsonRpcContractResolver();
+        private static readonly NamedRequestMarshaler defaultRequestMarshaler = new NamedRequestMarshaler();
+
+        private IJsonRpcContractResolver _ContractResolver = defaultContractResolver;
+        private IJsonRpcRequestMarshaler _RequestMarshaler = defaultRequestMarshaler;
 
         public JsonRpcProxyBuilder()
         {
@@ -65,7 +66,16 @@ namespace JsonRpc.Standard.Client
         public IJsonRpcContractResolver ContractResolver
         {
             get { return _ContractResolver; }
-            set { _ContractResolver = value ?? JsonRpcContractResolver.Default; }
+            set { _ContractResolver = value ?? defaultContractResolver; }
+        }
+
+        /// <summary>
+        /// The request marshaler used to convert the CLR parameter values into JSON RPC ones.
+        /// </summary>
+        public IJsonRpcRequestMarshaler RequestMarshaler
+        {
+            get { return _RequestMarshaler; }
+            set { _RequestMarshaler = value ?? defaultRequestMarshaler; }
         }
 
         protected string ImplementedProxyNamespace { get; }
@@ -105,7 +115,7 @@ namespace JsonRpc.Standard.Client
                     proxyTypeDict.Add(stubType, entry);
                 }
             }
-            return entry.CreateInstance(client);
+            return entry.CreateInstance(client, RequestMarshaler);
         }
 
         /// <summary>
@@ -143,11 +153,12 @@ namespace JsonRpc.Standard.Client
                 typeof(JsonRpcProxyBase), new[] { stubType });
             {
                 var ctor = builder.DefineConstructor(MethodAttributes.Public, CallingConventions.HasThis,
-                    new[] { typeof(JsonRpcClient), typeof(IList<JsonRpcMethod>) });
+                    new[] {typeof(JsonRpcClient), typeof(IList<JsonRpcMethod>), typeof(IJsonRpcRequestMarshaler)});
                 var gen = ctor.GetILGenerator();
                 gen.Emit(OpCodes.Ldarg_0); // this
                 gen.Emit(OpCodes.Ldarg_1); // client
                 gen.Emit(OpCodes.Ldarg_2); // methodTable
+                gen.Emit(OpCodes.Ldarg_3);
                 gen.Emit(OpCodes.Call, JsonRpcProxyBase_ctor);
                 gen.Emit(OpCodes.Ret);
             }
@@ -258,9 +269,9 @@ namespace JsonRpc.Standard.Client
 
             public IList<JsonRpcMethod> MethodTable { get; }
 
-            public object CreateInstance(JsonRpcClient client)
+            public object CreateInstance(JsonRpcClient client, IJsonRpcRequestMarshaler marshaler)
             {
-                return Activator.CreateInstance(ProxyType, client, MethodTable);
+                return Activator.CreateInstance(ProxyType, client, MethodTable, marshaler);
             }
         }
     }

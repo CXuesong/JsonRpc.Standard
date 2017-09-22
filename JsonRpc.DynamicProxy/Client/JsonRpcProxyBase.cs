@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using JsonRpc.Standard;
+using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
 
-namespace JsonRpc.Standard.Client
+namespace JsonRpc.DynamicProxy.Client
 {
     /// <summary>
     /// Infrastructure. Base class for client proxy implementation.
@@ -14,17 +16,20 @@ namespace JsonRpc.Standard.Client
     public class JsonRpcProxyBase
     {
 
-        protected JsonRpcProxyBase(JsonRpcClient client, IList<JsonRpcMethod> methodTable)
+        protected JsonRpcProxyBase(JsonRpcClient client, IList<JsonRpcMethod> methodTable, IJsonRpcRequestMarshaler marshaler)
         {
             if (client == null) throw new ArgumentNullException(nameof(client));
             if (methodTable == null) throw new ArgumentNullException(nameof(methodTable));
             Client = client;
             MethodTable = methodTable;
+            Marshaler = marshaler;
         }
 
         public JsonRpcClient Client { get; }
 
         protected IList<JsonRpcMethod> MethodTable { get; }
+
+        protected IJsonRpcRequestMarshaler Marshaler { get; }
 
         /// <summary>
         /// Infrastructure. Sends the request and wait for the response.
@@ -55,10 +60,10 @@ namespace JsonRpc.Standard.Client
         protected async Task<TResult> SendAsync<TResult>(int methodIndex, IList paramValues)
         {
             var method = MethodTable[methodIndex];
-            MarshaledRequest marshaled;
+            MarshaledRequestParameters marshaled;
             try
             {
-                marshaled = method.Marshal(paramValues);
+                marshaled = Marshaler.MarshalParameters(method.Parameters, paramValues);
             }
             catch (Exception ex)
             {
@@ -66,9 +71,10 @@ namespace JsonRpc.Standard.Client
                     ex);
             }
             marshaled.CancellationToken.ThrowIfCancellationRequested();
+            var request = new RequestMessage(method.MethodName, marshaled.Parameters);
             // Send the request
-            if (!method.IsNotification) marshaled.Message.Id = Client.NextRequestId();
-            var response = await Client.SendAsync(marshaled.Message, marshaled.CancellationToken).ConfigureAwait(false);
+            if (!method.IsNotification) request.Id = Client.NextRequestId();
+            var response = await Client.SendAsync(request, marshaled.CancellationToken).ConfigureAwait(false);
             // For notification, we do not have a response.
             if (response != null)
             {
@@ -93,7 +99,7 @@ namespace JsonRpc.Standard.Client
                     {
                         throw new JsonRpcContractException(
                             "An exception occured while unmarshalling the response. " + ex.Message,
-                            marshaled.Message, ex);
+                            request, ex);
                     }
                 }
             }
@@ -114,7 +120,7 @@ namespace JsonRpc.Standard.Client
     internal class JsonRpcProxyTest : JsonRpcProxyBase, IContractTest
     {
         /// <inheritdoc />
-        public JsonRpcProxyTest(JsonRpcClient client, JsonRpcMethod[] methodTable) : base(client, methodTable)
+        public JsonRpcProxyTest(JsonRpcClient client, JsonRpcMethod[] methodTable) : base(client, methodTable, new NamedRequestMarshaler())
         {
         }
 
