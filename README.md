@@ -8,6 +8,7 @@ The package is now available on NuGet. To install the package, run [one or more 
 
 ```powershell
 Install-Package CXuesong.JsonRpc.Standard -Pre
+Install-Package CXuesong.JsonRpc.DynamicProxy -Pre
 Install-Package CXuesong.JsonRpc.Streams -Pre
 Install-Package CXuesong.JsonRpc.AspNetCore -Pre
 Install-Package CXuesong.JsonRpc.Http -Pre
