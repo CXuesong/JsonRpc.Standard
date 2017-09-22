@@ -97,20 +97,18 @@ namespace JsonRpc.Streams
             await readerSemaphore.WaitAsync(cancellationToken);
             try
             {
+                string line;
                 if (Delimiter == null)
                 {
-                    string line;
                     do
                     {
                         cancellationToken.ThrowIfCancellationRequested();
                         line = await Reader.ReadLineAsync();
                         if (line == null) return null;
                     } while (string.IsNullOrWhiteSpace(line));
-                    return Message.LoadJson(line);
                 }
                 else
                 {
-                    string line;
                     var builder = new StringBuilder();
                     do
                     {
@@ -119,7 +117,14 @@ namespace JsonRpc.Streams
                         if (!string.IsNullOrWhiteSpace(line)) builder.AppendLine(line);
                     } while (line != null);
                     if (builder.Length == 0) return null;
-                    return Message.LoadJson(builder.ToString());
+                }
+                try
+                {
+                    return Message.LoadJson(line);
+                }
+                catch (Exception ex)
+                {
+                    throw new MessageReaderException("Cannot parse the message body into a valid JSON RPC message.", ex);
                 }
             }
             catch (ObjectDisposedException)
