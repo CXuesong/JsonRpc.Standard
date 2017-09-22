@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Text;
 using System.Threading.Tasks;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
@@ -9,32 +9,26 @@ using JsonRpc.Standard.Contracts;
 
 namespace JsonRpc.DynamicProxy.Client
 {
-    /// <summary>
-    /// Infrastructure. Base class for client proxy implementation.
-    /// </summary>
-    [Browsable(false)]
-    public class JsonRpcProxyBase
+    public sealed class JsonRpcRealProxy
     {
 
-        protected JsonRpcProxyBase(JsonRpcClient client, IList<JsonRpcMethod> methodTable, IJsonRpcRequestMarshaler marshaler)
+        internal readonly JsonRpcClient Client;
+
+        internal readonly IList<JsonRpcMethod> MethodTable;
+
+        internal readonly IJsonRpcRequestMarshaler Marshaler;
+
+        public JsonRpcRealProxy(JsonRpcClient client, IList<JsonRpcMethod> methodTable, IJsonRpcRequestMarshaler marshaler)
         {
-            if (client == null) throw new ArgumentNullException(nameof(client));
-            if (methodTable == null) throw new ArgumentNullException(nameof(methodTable));
-            Client = client;
-            MethodTable = methodTable;
-            Marshaler = marshaler;
+            this.Client = client ?? throw new ArgumentNullException(nameof(client));
+            this.MethodTable = methodTable ?? throw new ArgumentNullException(nameof(methodTable));
+            this.Marshaler = marshaler ?? throw new ArgumentNullException(nameof(marshaler));
         }
-
-        public JsonRpcClient Client { get; }
-
-        protected IList<JsonRpcMethod> MethodTable { get; }
-
-        protected IJsonRpcRequestMarshaler Marshaler { get; }
 
         /// <summary>
         /// Infrastructure. Sends the request and wait for the response.
         /// </summary>
-        protected TResult Send<TResult>(int methodIndex, IList paramValues)
+        public TResult Send<TResult>(int methodIndex, IList paramValues)
         {
             return SendAsync<TResult>(methodIndex, paramValues).GetAwaiter().GetResult();
         }
@@ -42,7 +36,7 @@ namespace JsonRpc.DynamicProxy.Client
         /// <summary>
         /// Infrastructure. Sends the notification; do not wait for the response.
         /// </summary>
-        protected void Send(int methodIndex, IList paramValues)
+        public void Send(int methodIndex, IList paramValues)
         {
             var forgetit = SendAsync<object>(methodIndex, paramValues);
         }
@@ -57,7 +51,7 @@ namespace JsonRpc.DynamicProxy.Client
         /// <exception cref="JsonRpcContractException">An error has occurred when generating the request or parsing the response.</exception>
         /// <exception cref="OperationCanceledException">The operation has been cancelled.</exception>
         /// <returns>The response.</returns>
-        protected async Task<TResult> SendAsync<TResult>(int methodIndex, IList paramValues)
+        public async Task<TResult> SendAsync<TResult>(int methodIndex, IList paramValues)
         {
             var method = MethodTable[methodIndex];
             MarshaledRequestParameters marshaled;
@@ -93,7 +87,7 @@ namespace JsonRpc.DynamicProxy.Client
                     //        message);
                     try
                     {
-                        return (TResult) method.ReturnParameter.Converter.JsonToValue(response.Result, typeof(TResult));
+                        return (TResult)method.ReturnParameter.Converter.JsonToValue(response.Result, typeof(TResult));
                     }
                     catch (Exception ex)
                     {
@@ -105,39 +99,6 @@ namespace JsonRpc.DynamicProxy.Client
             }
             return default(TResult);
         }
+
     }
-
-#if DEBUG
-    //… So that I can see some IL
-
-    internal interface IContractTest
-    {
-        object M1(int a, string b, object c, HashSet<int>.Enumerator d);
-
-        int P1 { get; set; }
-    }
-
-    internal class JsonRpcProxyTest : JsonRpcProxyBase, IContractTest
-    {
-        /// <inheritdoc />
-        public JsonRpcProxyTest(JsonRpcClient client, JsonRpcMethod[] methodTable) : base(client, methodTable, new NamedRequestMarshaler())
-        {
-        }
-
-        /// <inheritdoc />
-        object IContractTest.M1(int a, string b, object c, HashSet<int>.Enumerator d)
-        {
-            return Send<object>(1, new object[] {a, b, c, d});
-        }
-
-        /// <inheritdoc />
-        public int P1 { get; set; }
-
-        void XXX()
-        {
-            Send<object>(1, null);
-        }
-    }
-#endif
 }
-

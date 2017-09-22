@@ -71,6 +71,25 @@ namespace UnitTestProject1.Helpers
         void ManualResponseError();
     }
 
+    public abstract class TestRpcAbstractClassContract
+    {
+
+        [JsonRpcMethod]
+        protected abstract Task<int> One();
+
+        [JsonRpcMethod]
+        protected abstract Task<int> Two();
+
+        [JsonRpcMethod]
+        protected abstract Task<int> Add(int x, int y);
+
+        public async Task<int> OnePlusTwo()
+        {
+            return await Add(await One(), await Two());
+        }
+
+    }
+
     public interface ITestRpcCancallationContract
     {
 

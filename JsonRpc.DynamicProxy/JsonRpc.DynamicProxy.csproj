@@ -33,8 +33,4 @@
     <ProjectReference Include="..\JsonRpc.Standard\JsonRpc.Standard.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Contracts\" />
-  </ItemGroup>
-
 </Project>

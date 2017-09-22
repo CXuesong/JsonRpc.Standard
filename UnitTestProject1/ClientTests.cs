@@ -48,6 +48,13 @@ namespace UnitTestProject1
         }
 
         [Fact]
+        public async Task AbstractClassProxyTest()
+        {
+            var proxy = proxyBuilder.CreateProxy<TestRpcAbstractClassContract>(client);
+            Assert.Equal(3, await proxy.OnePlusTwo());
+        }
+
+        [Fact]
         public async Task ProxyExceptionTest()
         {
             var proxy = proxyBuilder.CreateProxy<ITestRpcExceptionContract>(client);

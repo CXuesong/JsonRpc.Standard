@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -14,16 +15,16 @@ namespace JsonRpc.DynamicProxy.Client
     /// A builder class that at runtime implements the server-side methods
     /// defined in the contract interfaces with JSON RPC requests or notifications.
     /// </summary>
+    /// <remarks>This class is thread-safe.</remarks>
     public class JsonRpcProxyBuilder
     {
         private static int assemblyCounter = 0;
-
         private int typeCounter = 0;
 
         // Proxy Type --> Implementation Type
-        private readonly Dictionary<Type, ProxyBuilderEntry> proxyTypeDict = new Dictionary<Type, ProxyBuilderEntry>();
+        private readonly ConcurrentDictionary<Type, ProxyBuilderEntry> proxyTypeDict = new ConcurrentDictionary<Type, ProxyBuilderEntry>();
 
-        internal const string DynamicAssemblyNamePrefix = "JsonRpc.Standard.Client._$ProxyImpl";
+        internal const string DynamicAssemblyNamePrefix = "JsonRpc.DynamicProxy.Client.$_ProxyImpl";
 
         private readonly Lazy<AssemblyBuilder> _AssemblyBuilder;
         private readonly Lazy<ModuleBuilder> _ModuleBuilder;
@@ -66,7 +67,15 @@ namespace JsonRpc.DynamicProxy.Client
         public IJsonRpcContractResolver ContractResolver
         {
             get { return _ContractResolver; }
-            set { _ContractResolver = value ?? defaultContractResolver; }
+            set
+            {
+                value = value ?? defaultContractResolver;
+                if (_ContractResolver != value)
+                {
+                    Volatile.Write(ref _ContractResolver, value);
+                    proxyTypeDict.Clear();
+                }
+            }
         }
 
         /// <summary>
@@ -104,17 +113,7 @@ namespace JsonRpc.DynamicProxy.Client
         {
             if (client == null) throw new ArgumentNullException(nameof(client));
             if (stubType == null) throw new ArgumentNullException(nameof(stubType));
-            if (!stubType.GetTypeInfo().IsInterface)
-                throw new ArgumentException($"{stubType} is not a Type of interface.", nameof(stubType));
-            ProxyBuilderEntry entry;
-            lock (proxyTypeDict)
-            {
-                if (!proxyTypeDict.TryGetValue(stubType, out entry))
-                {
-                    entry = ImplementProxy(stubType);
-                    proxyTypeDict.Add(stubType, entry);
-                }
-            }
+            var entry = proxyTypeDict.GetOrAdd(stubType, ImplementProxy);
             return entry.CreateInstance(client, RequestMarshaler);
         }
 
@@ -130,44 +129,46 @@ namespace JsonRpc.DynamicProxy.Client
         {
             return (T)CreateProxy(client, typeof(T));
         }
+        
+        private static readonly MethodInfo JsonRpcRealProxy_SendAsync =
+            typeof(JsonRpcRealProxy).GetRuntimeMethods().First(m => m.Name == "SendAsync");
 
-        private static readonly ConstructorInfo JsonRpcProxyBase_ctor =
-            typeof(JsonRpcProxyBase).GetTypeInfo().DeclaredConstructors.First();
+        private static readonly MethodInfo JsonRpcRealProxy_Send =
+            typeof(JsonRpcRealProxy).GetRuntimeMethods().First(m => m.Name == "Send" && m.IsGenericMethod);
 
-        private static readonly MethodInfo JsonRpcProxyBase_SendAsync =
-            typeof(JsonRpcProxyBase).GetRuntimeMethods().First(m => m.Name == "SendAsync");
-
-        private static readonly MethodInfo JsonRpcProxyBase_Send =
-            typeof(JsonRpcProxyBase).GetRuntimeMethods().First(m => m.Name == "Send" && m.IsGenericMethod);
-
-        private static readonly MethodInfo JsonRpcProxyBase_SendNotification =
-            typeof(JsonRpcProxyBase).GetRuntimeMethods().First(m => m.Name == "Send" && !m.IsGenericMethod);
+        private static readonly MethodInfo JsonRpcRealProxy_SendNotification =
+            typeof(JsonRpcRealProxy).GetRuntimeMethods().First(m => m.Name == "Send" && !m.IsGenericMethod);
 
         private static readonly ConstructorInfo NotImplementedException_ctor1 =
             typeof(NotImplementedException).GetTypeInfo().DeclaredConstructors.First(c => c.GetParameters().Length == 1);
 
+        private static readonly Type[] emptyTypes = { };
+
         protected virtual ProxyBuilderEntry ImplementProxy(Type stubType)
         {
+            if (stubType.GetTypeInfo().IsSealed)
+                throw new ArgumentException("Cannot implement transparent proxy on a sealed type.", nameof(stubType));
             var contract = ContractResolver.CreateClientContract(new[] { stubType });
-            var builder = ModuleBuilder.DefineType(NextProxyTypeName(), TypeAttributes.Class | TypeAttributes.Sealed,
-                typeof(JsonRpcProxyBase), new[] { stubType });
+            var builder = ModuleBuilder.DefineType(NextProxyTypeName(),
+                TypeAttributes.Class | TypeAttributes.Sealed,
+                stubType.GetTypeInfo().IsInterface ? typeof(object) : stubType,
+                stubType.GetTypeInfo().IsInterface ? new[] {stubType} : emptyTypes);
+            var realProxy = builder.DefineField("$_RealProxy", typeof(JsonRpcRealProxy),
+                FieldAttributes.Private | FieldAttributes.InitOnly);
             {
                 var ctor = builder.DefineConstructor(MethodAttributes.Public, CallingConventions.HasThis,
-                    new[] {typeof(JsonRpcClient), typeof(IList<JsonRpcMethod>), typeof(IJsonRpcRequestMarshaler)});
+                    new[] { typeof(JsonRpcRealProxy) });
                 var gen = ctor.GetILGenerator();
                 gen.Emit(OpCodes.Ldarg_0); // this
-                gen.Emit(OpCodes.Ldarg_1); // client
-                gen.Emit(OpCodes.Ldarg_2); // methodTable
-                gen.Emit(OpCodes.Ldarg_3);
-                gen.Emit(OpCodes.Call, JsonRpcProxyBase_ctor);
+                gen.Emit(OpCodes.Ldarg_1); // realproxy
+                gen.Emit(OpCodes.Stfld, realProxy);
                 gen.Emit(OpCodes.Ret);
             }
             int memberCounter = 0;          // Used to generate method names.
             var methodTable = new List<JsonRpcMethod>();
-            var interfaceMembers = stubType.GetTypeInfo().DeclaredMembers;
-            foreach (var member in interfaceMembers)
+            foreach (var member in stubType.GetRuntimeMethods().Where(m => m.IsAbstract))
             {
-                var implName = "$impl$." + memberCounter;
+                var implName = "$_Impl_" + memberCounter + member.Name;
                 if (member is MethodInfo method)
                 {
                     memberCounter++;
@@ -179,31 +180,29 @@ namespace JsonRpc.DynamicProxy.Client
                     builder.DefineMethodOverride(impl, method);
                     if (contract.Methods.TryGetValue(method, out var rpcMethod))
                     {
-                        ImplementProxyMethod(method, rpcMethod, methodTable.Count, impl);
+                        ImplementProxyMethod(method, rpcMethod, methodTable.Count, impl, realProxy);
                         methodTable.Add(rpcMethod);
                     }
                     else
                     {
                         var gen = impl.GetILGenerator();
-                        gen.Emit(OpCodes.Ldstr, $"\"{method.Name}\" is not implemented as a JSON RPC method.");
+                        gen.Emit(OpCodes.Ldstr, $"\"{method.Name}\" is not implemented by JSON RPC proxy builder.");
                         gen.Emit(OpCodes.Newobj, NotImplementedException_ctor1);
                         gen.Emit(OpCodes.Throw);
                     }
-                }
-                else if (member is PropertyInfo property)
-                {
-                    throw new InvalidOperationException($"Cannot implement property member in \"{stubType}\".");
                 }
             }
             return new ProxyBuilderEntry(builder.CreateTypeInfo().AsType(), methodTable);
         }
 
-        protected virtual void ImplementProxyMethod(MethodInfo method, JsonRpcMethod rpcMethod, int methodIndex, MethodBuilder builder)
+        protected virtual void ImplementProxyMethod(MethodInfo baseMethod, JsonRpcMethod rpcMethod, int methodIndex,
+            MethodBuilder implBuilder, FieldInfo realProxyField)
         {
-            var gen = builder.GetILGenerator();
-            gen.Emit(OpCodes.Ldarg_0);              // this
-            gen.Emit(OpCodes.Ldc_I4, methodIndex);  // 1st param of send[Async]
-            var args = method.GetParameters();
+            var gen = implBuilder.GetILGenerator();
+            gen.Emit(OpCodes.Ldarg_0);                  // this
+            gen.Emit(OpCodes.Ldfld, realProxyField);    // this.realProxy
+            gen.Emit(OpCodes.Ldc_I4, methodIndex);      // this.realProxy, methodIndex
+            var args = baseMethod.GetParameters();
             if (args.Length == 0)
             {
                 gen.Emit(OpCodes.Ldnull);
@@ -219,14 +218,15 @@ namespace JsonRpc.DynamicProxy.Client
                     gen.Emit(OpCodes.Ldarg, i + 1); // value
                     if (args[i].ParameterType.GetTypeInfo().IsValueType)
                         gen.Emit(OpCodes.Box, args[i].ParameterType);
-                    // ..., array, index, value --> ...
+                    // this.realProxy, methodIndex, array, array, index, value
                     gen.Emit(OpCodes.Stelem_Ref);
+                    // this.realProxy, methodIndex, array
                 }
             }
             var TResult = rpcMethod.ReturnParameter.ParameterType;
             if (rpcMethod.ReturnParameter.IsTask)
             {
-                gen.Emit(OpCodes.Call, JsonRpcProxyBase_SendAsync.MakeGenericMethod(
+                gen.Emit(OpCodes.Call, JsonRpcRealProxy_SendAsync.MakeGenericMethod(
                     TResult == typeof(void) ? typeof(object) : TResult));
             }
             else
@@ -236,19 +236,19 @@ namespace JsonRpc.DynamicProxy.Client
                     // Notification. invoke and forget.
                     if (rpcMethod.ReturnParameter.ParameterType != typeof(void))
                         throw new InvalidOperationException("Notification method can only return void or Task.");
-                    gen.Emit(OpCodes.Call, JsonRpcProxyBase_SendNotification);
+                    gen.Emit(OpCodes.Call, JsonRpcRealProxy_SendNotification);
                 }
                 else
                 {
                     // Message. invoke and wait.
                     if (TResult == typeof(void))
                     {
-                        gen.Emit(OpCodes.Call, JsonRpcProxyBase_Send.MakeGenericMethod(typeof(object)));
+                        gen.Emit(OpCodes.Call, JsonRpcRealProxy_Send.MakeGenericMethod(typeof(object)));
                         gen.Emit(OpCodes.Pop);
                     }
                     else
                     {
-                        gen.Emit(OpCodes.Call, JsonRpcProxyBase_Send.MakeGenericMethod(TResult));
+                        gen.Emit(OpCodes.Call, JsonRpcRealProxy_Send.MakeGenericMethod(TResult));
                     }
                 }
             }
@@ -257,12 +257,12 @@ namespace JsonRpc.DynamicProxy.Client
 
         protected class ProxyBuilderEntry
         {
+            private JsonRpcRealProxy _LastRealProxy;
+
             public ProxyBuilderEntry(Type proxyType, IList<JsonRpcMethod> methodTable)
             {
-                if (proxyType == null) throw new ArgumentNullException(nameof(proxyType));
-                if (methodTable == null) throw new ArgumentNullException(nameof(methodTable));
-                ProxyType = proxyType;
-                MethodTable = methodTable;
+                ProxyType = proxyType ?? throw new ArgumentNullException(nameof(proxyType));
+                MethodTable = methodTable ?? throw new ArgumentNullException(nameof(methodTable));
             }
 
             public Type ProxyType { get; }
@@ -271,7 +271,14 @@ namespace JsonRpc.DynamicProxy.Client
 
             public object CreateInstance(JsonRpcClient client, IJsonRpcRequestMarshaler marshaler)
             {
-                return Activator.CreateInstance(ProxyType, client, MethodTable, marshaler);
+                var realProxy = _LastRealProxy;
+                if (realProxy == null || realProxy.Client != client
+                    || realProxy.MethodTable != MethodTable || realProxy.Marshaler != marshaler)
+                {
+                    realProxy = new JsonRpcRealProxy(client, MethodTable, marshaler);
+                    Volatile.Write(ref _LastRealProxy, realProxy);
+                }
+                return Activator.CreateInstance(ProxyType, realProxy);
             }
         }
     }
