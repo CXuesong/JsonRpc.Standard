@@ -42,7 +42,7 @@ namespace JsonRpc.Standard
             {
                 return RpcSerializer.DeserializeMessage(jsonContent);
             }
-            catch (Exception ex) when (ex is ArgumentException || ex is JsonSerializationException)
+            catch (Exception ex) when (ex is ArgumentException || ex is JsonException)
             {
                 throw new ArgumentException("jsonContent doesn't contain valid JSON RPC message.", nameof(jsonContent));
             }
@@ -60,7 +60,7 @@ namespace JsonRpc.Standard
             {
                 return RpcSerializer.DeserializeMessage(textReader);
             }
-            catch (Exception ex) when (ex is ArgumentException || ex is JsonSerializationException)
+            catch (Exception ex) when (ex is ArgumentException || ex is JsonException)
             {
                 throw new ArgumentException("jsonContent doesn't contain valid JSON RPC message.", nameof(textReader));
             }

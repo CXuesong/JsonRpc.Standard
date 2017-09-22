@@ -77,7 +77,7 @@ namespace JsonRpc.Streams
                     if (headerBuffer.Count == 0)
                         return null; // EOF
                     else
-                        throw new JsonRpcException("Unexpected EOF when reading header.");
+                        throw new MessageReaderException("Unexpected EOF when reading header.");
                 }
                 headerBuffer.AddRange(headerSubBuffer.Take(readLength));
             }
@@ -96,14 +96,14 @@ namespace JsonRpc.Streams
             }
             catch (InvalidOperationException)
             {
-                throw new JsonRpcException("Invalid JSON RPC header. Content-Length is missing.");
+                throw new MessageReaderException("Invalid JSON RPC header. Content-Length is missing.");
             }
             catch (FormatException)
             {
-                throw new JsonRpcException("Invalid JSON RPC header. Content-Length is invalid.");
+                throw new MessageReaderException("Invalid JSON RPC header. Content-Length is invalid.");
             }
             if (contentLength <= 0)
-                throw new JsonRpcException("Invalid JSON RPC header. Content-Length is invalid.");
+                throw new MessageReaderException("Invalid JSON RPC header. Content-Length is invalid.");
             var contentType = headers.FirstOrDefault(e => e[0] == "Content-Type")?[1];
             var contentEncoding = Encoding;
             if (!string.IsNullOrEmpty(contentType))
@@ -119,9 +119,15 @@ namespace JsonRpc.Streams
                     }
                     else
                     {
-                        contentEncoding = Encoding.GetEncoding(mediaType.CharSet);
-                        if (contentEncoding == null)
-                            throw new JsonRpcException("Invalid JSON RPC header. Cannot recognize Content-Type(charset).");
+                        try
+                        {
+                            contentEncoding = Encoding.GetEncoding(mediaType.CharSet);
+                        }
+                        catch (ArgumentException ex)
+                        {
+                            throw new MessageReaderException(
+                                "Invalid JSON RPC header. Cannot recognize Content-Type(charset).", ex);
+                        }
                     }
                 }
             }
@@ -145,15 +151,24 @@ namespace JsonRpc.Streams
                 {
                     var length = Stream.Read(contentBuffer, pos,
                         Math.Min(contentLength - pos, contentBufferSize));
-                    if (length == 0) throw new JsonRpcException("Unexpected EOF when reading content.");
+                    if (length == 0) throw new MessageReaderException("Unexpected EOF when reading content.");
                     pos += length;
                 }
             }
             // Deserialization
-            using (var ms = new MemoryStream(contentBuffer))
+            try
             {
-                using (var sr = new StreamReader(ms, contentEncoding))
-                    return Message.LoadJson(sr);
+                using (var ms = new MemoryStream(contentBuffer))
+                {
+                    using (var sr = new StreamReader(ms, contentEncoding))
+                    {
+                        return Message.LoadJson(sr);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new MessageReaderException("Cannot parse the message body into a valid JSON RPC message.", ex);
             }
         }
 

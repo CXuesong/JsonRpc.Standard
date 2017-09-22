@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Security;
+using JsonRpc.Standard.Server;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 #if NET45
@@ -10,7 +11,8 @@ using System.Runtime.Serialization;
 namespace JsonRpc.Standard
 {
     /// <summary>
-    /// An exception that indicates an general JSON RPC error.
+    /// An exception that is thorown by <see cref="JsonRpcService"/> implementations
+    /// to indicate an general JSON RPC error.
     /// </summary>
 #if NET45
     [Serializable]

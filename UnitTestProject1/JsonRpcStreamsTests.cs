@@ -57,12 +57,11 @@ namespace UnitTestProject1
             }
         }
 
-
         [Fact]
         public async Task PartwiseStreamReaderTest()
         {
             var buffer = TestMessagePartwiseStreamContent.Concat(TestMessagePartwiseStreamContent).ToArray();
-            using (var stream = new MemoryStream(buffer))
+            using (var stream = new MemoryStream(buffer, false))
             {
                 using (var reader = new PartwiseStreamMessageReader(stream))
                 {
@@ -73,6 +72,26 @@ namespace UnitTestProject1
                     Assert.Null(await reader.ReadAsync(m => true, CancellationToken.None));
                     Assert.Equal(JsonConvert.SerializeObject(TestMessage), JsonConvert.SerializeObject(message1));
                     Assert.Equal(JsonConvert.SerializeObject(TestMessage), JsonConvert.SerializeObject(message2));
+                }
+            }
+        }
+
+        [Theory]
+        [InlineData("Content-Length: -40\r\n\r\n")]
+        [InlineData("Content-Length: ABC\r\n\r\n")]
+        [InlineData("Content-Length: 3\r\nContent-Type: application/json-rpc;charset=invalid-charset\r\n\r\n{ }")]
+        [InlineData("Content-Length: 40\r\nContent-Type: application/json-rpc;charset=utf-8\r\n\r\nABC")]
+        [InlineData("Content-Length: 3\r\nContent-Type: application/json-rpc;charset=utf-8\r\n\r\nABC")]
+        public async Task PartwiseStreamReaderExceptionTest(string jsonContent)
+        {
+            var buffer = Encoding.UTF8.GetBytes(jsonContent);
+            using (var stream = new MemoryStream(buffer, false))
+            {
+                using (var reader = new PartwiseStreamMessageReader(stream))
+                {
+                    var ex = await Assert.ThrowsAsync<MessageReaderException>(() =>
+                        reader.ReadAsync(m => true, CancellationToken.None));
+                    Output.WriteLine(ex.Message);
                 }
             }
         }
