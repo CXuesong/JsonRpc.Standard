@@ -41,7 +41,7 @@ namespace JsonRpc.Standard.Server
         public static TFeature Get<TFeature>(this IFeatureCollection featureCollection)
         {
             if (featureCollection == null) throw new ArgumentNullException(nameof(featureCollection));
-            return (TFeature) featureCollection.Get(typeof(TFeature));
+            return (TFeature)featureCollection.Get(typeof(TFeature));
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace JsonRpc.Standard.Server
     }
 
     /// <summary>
-    /// A feature collection who owns only 1 feature instance.
+    /// A feature collection that owns only 1 feature instance.
     /// </summary>
     /// <typeparam name="TFeature">Feature type.</typeparam>
     public class SingleFeatureCollection<TFeature> : IFeatureCollection
@@ -136,14 +136,15 @@ namespace JsonRpc.Standard.Server
         /// <inheritdoc />
         public object Get(Type featureType)
         {
-            if (featureType == typeof(TFeature) && myFeature != null) return myFeature;
+            if (featureType.GetTypeInfo().IsAssignableFrom(typeof(TFeature).GetTypeInfo()) && myFeature != null)
+                return myFeature;
             return baseCollection.Get(featureType);
         }
 
         /// <inheritdoc />
         public void Set(Type featureType, object instance)
         {
-            if (featureType == typeof(TFeature)) myFeature = (TFeature) instance;
+            if (featureType == typeof(TFeature)) myFeature = (TFeature)instance;
             throw new NotSupportedException("Cannot set feature of a different type.");
         }
     }
