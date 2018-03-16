@@ -9,10 +9,7 @@ using System.Threading.Tasks;
 using JsonRpc.DynamicProxy.Client;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
-using JsonRpc.Standard.Contracts;
 using JsonRpc.Standard.Server;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnitTestProject1.Helpers;
 using Xunit;
@@ -61,7 +58,7 @@ namespace UnitTestProject1
             await TestRoutines.TestStubAsync(proxy);
         }
 
-        // You should see something linke this in the output
+        // You should see something like this in the output
         // {"method":"cancelRequest","params":{"id":"46361581#1"},"jsonrpc":"2.0"}
         [Fact]
         public async Task ProxyCancellationTest()

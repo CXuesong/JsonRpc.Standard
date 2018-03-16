@@ -4,7 +4,6 @@
     <TargetFrameworks>netstandard1.1;net45</TargetFrameworks>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <DebugType>portable</DebugType>
 
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>0.4.1</Version>
