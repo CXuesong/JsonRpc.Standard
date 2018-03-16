@@ -80,7 +80,7 @@ namespace JsonRpc.AspNetCore
             }
             catch (Exception ex)
             {
-                response = new ResponseMessage(MessageId.Empty, ResponseError.FromException(ex));
+                response = new ResponseMessage(MessageId.Empty, ResponseError.FromException(ex, false));
                 goto WRITE_RESPONSE;
             }
             context.RequestAborted.ThrowIfCancellationRequested();

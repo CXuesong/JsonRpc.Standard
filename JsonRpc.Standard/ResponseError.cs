@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Text;
+using JsonRpc.Standard.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -77,11 +78,35 @@ namespace JsonRpc.Standard
 
         }
 
+        /// <inheritdoc cref="FromException(Exception,bool)"/>
         public static ResponseError FromException(Exception ex)
         {
+            return FromException(ex, false);
+        }
+
+        /// <summary>
+        /// Instantiates a new <see cref="ResponseError"/> from an existing <see cref="Exception"/>.
+        /// </summary>
+        /// <param name="ex">The exception containing the error information.</param>
+        /// <param name="includesStackTrace">Whether to include <see cref="Exception.StackTrace"/> from the given exception. Note that the stack trace may contain sensitive information.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="ex"/> is <c>null</c>.</exception>
+        public static ResponseError FromException(Exception ex, bool includesStackTrace)
+        {
+            if (ex == null) throw new ArgumentNullException(nameof(ex));
             if (ex is JsonRpcException re && re.Error != null) return re.Error;
-            return new ResponseError(JsonRpcErrorCode.UnhandledClrException, $"{ex.GetType()}: {ex.Message}",
-                ClrExceptionErrorData.FromException(ex));
+            return FromException(ClrExceptionErrorData.FromException(ex, includesStackTrace));
+        }
+
+        /// <summary>
+        /// Instantiates a new <see cref="ResponseError"/> from an existing <see cref="ClrExceptionErrorData"/>.
+        /// </summary>
+        /// <param name="errorData">The error information.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="errorData"/> is <c>null</c>.</exception>
+        public static ResponseError FromException(ClrExceptionErrorData errorData)
+        {
+            if (errorData == null) throw new ArgumentNullException(nameof(errorData));
+            return new ResponseError(JsonRpcErrorCode.UnhandledClrException,
+                $"{errorData.ExceptionType}: {errorData.Message}", errorData);
         }
 
         [JsonProperty]
@@ -96,28 +121,68 @@ namespace JsonRpc.Standard
         [JsonProperty]
         public JToken Data { get; set; }
 
+        /// <summary>
+        /// Deserializes <see cref="Data"/> into the object of specified type.
+        /// </summary>
+        /// <param name="dataType">The target type of JSON deserialization.</param>
+        /// <returns>The deserialized data object.</returns>
         public object GetData(Type dataType)
         {
             return Data?.ToObject(dataType, RpcSerializer.Serializer);
         }
 
+        /// <summary>
+        /// Deserializes <see cref="Data"/> into the object of specified type.
+        /// </summary>
+        /// <typeparam name="T">The target type of JSON deserialization.</typeparam>
+        /// <returns>The deserialized data object.</returns>
         public T GetData<T>()
         {
             return Data == null ? default(T) : Data.ToObject<T>(RpcSerializer.Serializer);
         }
 
+        /// <summary>
+        /// Serializes the specified object into JSON <see cref="Data"/>.
+        /// </summary>
+        /// <param name="newData">The source value for JSON serialization.</param>
         public void SetData(object newData)
         {
             Data = newData == null ? null : JToken.FromObject(newData, RpcSerializer.Serializer);
         }
     }
 
+    /// <summary>
+    /// A POCO object containing additional CLR exception information
+    /// that can be serialized into <see cref="ResponseError"/>.<see cref="ResponseError.Data"/>.
+    /// </summary>
     public class ClrExceptionErrorData
     {
+
+
+        internal static bool MightBeOfThisType(JToken jtoken)
+        {
+            if (!(jtoken is JObject jobj)) return false;
+            if (jobj[nameof(ExceptionType)] == null) return false;
+            if (jobj[nameof(Message)] == null) return false;
+            return true;
+        }
+
+        /// <inheritdoc cref="FromException(Exception, bool)"/>
         public static ClrExceptionErrorData FromException(Exception ex)
         {
+            return FromException(ex, false);
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="ClrExceptionErrorData"/> from an existing exception.
+        /// </summary>
+        /// <param name="ex">The exception from which to extract error data.</param>
+        /// <param name="includesStackTrace">Whether to set <see cref="StackTrace"/> from the given exception. Note that the stack trace may contain sensitive information.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="ex"/> is <c>null</c>.</exception>
+        public static ClrExceptionErrorData FromException(Exception ex, bool includesStackTrace)
+        {
             if (ex == null) throw new ArgumentNullException(nameof(ex));
-            return new ClrExceptionErrorData
+            var inst = new ClrExceptionErrorData
             {
                 ExceptionType = ex.GetType().FullName,
                 Message = ex.Message,
@@ -125,8 +190,19 @@ namespace JsonRpc.Standard
                 HResult = ex.HResult,
                 HelpLink = ex.HelpLink,
                 StackTrace = ex.StackTrace,
-                InnerException = ex.InnerException == null ? null : FromException(ex.InnerException)
+                InnerException = ex.InnerException == null ? null : FromException(ex.InnerException, includesStackTrace)
             };
+            // Consider extract such special behaviors into a interface,
+            // and let Exception-implementor implement it.
+            if (ex is JsonRpcRemoteException re && re.InnerException == null && re.RemoteException != null)
+            {
+                // For JsonRpcRemoteException, we treat RemoteException as InnerException,
+                // if possible. This can be helpful to maintain as much information as we can,
+                // especially when we are relaying JSON RPC operations through the channels.
+                inst.InnerException = re.RemoteException;
+            }
+
+            return inst;
         }
 
         public string ExceptionType { get; set; }
@@ -142,6 +218,20 @@ namespace JsonRpc.Standard
         public string StackTrace { get; set; }
 
         public ClrExceptionErrorData InnerException { get; set; }
+
+        /// <summary>
+        /// Gets the root cause of the exception.
+        /// This method is similar to <see cref="Exception"/>.<see cref="Exception.GetBaseException"/>.
+        /// </summary>
+        public ClrExceptionErrorData GetBaseException()
+        {
+            var cur = this;
+            while (cur.InnerException != null)
+            {
+                cur = cur.InnerException;
+            }
+            return cur;
+        }
 
         internal void ToString(StringBuilder sb, int indention)
         {

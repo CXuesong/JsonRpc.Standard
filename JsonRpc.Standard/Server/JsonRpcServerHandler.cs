@@ -20,7 +20,7 @@ namespace JsonRpc.Standard.Server
         }
 
         /// <summary>
-        /// Gets the undelying <see cref="IJsonRpcServiceHost"/>.
+        /// Gets the underlying <see cref="IJsonRpcServiceHost"/>.
         /// </summary>
         public IJsonRpcServiceHost ServiceHost { get; }
 

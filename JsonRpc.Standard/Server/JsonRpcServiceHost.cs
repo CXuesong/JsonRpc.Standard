@@ -57,7 +57,7 @@ namespace JsonRpc.Standard.Server
                 if (context.Response != null)
                 {
                     context.Response.Result = null;
-                    context.Response.Error = ResponseError.FromException(ex);
+                    context.Response.Error = ResponseError.FromException(ex, true);
                 }
             }
             return context.Response;
@@ -131,7 +131,7 @@ namespace JsonRpc.Standard.Server
             {
                 TrySetErrorResponse(context, JsonRpcErrorCode.InvalidParams, ex.Message);
                 if (context.Response != null)
-                    context.Response.Error = ResponseError.FromException(ex);
+                    context.Response.Error = ResponseError.FromException(ex, true);
                 return;
             }
             // Call the method
