@@ -129,7 +129,7 @@ namespace JsonRpc.DynamicProxy.Client
         {
             return (T)CreateProxy(client, typeof(T));
         }
-        
+
         private static readonly MethodInfo JsonRpcRealProxy_SendAsync =
             typeof(JsonRpcRealProxy).GetRuntimeMethods().First(m => m.Name == "SendAsync");
 
@@ -152,7 +152,7 @@ namespace JsonRpc.DynamicProxy.Client
             var builder = ModuleBuilder.DefineType(NextProxyTypeName(),
                 TypeAttributes.Class | TypeAttributes.Sealed,
                 stubType.GetTypeInfo().IsInterface ? typeof(object) : stubType,
-                stubType.GetTypeInfo().IsInterface ? new[] {stubType} : emptyTypes);
+                stubType.GetTypeInfo().IsInterface ? new[] { stubType } : emptyTypes);
             var realProxy = builder.DefineField("$_RealProxy", typeof(JsonRpcRealProxy),
                 FieldAttributes.Private | FieldAttributes.InitOnly);
             {

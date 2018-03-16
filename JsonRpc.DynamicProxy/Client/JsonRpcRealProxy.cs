@@ -9,6 +9,11 @@ using JsonRpc.Standard.Contracts;
 
 namespace JsonRpc.DynamicProxy.Client
 {
+    /// <summary>
+    /// Infrastructure.
+    /// Stores method information for implemented proxies in <see cref="JsonRpcProxyBuilder"/>
+    /// and provides methods to execute them.
+    /// </summary>
     public sealed class JsonRpcRealProxy
     {
 
@@ -18,7 +23,7 @@ namespace JsonRpc.DynamicProxy.Client
 
         internal readonly IJsonRpcRequestMarshaler Marshaler;
 
-        public JsonRpcRealProxy(JsonRpcClient client, IList<JsonRpcMethod> methodTable, IJsonRpcRequestMarshaler marshaler)
+        internal JsonRpcRealProxy(JsonRpcClient client, IList<JsonRpcMethod> methodTable, IJsonRpcRequestMarshaler marshaler)
         {
             this.Client = client ?? throw new ArgumentNullException(nameof(client));
             this.MethodTable = methodTable ?? throw new ArgumentNullException(nameof(methodTable));
@@ -61,7 +66,7 @@ namespace JsonRpc.DynamicProxy.Client
             }
             catch (Exception ex)
             {
-                throw new JsonRpcContractException("An exception occured while marshalling the request. " + ex.Message,
+                throw new JsonRpcContractException("An exception occurred while marshalling the request. " + ex.Message,
                     ex);
             }
             marshaled.CancellationToken.ThrowIfCancellationRequested();
@@ -92,7 +97,7 @@ namespace JsonRpc.DynamicProxy.Client
                     catch (Exception ex)
                     {
                         throw new JsonRpcContractException(
-                            "An exception occured while unmarshalling the response. " + ex.Message,
+                            "An exception occurred while unmarshalling the response. " + ex.Message,
                             request, ex);
                     }
                 }
