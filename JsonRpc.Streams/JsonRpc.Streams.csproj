@@ -6,7 +6,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.4.0</Version>
+    <Version>0.4.1</Version>
     <Authors>CXuesong</Authors>
     <Company />
     <PackageId>CXuesong.JsonRpc.Streams</PackageId>

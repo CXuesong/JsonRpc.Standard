@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -101,18 +102,25 @@ namespace JsonRpc.Streams
             using (var linkedTokenSource =
                 CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, DisposalToken))
             {
+                var linkedToken = linkedTokenSource.Token;
                 var content = message.ToString();
-                await writerSemaphore.WaitAsync(linkedTokenSource.Token);
+                await writerSemaphore.WaitAsync(linkedToken);
                 try
                 {
                     await Writer.WriteLineAsync(content);
-                    if (Delimiter != null) await Writer.WriteLineAsync(Delimiter);
+                    linkedToken.ThrowIfCancellationRequested();
+                    if (Delimiter != null)
+                    {
+                        await Writer.WriteLineAsync(Delimiter);
+                        linkedToken.ThrowIfCancellationRequested();
+                    }
+
                     await Writer.FlushAsync();
                 }
                 catch (ObjectDisposedException)
                 {
                     // Throws OperationCanceledException if the cancellation has already been requested.
-                    linkedTokenSource.Token.ThrowIfCancellationRequested();
+                    linkedToken.ThrowIfCancellationRequested();
                     throw;
                 }
                 finally
@@ -127,16 +135,22 @@ namespace JsonRpc.Streams
         {
             base.Dispose(disposing);
             if (Writer == null) return;
-            if (LeaveWriterOpen)
+            if (underlyingStream != null)
+            {
+                Utility.TryDispose(Writer, writerSemaphore, this);
+            }
+            if (!LeaveWriterOpen)
             {
                 if (underlyingStream != null)
-                    Writer.Dispose();
+                {
+                    Utility.TryDispose(underlyingStream, writerSemaphore, this);
+                }
+                else
+                {
+                    Utility.TryDispose(Writer, writerSemaphore, this);
+                }
             }
-            else
-            {
-                underlyingStream?.Dispose();
-                Writer.Dispose();
-            }
+            writerSemaphore.Dispose();
             underlyingStream = null;
             Writer = null;
         }

@@ -144,17 +144,22 @@ namespace JsonRpc.Streams
         {
             base.Dispose(disposing);
             if (Reader == null) return;
-            readerSemaphore.Dispose();
-            if (LeaveReaderOpen)
+            if (underlyingStream != null)
+            {
+                Utility.TryDispose(Reader, readerSemaphore, this);
+            }
+            if (!LeaveReaderOpen)
             {
                 if (underlyingStream != null)
-                    Reader.Dispose();
+                {
+                    Utility.TryDispose(underlyingStream, readerSemaphore, this);
+                }
+                else
+                {
+                    Utility.TryDispose(Reader, readerSemaphore, this);
+                }
             }
-            else
-            {
-                underlyingStream?.Dispose();
-                Reader.Dispose();
-            }
+            readerSemaphore.Dispose();
             underlyingStream = null;
             Reader = null;
         }

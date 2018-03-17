@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,5 +35,31 @@ namespace JsonRpc.Streams
             }
             return -1;
         }
+
+            // IDisposable: TextReader, TextWriter, or Stream
+        public static bool TryDispose(IDisposable disposable, SemaphoreSlim waitFor, object source)
+        {
+            // Try to wait until the operation indicated by waitFor to finish first, elegantly.
+            // However, if the operation is blocking for too long, we will just abandon it,
+            // which may cause disposable.Dispose to fail.
+            waitFor.Wait(1000);
+            try
+            {
+                disposable.Dispose();
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                // TextWriter can throw InvalidOperationException on disposal
+                // when an ongoing asynchronous operation
+                // has not been finished yet.
+                // Theoretically, we can do nothing about it, but to wait.
+                // Sadly, we can't.
+                Debug.WriteLine("{0}: Cannot dispose {1}. {2}", source, disposable, ex.Message);
+            }
+
+            return false;
+        }
+
     }
 }
