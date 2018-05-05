@@ -118,46 +118,57 @@ namespace JsonRpc.Streams
                 var request = (RequestMessage) await reader.ReadAsync(m => m is RequestMessage, ct)
                     .ConfigureAwait(false);
                 if (request == null) return; // EOF reached.
-                CancellationTokenSource cts = null;
+                // This cts is used in TryCancelRequest only. Do not confuse with parameter `ct`.
+                CancellationTokenSource clientCts = null;
                 if (requestCtsDict != null && !request.IsNotification)
                 {
-                    cts = new CancellationTokenSource();
-                    if (!requestCtsDict.TryAdd(request.Id, cts))
+                    clientCts = new CancellationTokenSource();
+                    if (!requestCtsDict.TryAdd(request.Id, clientCts))
                     {
                         //logger.LogWarning(1001, ex, "Duplicate request id for client detected: Id = {id}",
                         //    requestId);
-                        cts.Dispose();
-                        cts = null;
+                        clientCts.Dispose();
+                        clientCts = null;
                     }
                 }
-                var task = ProcessRequestAsync(request, cts, lastRequestTask);
+                var task = ProcessRequestAsync(request, ct, clientCts, lastRequestTask);
                 if (preserveResponseOrder && !request.IsNotification) lastRequestTask = task;
             }
         }
 
-        private async Task ProcessRequestAsync(RequestMessage message, CancellationTokenSource clientCancellation, Task waitFor)
+        private async Task ProcessRequestAsync(RequestMessage message, CancellationToken pumpCt,
+            CancellationTokenSource clientCts, Task waitFor)
         {
-            var ct = clientCancellation?.Token ?? CancellationToken.None;
+            var clientCt = clientCts?.Token ?? CancellationToken.None;
             var requestId = message.Id; // Defensive copy, in case request has been changed in the pipeline.
             try
             {
                 var result = await ServiceHost.InvokeAsync(message,
                     new SingleFeatureCollection<RequestCancellationFeature>(DefaultFeatures,
-                        requestCancellationFeature), ct).ConfigureAwait(false);
+                        requestCancellationFeature), clientCt).ConfigureAwait(false);
                 if (result == null) return;
                 // Wait for the previous task to finish.
-                if (waitFor != null) await waitFor.ConfigureAwait(false);
+                if (waitFor != null)
+                {
+                    Debug.Assert(waitFor.Status != TaskStatus.Created && waitFor.Status != TaskStatus.WaitingToRun);
+                    if (!waitFor.IsCompleted && !waitFor.IsFaulted && waitFor.IsCanceled)
+                        await waitFor.ConfigureAwait(false);
+                }
                 // Note that cts only reflects client's cancellation request.
                 // We still need to write the whole response, if it exists.
-                if (writer != null) await writer.WriteAsync(result, ct).ConfigureAwait(false);
+                if (writer != null) await writer.WriteAsync(result, pumpCt).ConfigureAwait(false);
             }
             finally
             {
-                if (clientCancellation != null)
+                if (clientCts != null)
                 {
-                    requestCtsDict.TryRemove(requestId, out var cts);
-                    Debug.Assert(clientCancellation == cts);
-                    clientCancellation.Dispose();
+                    // Note TryCancelRequest will also remove the cts from requestCtsDict.
+                    if (requestCtsDict.TryRemove(requestId, out var cts))
+                    {
+                        // So we will reach here unless the request has been cancelled.
+                        Debug.Assert(clientCts == cts);
+                    }
+                    clientCts.Dispose();
                 }
             }
         }
