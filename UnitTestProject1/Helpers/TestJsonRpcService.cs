@@ -90,7 +90,7 @@ namespace UnitTestProject1.Helpers
 
     }
 
-    public interface ITestRpcCancallationContract
+    public interface ITestRpcCancellationContract
     {
 
         [JsonRpcMethod]

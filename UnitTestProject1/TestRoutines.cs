@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -54,22 +55,36 @@ namespace UnitTestProject1
             {
                 var ex = Assert.Throws<JsonRpcRemoteException>(() => stub.MismatchedMethod());
                 Assert.Null(ex.RemoteException);
-                Assert.Equal(JsonRpcErrorCode.MethodNotFound, (JsonRpcErrorCode)ex.Error.Code);
+                Assert.Equal(JsonRpcErrorCode.MethodNotFound, (JsonRpcErrorCode) ex.Error.Code);
             }
             {
                 var ex = await Assert.ThrowsAsync<JsonRpcContractException>(stub.ContractViolatingMethodAsync);
             }
         }
 
-        public static async Task TestCancellationAsync(ITestRpcCancallationContract stub)
+        public static async Task TestCancellationAsync(ITestRpcCancellationContract stub)
         {
             await stub.Delay(TimeSpan.FromMilliseconds(50));
             Assert.True(await stub.IsLastDelayFinished());
-            using (var cts = new CancellationTokenSource(100))
+            using (var cts = new CancellationTokenSource())
             {
-                await Assert.ThrowsAsync<TaskCanceledException>(
-                    () => stub.Delay(TimeSpan.FromSeconds(1), cts.Token));
+                // Note: When the request cancellation notification is issued from client,
+                //      a TaskCancelledException will be thrown immediately regardless of the service handler's state.
+                //      we can check whether the request has really been cancelled by enabling ConsistentResponseSequence.
+                // TODO implement ability to wait for "request cancelled" response and put it into some OperationCancelledException-derived class
+                //      in JsonRpcClient.
+                // 1. Issue the request
+                var delayTask = stub.Delay(TimeSpan.FromSeconds(3), cts.Token);
+                // 2. Issue the cancellation
+                cts.Cancel();
+                // 3. Ensures the client-side exception
+                await Assert.ThrowsAsync<TaskCanceledException>(() => delayTask);
+                var sw = Stopwatch.StartNew();
                 Assert.False(await stub.IsLastDelayFinished());
+                sw.Stop();
+                // Ensures that the stub.Delay request has really been cancelled.
+                // Normally the execution time of stub.IsLastDelayFinished should definitely be less than 2 sec.
+                Assert.InRange(sw.ElapsedMilliseconds, 1, 2000);
             }
         }
     }

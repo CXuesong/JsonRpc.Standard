@@ -33,9 +33,8 @@ namespace UnitTestProject1
         private readonly RequestMessage TestMessage = new RequestMessage(1, "test");
 
         private readonly byte[] TestMessagePartwiseStreamContent =
-                Encoding.UTF8.GetBytes(
-                    "Content-Length: 40\r\nContent-Type: application/json-rpc;charset=utf-8\r\n\r\n{\"id\":1,\"method\":\"test\",\"jsonrpc\":\"2.0\"}")
-            ;
+            Encoding.UTF8.GetBytes(
+                "Content-Length: 40\r\nContent-Type: application/json-rpc;charset=utf-8\r\n\r\n{\"id\":1,\"method\":\"test\",\"jsonrpc\":\"2.0\"}");
 
         [Fact]
         public async Task PartwiseStreamWriterTest()
@@ -113,6 +112,7 @@ namespace UnitTestProject1
                     Output.WriteLine($"Received response in {sw.Elapsed}.");
                     return (ResponseMessage) Message.LoadJson(content);
                 }
+
                 async Task<ResponseMessage> SendRequest(MessageId messageId)
                 {
                     request.Id = messageId;
@@ -125,6 +125,7 @@ namespace UnitTestProject1
                     Assert.Equal(55, (int) response.Result);
                     return response;
                 }
+
                 using (var server = new ServerTestHelper(this, serverReader, serverWriter,
                     StreamRpcServerHandlerOptions.None))
                 {
@@ -215,22 +216,40 @@ namespace UnitTestProject1
             }
         }
 
+        // #5 StreamRpcServerHandler.TryCancelRequest may cause server unable to respond to the subsequent requests
+        [Fact]
+        public async Task PartwiseStreamConsistentSequenceCancellationTest()
+        {
+            (var ss, var cs) = FullDuplexStream.CreateStreams();
+            using (var clientReader = new ByLineTextMessageReader(cs))
+            using (var clientWriter = new ByLineTextMessageWriter(cs))
+            using (var serverReader = new ByLineTextMessageReader(ss))
+            using (var serverWriter = new ByLineTextMessageWriter(ss))
+            using (var server = new ServerTestHelper(this, serverReader, serverWriter,
+                StreamRpcServerHandlerOptions.ConsistentResponseSequence
+                | StreamRpcServerHandlerOptions.SupportsRequestCancellation))
+            using (var client = new ClientTestHelper(clientReader, clientWriter))
+            {
+                await TestRoutines.TestCancellationAsync(client.ClientCancellationStub);
+            }
+        }
+
         public class ServerTestHelper : IDisposable
-    {
+        {
 
             private readonly List<IDisposable> disposables = new List<IDisposable>();
 
-        public ServerTestHelper(UnitTestBase owner, MessageReader reader, MessageWriter writer,
-            StreamRpcServerHandlerOptions options)
-        {
-            ServiceHost = Utility.CreateJsonRpcServiceHost(owner);
-            ServerHandler = new StreamRpcServerHandler(ServiceHost, options);
-            ServerMessageReader = reader;
-            ServerMessageWriter = writer;
-            disposables.Add(ServerHandler.Attach(ServerMessageReader, ServerMessageWriter));
-        }
+            public ServerTestHelper(UnitTestBase owner, MessageReader reader, MessageWriter writer,
+                StreamRpcServerHandlerOptions options)
+            {
+                ServiceHost = Utility.CreateJsonRpcServiceHost(owner);
+                ServerHandler = new StreamRpcServerHandler(ServiceHost, options);
+                ServerMessageReader = reader;
+                ServerMessageWriter = writer;
+                disposables.Add(ServerHandler.Attach(ServerMessageReader, ServerMessageWriter));
+            }
 
-        public IJsonRpcServiceHost ServiceHost { get; }
+            public IJsonRpcServiceHost ServiceHost { get; }
 
             public MessageReader ServerMessageReader { get; }
 
@@ -257,12 +276,14 @@ namespace UnitTestProject1
                 Client = new JsonRpcClient(ClientHandler);
                 ClientMessageReader = reader;
                 ClientMessageWriter = writer;
+                // We use positional parameters when issuing cancelRequest request. Just for more test coverage.
+                Client.RequestCancelling += (_, e) => { Client.SendNotificationAsync("cancelRequest", new JArray(e.RequestId.Value), CancellationToken.None); };
                 disposables.Add(ClientHandler.Attach(ClientMessageReader, ClientMessageWriter));
 
                 var proxyBuilder = new JsonRpcProxyBuilder {ContractResolver = Utility.DefaultContractResolver};
                 ClientStub = proxyBuilder.CreateProxy<ITestRpcContract>(Client);
                 ClientExceptionStub = proxyBuilder.CreateProxy<ITestRpcExceptionContract>(Client);
-                ClientCancellationStub = proxyBuilder.CreateProxy<ITestRpcCancallationContract>(Client);
+                ClientCancellationStub = proxyBuilder.CreateProxy<ITestRpcCancellationContract>(Client);
             }
 
             public JsonRpcClient Client { get; }
@@ -277,7 +298,7 @@ namespace UnitTestProject1
 
             public ITestRpcExceptionContract ClientExceptionStub { get; }
 
-            public ITestRpcCancallationContract ClientCancellationStub { get; }
+            public ITestRpcCancellationContract ClientCancellationStub { get; }
 
             /// <inheritdoc />
             public void Dispose()
