@@ -42,7 +42,7 @@ namespace WebTestApplication.Services
             var ct = session.GetInt32("counter") ?? 0;
             ct++;
             session.SetInt32("counter", ct);
-            logger.LogInformation("Counter incresed: {counter}.", ct);
+            logger.LogInformation("Counter increased: {counter}.", ct);
         }
 
         [JsonRpcMethod]

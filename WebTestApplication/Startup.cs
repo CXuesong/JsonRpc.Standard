@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using JsonRpc.AspNetCore;
 using JsonRpc.Standard.Contracts;
+using Microsoft.AspNetCore.Http;
 
 namespace WebTestApplication
 {
@@ -38,12 +39,15 @@ namespace WebTestApplication
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
             app.UseSession();
+            // If you want to implement your JSON-RPC endpoint in Controller, you need to ensure calling
+            // UseWebSockets first, then UseMvc.
+            // You may also create your JSON-RPC Websocket endpoint with app.Use(...) rather than Controller.
+            // See https://docs.microsoft.com/en-us/aspnet/core/fundamentals/websockets?view=aspnetcore-2.2#how-to-use-websockets
+            // for more information.
+            app.UseWebSockets();
             app.UseMvc();
             app.UseJsonRpc("/api/jsonrpc");
             app.UseStaticFiles();

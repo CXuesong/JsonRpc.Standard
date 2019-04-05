@@ -6,41 +6,65 @@
     <script src="lib/jquery-3.2.1.min.js"></script>
     <script src="js/jsonrpc.js"></script>
     <script>
-        var cp = { client: new JsonRpcClient("/api/jsonrpc") };
-        cp.send = function (methodName, parameters, isRequest) {
-            this.client.send(methodName, parameters, isRequest ? undefined : null)
-                .always(function (result, httpCode) {
-                    var text = "HTTP " + httpCode + "\n\n" + JSON.stringify(result);
-                    if (!isRequest) {
-                        text += "\n\n(This is a JSON RPC Notification.)";
-                    }
-                    $("#resultContainer").text(text);
-                });
-        };
-        cp.request = function (methodName, parameters) {
-            this.send(methodName, parameters, true);
-        }
-        cp.notify = function (methodName, parameters) {
-            this.send(methodName, parameters, false);
-        }
-        cp.getValue = function (id) {
-            this.request("getValue", id ? { id: id } : null);
-        }
-        cp.callNotify = function () {
-            this.notify("notify");
-        }
-        cp.getCounter = function () {
-            this.request("getCounter");
-        }
-        cp.nonexistentMethod = function () {
-            this.request("nonexistentMethod");
-        }
+        $(function() {
+            /**@type {{ client: JsonRpcClient }} */
+            var cp = { client: undefined };
+            cp.send = function (methodName, parameters, isRequest) {
+                try {
+                    this.client.send(methodName, parameters, isRequest ? undefined : null)
+                        .always(function(result, httpCode) {
+                            var text = "HTTP " + httpCode + "\n\n" + JSON.stringify(result);
+                            if (!isRequest) {
+                                text += "\n\n(This is a JSON RPC notification.)";
+                            }
+                            $("#resultContainer").text(text);
+                        });
+                } catch (e) {
+                    $("#resultContainer").text(e.toString());
+                } 
+            };
+            cp.request = function(methodName, parameters) {
+                this.send(methodName, parameters, true);
+            }
+            cp.notify = function(methodName, parameters) {
+                this.send(methodName, parameters, false);
+            }
+            cp.getValue = function(id) {
+                this.request("getValue", id ? { id: id } : null);
+            }
+            cp.callNotify = function() {
+                this.notify("notify");
+            }
+            cp.getCounter = function() {
+                this.request("getCounter");
+            }
+            cp.nonexistentMethod = function() {
+                this.request("nonexistentMethod");
+            }
+            cp.updateClient = function() {
+                if (this.client)
+                    this.client.close();
+                if (useWebSocketCheckbox.checked) {
+                    var loc = window.location;
+                    var endpointUrl = (loc.protocol === "https:" ? "wss://" : "ws://") + loc.host + "/api/jsonrpc";
+                    this.client = new JsonRpcClient(endpointUrl);
+                } else {
+                    this.client = new JsonRpcClient("/api/jsonrpc");
+                }
+            }
+            cp.updateClient();
+            window.cp = cp;
+        });
     </script>
 </head>
 <body>
     <h1>JsonRpc.AspNetCore</h1>
     <h2>ASP.NET Core Test Page</h2>
     <hr />
+    <div>
+        <input type="checkbox" id="useWebSocketCheckbox" onchange="cp.updateClient();" />
+        <label for="useWebSocketCheckbox">Use WebSocket</label>
+    </div>
     <div>
         <p>Click on the following buttons to send JSON RPC requests.</p>
         <input type="button" value="getValue()" onclick="cp.getValue();" />
