@@ -19,7 +19,7 @@ namespace JsonRpc.AspNetCore
         /// </summary>
         /// <remarks>
         /// The default value uses <see cref="HttpContextServiceFactory.Default"/>.
-        /// Set this property to <c>null</c> is equavalent to setting it to <see cref="DefaultServiceFactory.Default"/>.
+        /// Set this property to <c>null</c> is equivalent to setting it to <see cref="DefaultServiceFactory.Default"/>.
         /// </remarks>
         public IServiceFactory ServiceFactory { get; set; } = HttpContextServiceFactory.Default;
 
@@ -41,7 +41,7 @@ namespace JsonRpc.AspNetCore
         /// <summary>
         /// Whether to automatically register all the <see cref="IJsonRpcService"/> types
         /// used in the service host in the current <see cref="IServiceCollection"/>
-        /// with transcient lifetime.
+        /// with transient lifetime.
         /// </summary>
         /// <remarks>
         /// If you plan to work with your own <see cref="ServiceFactory"/>, you may

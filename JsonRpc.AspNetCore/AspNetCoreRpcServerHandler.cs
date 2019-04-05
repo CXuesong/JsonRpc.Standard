@@ -39,7 +39,7 @@ namespace JsonRpc.AspNetCore
         /// <summary>
         /// Content-Type header value of the emitted messages.
         /// </summary>
-        /// <value>Content-Type header value, or <c>null</c> to supress Content-Type header.</value>
+        /// <value>Content-Type header value, or <c>null</c> to suppress Content-Type header.</value>
         public string ResponseContentType { get; set; } = "application/json-rpc";
 
         /// <summary>

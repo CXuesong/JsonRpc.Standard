@@ -27,7 +27,7 @@ namespace JsonRpc.AspNetCore
         {
             if (featureType == typeof(IAspNetCoreFeature))
             {
-                if (feature == null) feature = new AspNetCoreFeature(Context);
+                if (feature == null) feature = AspNetCoreFeature.FromHttpContext(Context);
                 return feature;
             }
             return BaseCollection?.Get(featureType);
