@@ -48,10 +48,8 @@ namespace JsonRpc.WebSockets
         public override async Task WriteAsync(Message message, CancellationToken cancellationToken)
         {
             using (var ms = new MemoryStream())
-            using (var writer = new StreamWriter(ms))
             {
-                message.WriteJson(writer);
-                writer.Flush();
+                DeserializeMessage(ms, message);
                 var pos = 0;
                 if (!ms.TryGetBuffer(out var buffer))
                 {
@@ -67,5 +65,20 @@ namespace JsonRpc.WebSockets
                 }
             }
         }
+
+        /// <summary>
+        /// Writes a JSON-RPC message to the specified stream.
+        /// </summary>
+        /// <param name="stream">A stream containing the WebSocket message to be sent to the client.</param>
+        /// <param name="message">The JSON-RPC message to be sent to the client.</param>
+        protected virtual void DeserializeMessage(Stream stream, Message message)
+        {
+            // Use UTF-8 by default.
+            using (var writer = new StreamWriter(stream))
+            {
+                message.WriteJson(writer);
+            }
+        }
+
     }
 }

@@ -58,9 +58,9 @@ namespace JsonRpc.WebSockets
         protected override async Task<Message> ReadDirectAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            var buffer = new byte[bufferSize];
             using (var ms = new MemoryStream())
             {
-                var buffer = new byte[bufferSize];
                 while (true)
                 {
                     var result = await WebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
@@ -78,11 +78,7 @@ namespace JsonRpc.WebSockets
                         if (ms.Length > 0)      // If the socket is closing, we won't receive any data in the reception result.
                         {
                             ms.Seek(0, SeekOrigin.Begin);
-                            // Use UTF-8 by default.
-                            using (var reader = new StreamReader(ms))
-                            {
-                                return Message.LoadJson(reader);
-                            }
+                            return DeserializeMessage(ms);
                         }
                     }
                     if (result.CloseStatus != null)
@@ -91,6 +87,20 @@ namespace JsonRpc.WebSockets
                         return null;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Loads a JSON-RPC message from the specified stream.
+        /// </summary>
+        /// <param name="stream">A stream containing the WebSocket message received from client.</param>
+        /// <returns>The parsed JSON-RPC message.</returns>
+        protected virtual Message DeserializeMessage(Stream stream)
+        {
+            // Use UTF-8 by default.
+            using (var reader = new StreamReader(stream))
+            {
+                return Message.LoadJson(reader);
             }
         }
     }
