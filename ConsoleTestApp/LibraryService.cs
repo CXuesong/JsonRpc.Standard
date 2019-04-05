@@ -12,7 +12,7 @@ namespace ConsoleTestApp
     public class LibraryService : JsonRpcService
     {
 
-    // The service instance is transcient. You cannot persist state in such a class.
+    // The service instance is transient. You cannot persist state in such a class.
     // So we need session.
     private LibrarySessionFeature Session => RequestContext.Features.Get<LibrarySessionFeature>();
 

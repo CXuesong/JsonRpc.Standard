@@ -63,7 +63,7 @@ namespace JsonRpc.Http
         /// <summary>
         /// Content-Type header value of the emitted messages.
         /// </summary>
-        /// <value>Content-Type header value, or <c>null</c> to supress Content-Type header.</value>
+        /// <value>Content-Type header value, or <c>null</c> to suppress Content-Type header.</value>
         public string ContentType { get; set; } = "application/json-rpc";
 
         // Looking for EmitContentCharset? No, StringContent will automatically append charset to the

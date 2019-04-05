@@ -214,7 +214,7 @@ namespace JsonRpc.Standard
         /// <remarks>
         /// To compose a valid JSON RPC response, you need to set this property to
         /// the value returned by <see cref="JValue.CreateNull"/>, if the response is
-        /// sucess and no other value is to be offered.
+        /// success and no other value is to be offered.
         /// </remarks>
         // This member is REQUIRED on success.
         // This member MUST NOT exist if there was an error invoking the method.

@@ -125,7 +125,7 @@ namespace JsonRpc.Streams
                         if (!impendingRequestDict.TryGetValue(id, out tcs1)) return;
                         if (!tcs1.TrySetCanceled()) return;
                         // Note that server might still send the response after cancellation on the client.
-                        // If we are going to keep all "foreign" responses, we need to be able to recgnize it later.
+                        // If we are going to keep all "foreign" responses, we need to be able to recognize it later.
                         var keepRequestIdInMind = (Options & StreamRpcClientOptions.PreserveForeignResponses) ==
                                                   StreamRpcClientOptions.PreserveForeignResponses;
                         if (keepRequestIdInMind)

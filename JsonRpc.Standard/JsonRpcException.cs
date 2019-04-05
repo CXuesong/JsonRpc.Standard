@@ -11,7 +11,7 @@ using System.Runtime.Serialization;
 namespace JsonRpc.Standard
 {
     /// <summary>
-    /// An exception that is thorown by <see cref="JsonRpcService"/> implementations
+    /// An exception that is thrown by <see cref="JsonRpcService"/> implementations
     /// to indicate an general JSON RPC error.
     /// </summary>
 #if NET45

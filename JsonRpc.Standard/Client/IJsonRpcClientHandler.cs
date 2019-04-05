@@ -23,7 +23,7 @@ namespace JsonRpc.Standard.Client
         /// If a JSON RPC Request has already been sent, cancellation via
         /// <paramref name="cancellationToken"/> will only make the returned task stop waiting for the response.
         /// To actually notifies the RPC server to cancel certain request, both the client and server side should
-        /// make a contract on how to cancel an ongoing reqeuest, for example, by sending a special "cancellation"
+        /// make a contract on how to cancel an ongoing request, for example, by sending a special "cancellation"
         /// notification.
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="request"/> is <c>null</c>.</exception>
