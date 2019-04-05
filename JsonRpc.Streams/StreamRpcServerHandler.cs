@@ -99,7 +99,7 @@ namespace JsonRpc.Streams
         /// <param name="id">Id of the request to cancel.</param>
         /// <exception cref="NotSupportedException"><see cref="StreamRpcServerHandlerOptions.SupportsRequestCancellation"/> is not specified in the constructor, so cancellation is not supported.</exception>
         /// <returns><c>true</c> if the specified request has been cancelled. <c>false</c> if the specified request id has not found.</returns>
-        /// <remarks>If cancellation is supported, you may cancel an arbitary request in the <see cref="JsonRpcService"/> via <see cref="IRequestCancellationFeature"/>.</remarks>
+        /// <remarks>If cancellation is supported, you may cancel an arbitrary request in the <see cref="JsonRpcService"/> via <see cref="IRequestCancellationFeature"/>.</remarks>
         public bool TryCancelRequest(MessageId id)
         {
             if (requestCtsDict == null) throw new NotSupportedException("Request cancellation is not supported.");
@@ -143,26 +143,28 @@ namespace JsonRpc.Streams
             var requestId = message.Id; // Defensive copy, in case request has been changed in the pipeline.
             try
             {
-                var result = await ServiceHost.InvokeAsync(message,
+                var response = await ServiceHost.InvokeAsync(message,
                     new SingleFeatureCollection<RequestCancellationFeature>(DefaultFeatures,
                         requestCancellationFeature), clientCt).ConfigureAwait(false);
-                if (result == null) return;
+                if (response == null) return;
                 // Wait for the previous task to finish.
                 if (waitFor != null)
                 {
                     Debug.Assert(waitFor.Status != TaskStatus.Created && waitFor.Status != TaskStatus.WaitingToRun);
-                    if (!waitFor.IsCompleted && !waitFor.IsFaulted && waitFor.IsCanceled)
+                    if (!waitFor.IsCompleted && !waitFor.IsFaulted && !waitFor.IsCanceled)
+                    {
                         await waitFor.ConfigureAwait(false);
+                    }
                 }
                 // Note that cts only reflects client's cancellation request.
                 // We still need to write the whole response, if it exists.
-                if (writer != null) await writer.WriteAsync(result, pumpCt).ConfigureAwait(false);
+                if (writer != null) await writer.WriteAsync(response, pumpCt).ConfigureAwait(false);
             }
             finally
             {
                 if (clientCts != null)
                 {
-                    // Note TryCancelRequest will also remove the cts from requestCtsDict.
+                    // Note TryCancelRequest can also remove the cts from requestCtsDict.
                     if (requestCtsDict.TryRemove(requestId, out var cts))
                     {
                         // So we will reach here unless the request has been cancelled.
