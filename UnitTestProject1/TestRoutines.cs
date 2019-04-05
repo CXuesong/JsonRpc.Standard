@@ -73,18 +73,20 @@ namespace UnitTestProject1
                 //      we can check whether the request has really been cancelled by enabling ConsistentResponseSequence.
                 // TODO implement ability to wait for "request cancelled" response and put it into some OperationCancelledException-derived class
                 //      in JsonRpcClient.
-                // 1. Issue the request
-                var delayTask = stub.Delay(TimeSpan.FromSeconds(3), cts.Token);
+                // 1. Issue the request. 500ms should be enough for us to issue a cancellation.
+                var delayTask = stub.Delay(TimeSpan.FromSeconds(500), cts.Token);
                 // 2. Issue the cancellation
                 cts.Cancel();
                 // 3. Ensures the client-side exception
                 await Assert.ThrowsAsync<TaskCanceledException>(() => delayTask);
-                var sw = Stopwatch.StartNew();
                 Assert.False(await stub.IsLastDelayFinished());
-                sw.Stop();
                 // Ensures that the stub.Delay request has really been cancelled.
-                // Normally the execution time of stub.IsLastDelayFinished should definitely be less than 2 sec.
-                Assert.InRange(sw.ElapsedMilliseconds, 1, 2000);
+                // ReSharper disable once MethodSupportsCancellation
+                await Task.Delay(500);
+                Assert.False(await stub.IsLastDelayFinished());
+                // ReSharper disable once MethodSupportsCancellation
+                await Task.Delay(500);
+                Assert.False(await stub.IsLastDelayFinished());
             }
         }
     }
