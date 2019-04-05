@@ -28,6 +28,9 @@ namespace JsonRpc.Streams
 
         private readonly CancellationTokenSource disposalTokenSource = new CancellationTokenSource();
 
+        /// <summary>
+        /// A <see cref="CancellationToken"/> that is cancelled when the current object has been disposed.
+        /// </summary>
         protected CancellationToken DisposalToken => disposalTokenSource.Token;
 
         /// <inheritdoc />
@@ -140,14 +143,16 @@ namespace JsonRpc.Streams
                                 }
                                 finally
                                 {
-                                    messagesLock.Release();
+                                    if (!DisposalToken.IsCancellationRequested)
+                                        messagesLock.Release();
                                 }
                                 // After that, we can check the cancellation
                                 linkedTokenSource.Token.ThrowIfCancellationRequested();
                             }
                             finally
                             {
-                                fetchMessagesLock.Release();
+                                if (!DisposalToken.IsCancellationRequested)
+                                    fetchMessagesLock.Release();
                             }
                         }
                         else
@@ -171,7 +176,9 @@ namespace JsonRpc.Streams
         /// When overridden in the derived class, directly asynchronously reads the next message.
         /// </summary>
         /// <param name="cancellationToken">A token that cancels the operation OR indicates the current instance has just been disposed.</param>
+        /// <returns>The message just read, or <c>null</c> if EOF has reached.</returns>
         /// <exception cref="OperationCanceledException">The operation has been canceled.</exception>
+        /// <remarks>The caller has guaranteed there is at most 1 ongoing call of this method.</remarks>
         protected abstract Task<Message> ReadDirectAsync(CancellationToken cancellationToken);
 
         /// <inheritdoc />
