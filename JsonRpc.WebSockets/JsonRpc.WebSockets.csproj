@@ -5,7 +5,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.4.1</Version>
+    <Version>0.4.3</Version>
     <Authors>CXuesong</Authors>
     <Company />
     <PackageId>CXuesong.JsonRpc.WebSocket</PackageId>
@@ -16,8 +16,6 @@
     <NeutralLanguage>en-us</NeutralLanguage>
     <PackageReleaseNotes>See https://github.com/CXuesong/JsonRpc.Standard/releases .</PackageReleaseNotes>
     <Copyright>Copyright 2019 CXuesong</Copyright>
-    <AssemblyVersion>0.4.0.0</AssemblyVersion>
-    <FileVersion>0.4.0.0</FileVersion>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>../JsonRpc.Standard.snk</AssemblyOriginatorKeyFile>
     <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0.html</PackageLicenseUrl>
