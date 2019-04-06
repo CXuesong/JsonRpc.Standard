@@ -1,0 +1,855 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HelpTOC>
+
+  <HelpTOCNode Title="Welcome to the JsonRpc.Standard" Url="html/7836b300-e8f3-40ae-bf6e-9bc1dc4883d7.htm" />
+  <HelpTOCNode Id="2a933bad-f7b0-4f0e-92bd-4125c9f0ca09" Title="JsonRpc.AspNetCore" Url="html/54e7ccac-186f-1844-8c41-2f903ab13508.htm">
+    <HelpTOCNode Id="06b5c966-dd6b-4e42-abc9-14eee641f600" Title="AspNetCoreFeature Class" Url="html/513582eb-77da-7ec9-6e9d-a5bd8c40c6d2.htm">
+      <HelpTOCNode Id="3ff8507b-b1c3-4abe-a65e-fb2d84c798c2" Title="AspNetCoreFeature Properties" Url="html/fde4c9c7-d49e-1a14-ad7a-d6689808a837.htm">
+        <HelpTOCNode Title="HttpContext Property " Url="html/87b2edc7-a692-76cc-6836-7262e36592f4.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="557c01bc-0da9-4665-9365-e4ddeb1bb53c" Title="AspNetCoreFeature Methods" Url="html/857b6a8f-f151-0dc8-973a-91cd02bc1ab1.htm">
+        <HelpTOCNode Title="FromHttpContext Method " Url="html/d88f6e8b-598a-0703-bd75-6e2ad1100be6.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="97bfb7e2-a115-4c3d-8751-3e0480d68cb7" Title="AspNetCoreRpcServerHandler Class" Url="html/70e57ad4-a8ea-626a-ee63-debbfd912104.htm">
+      <HelpTOCNode Title="AspNetCoreRpcServerHandler Constructor " Url="html/1097c570-ea68-bbf5-5203-ed97695a907f.htm" />
+      <HelpTOCNode Id="cc58c79a-4c8e-4de3-9f5d-154adbacac55" Title="AspNetCoreRpcServerHandler Properties" Url="html/d7f094a4-4a77-b3e1-71f5-cdda0d34fbfe.htm">
+        <HelpTOCNode Title="EmitContentCharset Property " Url="html/492a5bb6-02ae-cd54-74be-2cfcb5c8872a.htm" />
+        <HelpTOCNode Title="Encoding Property " Url="html/605fc2eb-a270-4ceb-903d-142eeb9520a4.htm" />
+        <HelpTOCNode Title="ResponseContentType Property " Url="html/5f3a8ed7-8f64-7df3-4913-381fbf342657.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="5137cf3e-0451-4a4e-a8e9-f841ca1b4659" Title="AspNetCoreRpcServerHandler Methods" Url="html/ef2ad04d-d3bb-bda3-cccb-4fe1a415b76b.htm">
+        <HelpTOCNode Id="313e9bfc-b5b9-43c8-a45e-5ab5da010be8" Title="ProcessRequestAsync Method " Url="html/58a463b0-59cb-410f-19ba-058f5f2e500e.htm">
+          <HelpTOCNode Title="ProcessRequestAsync Method (HttpContext)" Url="html/65ecfd7d-5277-1cdb-7560-8f334e982d60.htm" />
+          <HelpTOCNode Title="ProcessRequestAsync Method (RequestMessage, HttpContext)" Url="html/b3da293e-e889-edd4-cf39-2906a90b52ed.htm" />
+          <HelpTOCNode Title="ProcessRequestAsync Method (RequestMessage, HttpContext, Boolean)" Url="html/77601b7c-d8c4-a959-aaa7-fad61af7cacf.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="5a6fcf06-6112-442c-b966-3b4165738c55" Title="HttpContextServiceFactory Class" Url="html/446efb4c-b896-a6da-1527-3e84bc70a49a.htm">
+      <HelpTOCNode Title="HttpContextServiceFactory Constructor " Url="html/8ad75a1b-34e9-7bea-a3f2-51c003cd192d.htm" />
+      <HelpTOCNode Id="777c86e7-324f-4f65-acdd-0b3a2313fa7f" Title="HttpContextServiceFactory Methods" Url="html/f39d5514-2362-8e0b-a6eb-694d590e7c00.htm">
+        <HelpTOCNode Title="CreateService Method " Url="html/dec6bbb0-ce1f-0a00-1ab0-9eabcee84e3d.htm" />
+        <HelpTOCNode Title="ReleaseService Method " Url="html/056045d6-3e30-70ba-7f1a-542ee92a5ed0.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="b9f01ce0-daca-4712-99a2-e538f678fe38" Title="HttpContextServiceFactory Fields" Url="html/d337b3ac-2708-0cee-fedc-96de17ac95aa.htm">
+        <HelpTOCNode Title="Default Field" Url="html/bc5fd9b6-eda7-c5e1-48ef-2efc5a4baa9d.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="49c1c758-ee6e-4494-8128-58dceac5badb" Title="IAspNetCoreFeature Interface" Url="html/0bb68566-1962-1173-e4f3-19acd059b067.htm">
+      <HelpTOCNode Id="e64d2fd2-4bc6-443b-a890-54e7ebcef1f5" Title="IAspNetCoreFeature Properties" Url="html/5c114615-44ae-ac26-1d9d-b009a706a9dd.htm">
+        <HelpTOCNode Title="HttpContext Property " Url="html/9f859222-6b6c-3269-b18c-7159d450f790.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="e918f66e-f943-497f-8ba6-90c3e0de0f71" Title="IJsonRpcBuilder Interface" Url="html/528fe163-a0d9-147b-94a0-07f82da3040a.htm">
+      <HelpTOCNode Id="d210dae1-212d-4711-a65e-2c5266915c37" Title="IJsonRpcBuilder Methods" Url="html/67bcb57b-f45a-b559-5d6b-9efd337f0672.htm">
+        <HelpTOCNode Title="Intercept Method " Url="html/e0b1558d-91b2-608a-8581-b22fbd816d8a.htm" />
+        <HelpTOCNode Title="Register Method " Url="html/6ccf4cc0-c87a-fc8f-8060-427e1778ac21.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="844bf389-b081-4d4f-9337-9357552d7588" Title="JsonRpcAspNetExtensions Class" Url="html/5cb480a8-29bf-4b7d-4f1e-319ce39e69f3.htm">
+      <HelpTOCNode Id="61874f2f-b320-4549-810a-1d2bdfe99401" Title="JsonRpcAspNetExtensions Methods" Url="html/baf5ecc2-7635-dec5-fc54-8850a78f8dfb.htm">
+        <HelpTOCNode Title="AddJsonRpc Method " Url="html/658f9119-b3d3-07b0-666b-5262f215fa01.htm" />
+        <HelpTOCNode Title="GetHttpContext Method " Url="html/06462e15-fcf4-bee4-f2d7-1359d6ca51f4.htm" />
+        <HelpTOCNode Id="b4e0cf2a-6630-4202-8f1b-1f7079a5ba6a" Title="UseJsonRpc Method " Url="html/1ca52683-8cab-b325-b9fe-6d93f651fc79.htm">
+          <HelpTOCNode Title="UseJsonRpc Method (IApplicationBuilder, String)" Url="html/f238d561-a776-acd3-a084-0148535c39d6.htm" />
+          <HelpTOCNode Title="UseJsonRpc Method (IApplicationBuilder, String, AspNetCoreRpcServerHandler)" Url="html/f7e7e41c-d477-3bf1-9d8b-b6f6e58fb901.htm" />
+          <HelpTOCNode Title="UseJsonRpc Method (IApplicationBuilder, String, Func(HttpContext, AspNetCoreRpcServerHandler))" Url="html/be41414b-995b-a644-6429-d6590ca589de.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="e75da0a0-105b-4d99-b4e0-9a05326d55e2" Title="JsonRpcBuilderExtensions Class" Url="html/f8f6ee2f-72f1-3b20-9b2b-15fdde515aa2.htm">
+      <HelpTOCNode Id="ef91963e-572a-48e2-97a5-eb4dd42d667f" Title="JsonRpcBuilderExtensions Methods" Url="html/be7896b7-39a1-1f23-a413-6e52e03642bc.htm">
+        <HelpTOCNode Title="Intercept Method " Url="html/8d98d740-5da5-be9b-d0b2-d3a514123b09.htm" />
+        <HelpTOCNode Id="c5a92037-12d5-4f8c-8e7e-28efeeb6f4f1" Title="Register Method " Url="html/8aac1c32-2f5e-8f80-9973-8911b6b96975.htm">
+          <HelpTOCNode Title="Register(TService) Method (IJsonRpcBuilder)" Url="html/b8071ebf-7bfa-0b8a-4e97-205327b8caa3.htm" />
+          <HelpTOCNode Title="Register Method (IJsonRpcBuilder, Assembly)" Url="html/f6a1aab9-19e7-0484-1c7c-d6d62a282235.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="RegisterFromAssembly(T) Method " Url="html/fbdf0b0c-fa89-95c4-0140-d7bbd4b09395.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="cb38c62e-5b13-4818-9ca6-71db7c4d86bc" Title="JsonRpcOptions Class" Url="html/b4345a46-911e-9a30-1e28-717269bd1636.htm">
+      <HelpTOCNode Title="JsonRpcOptions Constructor " Url="html/8b7bb497-6f34-2669-a4d9-c150f4f66e02.htm" />
+      <HelpTOCNode Id="4d71560c-e644-4c70-9e10-13b04ab7136d" Title="JsonRpcOptions Properties" Url="html/b5b4f257-be70-8796-1124-db4e9841b660.htm">
+        <HelpTOCNode Title="ContractResolver Property " Url="html/316d4b5b-22d1-2101-f394-9be887a14519.htm" />
+        <HelpTOCNode Title="InjectServiceTypes Property " Url="html/be178517-0c06-a932-20c2-42de568ef06c.htm" />
+        <HelpTOCNode Title="LoggerFactory Property " Url="html/798be772-cd01-2ad1-a6de-b4ccb549af67.htm" />
+        <HelpTOCNode Title="MethodBinder Property " Url="html/5cf1fa3d-23c3-abe1-dc79-75d0f4758c9b.htm" />
+        <HelpTOCNode Title="ServiceFactory Property " Url="html/23b8c5e1-3a9f-7974-baec-9cbec5e214be.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="JsonRpcOptions Methods" Url="html/a0c62c29-2294-75c1-3502-79b09f9cd212.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="5db9e6c3-c3fa-497b-ba92-14be3bc7b55b" Title="JsonRpcOptionsExtensions Class" Url="html/2679ee02-d62f-3d52-7424-c55331266f3a.htm">
+      <HelpTOCNode Id="a8d2504a-2325-4443-88ff-1996e209e46c" Title="JsonRpcOptionsExtensions Methods" Url="html/cd254796-698e-00ba-2bc9-f82ff5bc7a09.htm">
+        <HelpTOCNode Title="UseCamelCaseContractResolver Method " Url="html/b14c7165-c7f3-1c42-0c23-3fcd893715f2.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="90d3c4a3-7ca5-43e0-b252-5fa611c4d86c" Title="JsonRpc.DynamicProxy.Client" Url="html/526c284b-44f8-c8c0-8f0b-7cf40017385d.htm">
+    <HelpTOCNode Id="acaa6091-1a76-4374-b416-af0d44f803fe" Title="JsonRpcProxyBuilder Class" Url="html/11dca66c-18e6-603f-9bc0-38e7c83c530b.htm">
+      <HelpTOCNode Title="JsonRpcProxyBuilder Constructor " Url="html/3c6c6e3c-e0e4-2c1f-b12d-f90ef4335f45.htm" />
+      <HelpTOCNode Id="14ba53bd-d46d-4760-9496-7bf0741f86b5" Title="JsonRpcProxyBuilder Properties" Url="html/276dc7de-fb73-9e21-93e1-e0b8e22ea9d1.htm">
+        <HelpTOCNode Title="AssemblyBuilder Property " Url="html/b7e10129-050c-6fb5-4f99-0d3788506201.htm" />
+        <HelpTOCNode Title="ContractResolver Property " Url="html/3a251512-43b7-c430-ddcd-72c4335a04c1.htm" />
+        <HelpTOCNode Title="ImplementedProxyAssemblyName Property " Url="html/9eb1abd0-a957-ae44-89d5-7e522be78d7c.htm" />
+        <HelpTOCNode Title="ImplementedProxyNamespace Property " Url="html/3f9b9cb2-1448-1f8e-0600-bd5a5d27fed4.htm" />
+        <HelpTOCNode Title="ModuleBuilder Property " Url="html/b3fb5253-14b4-c777-41ff-e1d799a084e6.htm" />
+        <HelpTOCNode Title="RequestMarshaler Property " Url="html/2a357128-677f-f5aa-7a50-1c9ccc609758.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="673c7d5c-63fd-4bf0-a01a-3d9e1e150b09" Title="JsonRpcProxyBuilder Methods" Url="html/d49097e1-36d9-2c7b-0a05-8c6d808b77df.htm">
+        <HelpTOCNode Id="e0c1b417-711a-4a92-bdaf-0a9011df04c8" Title="CreateProxy Method " Url="html/953e9ca2-02d4-8148-96b5-c9fb92a6ce64.htm">
+          <HelpTOCNode Title="CreateProxy(T) Method (JsonRpcClient)" Url="html/87c1faa8-b82b-852f-4f86-2fda59f55ff9.htm" />
+          <HelpTOCNode Title="CreateProxy Method (JsonRpcClient, Type)" Url="html/0a2860ad-3ef8-6780-946c-fe406d7d51c3.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="ImplementProxy Method " Url="html/a7255905-2870-9b97-945a-b46d6fcaca7e.htm" />
+        <HelpTOCNode Title="ImplementProxyMethod Method " Url="html/5ad0ffd8-037b-6ddd-7f63-d883d1f62fa6.htm" />
+        <HelpTOCNode Title="NextProxyTypeName Method " Url="html/ff10f733-242f-9417-7fc1-9d42f6e5c939.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="b1192482-1206-46ab-bc4d-0467930ca4f3" Title="JsonRpcProxyBuilder.ProxyBuilderEntry Class" Url="html/bc09ed4c-dd94-dafd-d281-4cde53a58cfa.htm">
+      <HelpTOCNode Title="JsonRpcProxyBuilder.ProxyBuilderEntry Constructor " Url="html/6bb671b8-aa24-7a86-4be1-6b0acae9df75.htm" />
+      <HelpTOCNode Id="5d81e082-0874-403b-853a-e1ad2e5ebee6" Title="ProxyBuilderEntry Properties" Url="html/a6e8addb-fadf-3b06-161d-49e4e9255226.htm">
+        <HelpTOCNode Title="MethodTable Property " Url="html/42b347ce-7c64-c834-a694-36a351d06dca.htm" />
+        <HelpTOCNode Title="ProxyType Property " Url="html/50ef596f-254e-4df6-0456-ebd8e5ea3bcb.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="16468982-ac5a-4c00-9456-0226356aa0e3" Title="ProxyBuilderEntry Methods" Url="html/3dee67c1-acdf-80a4-9941-a773fa8dbe34.htm">
+        <HelpTOCNode Title="CreateInstance Method " Url="html/a4b9ff2b-b7b0-1343-e8f7-2a3d7c51d2ad.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="f9d881ab-129e-438d-a30b-b1785c90327f" Title="JsonRpcRealProxy Class" Url="html/b8537194-918a-99a4-f3ff-9f25c24b65a9.htm">
+      <HelpTOCNode Id="2146e881-3033-49b3-a197-da6f6b90f1cb" Title="JsonRpcRealProxy Methods" Url="html/97ff3c5a-3f61-346f-4400-90df5bc49659.htm">
+        <HelpTOCNode Id="bb358d99-d8f5-4a2a-873a-6f537807b5a4" Title="Send Method " Url="html/8870c64f-c1c6-0fdf-7d65-567b16585cb2.htm">
+          <HelpTOCNode Title="Send(TResult) Method (Int32, IList)" Url="html/ffe67311-4686-9045-667d-5b872e82609c.htm" />
+          <HelpTOCNode Title="Send Method (Int32, IList)" Url="html/93e67be4-e072-aaae-cc5e-5dbf598fe7c7.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="SendAsync(TResult) Method " Url="html/049b327a-24fb-b9e0-683e-ac5f4e775c3b.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="1cca7dfc-87d6-4e79-88c2-7fb70597649d" Title="JsonRpc.Http" Url="html/e4b45469-892e-c7e9-ec2e-cb92a3cabb8e.htm">
+    <HelpTOCNode Id="131f0b8f-7b88-4281-b4ac-d344ff0a87b7" Title="HttpRpcClientHandler Class" Url="html/c11e4209-1ce0-41f3-5671-eb8a8bb2057f.htm">
+      <HelpTOCNode Id="3990a766-5a3a-4d9c-86cc-e29862eefaf7" Title="HttpRpcClientHandler Constructor " Url="html/84f125c6-e3b3-8616-df6f-9c0bb3510210.htm">
+        <HelpTOCNode Title="HttpRpcClientHandler Constructor " Url="html/d67e6a17-f2f9-2e78-bd63-d7c87e99dfd5.htm" />
+        <HelpTOCNode Title="HttpRpcClientHandler Constructor (HttpClient)" Url="html/0c14659c-6f84-3653-7e21-b70f5680cca4.htm" />
+        <HelpTOCNode Title="HttpRpcClientHandler Constructor (HttpMessageHandler)" Url="html/06bf135f-f241-4e50-f594-d32a0ba5430e.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="ba839503-313f-43b0-be8a-67cbcb4290b9" Title="HttpRpcClientHandler Properties" Url="html/51256854-687c-a681-e0ed-9a57b6ddd1f9.htm">
+        <HelpTOCNode Title="ContentType Property " Url="html/31e99a54-f366-7bce-917e-d7f9b3c9cbc7.htm" />
+        <HelpTOCNode Title="Encoding Property " Url="html/aa5cf29b-0172-c216-247a-43218617785d.htm" />
+        <HelpTOCNode Title="EndpointUrl Property " Url="html/66442dd8-c201-fd96-770f-7423bf19b485.htm" />
+        <HelpTOCNode Title="HttpMethod Property " Url="html/a006284b-c820-1e83-4d8d-e58ed5a36762.htm" />
+        <HelpTOCNode Title="UserAgent Property " Url="html/75fe3460-4e25-d246-27bd-0581ed6312e8.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="6d731f59-1589-46e2-8d42-931cbedd04e4" Title="HttpRpcClientHandler Methods" Url="html/a29a2bff-fae6-fb84-6889-898d471f8821.htm">
+        <HelpTOCNode Title="Dispose Method " Url="html/fb3fed80-7c2b-8593-ceb2-1705b7493114.htm" />
+        <HelpTOCNode Title="GetHttpRequestMessage Method " Url="html/2896ae26-41de-27d0-d103-bec439955ac0.htm" />
+        <HelpTOCNode Title="ParseHttpResponseMessageAsync Method " Url="html/7fe7c75e-7848-f476-28fe-c1fcc25884d8.htm" />
+        <HelpTOCNode Title="SendAsync Method " Url="html/88b8a9e7-59b6-133e-256a-e87d7547d8a5.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="HttpRpcClientHandler Events" Url="html/e7c53bae-a2a1-311f-ad87-9c1fd7b4db64.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="b2f47241-f089-4987-9858-38a83a40e748" Title="JsonRpc.Standard" Url="html/e2eee8d3-367c-bb97-1f14-b79b84c8d5bc.htm">
+    <HelpTOCNode Id="527ee27a-c255-4d08-9b8f-91dfb2147592" Title="ClrExceptionErrorData Class" Url="html/e499d161-a7a5-aac0-4910-f8a80ceb0682.htm">
+      <HelpTOCNode Title="ClrExceptionErrorData Constructor " Url="html/b955527f-9360-7ea8-cdc6-cdd9e5e59da2.htm" />
+      <HelpTOCNode Id="f6988192-f0f1-426c-8568-0db02af09bfd" Title="ClrExceptionErrorData Properties" Url="html/8887ddfe-8118-c9c6-c882-53d4c704b086.htm">
+        <HelpTOCNode Title="Data Property " Url="html/1854ccaf-1853-0fbd-840a-f560e7c7342c.htm" />
+        <HelpTOCNode Title="ExceptionType Property " Url="html/2e23579a-761e-72c6-f8c1-f6c932a83829.htm" />
+        <HelpTOCNode Title="HelpLink Property " Url="html/f7c6a64f-1877-7821-0951-d155d0c16e48.htm" />
+        <HelpTOCNode Title="HResult Property " Url="html/26cfe15d-779d-56c1-5d97-18abee0d6e22.htm" />
+        <HelpTOCNode Title="InnerException Property " Url="html/2b8f08a3-49d2-7407-1f0c-0dd4e1ec6802.htm" />
+        <HelpTOCNode Title="Message Property " Url="html/637b8a3d-1e9a-b550-241c-397fc7747247.htm" />
+        <HelpTOCNode Title="StackTrace Property " Url="html/90b2d819-a76c-4995-9a42-2b6531ed2a69.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="562e60f3-9561-4bd2-9326-33e692e3eda8" Title="ClrExceptionErrorData Methods" Url="html/d54b9704-1570-5690-e769-5f8affc8811f.htm">
+        <HelpTOCNode Id="58dea914-a87f-4944-8159-001224980b7e" Title="FromException Method " Url="html/a7ec110d-ae08-3c32-cc47-b2bb126e463e.htm">
+          <HelpTOCNode Title="FromException Method (Exception)" Url="html/0443ff00-4a97-feff-34b1-5209fc1a9276.htm" />
+          <HelpTOCNode Title="FromException Method (Exception, Boolean)" Url="html/f2689913-4372-4bae-5921-6bf55bb9a01c.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="GetBaseException Method " Url="html/92a7d3ce-6c03-0bcf-4c10-4ca482093ff0.htm" />
+        <HelpTOCNode Title="ToString Method " Url="html/13a3c150-d60d-4e2e-7883-3a907f5b4ca0.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Title="JsonRpcErrorCode Enumeration" Url="html/5afcb910-12e3-aa24-a6f9-8b88e3ecac25.htm" />
+    <HelpTOCNode Id="85052a16-5112-4f47-8c65-f2364d35652c" Title="JsonRpcException Class" Url="html/a7ad454b-d0ce-973e-fc82-4ac8b047ec23.htm">
+      <HelpTOCNode Id="7486cda9-1344-4743-9a59-ddd97b0df968" Title="JsonRpcException Constructor " Url="html/fec5e984-ae37-d64a-34f3-935aaa03b817.htm">
+        <HelpTOCNode Title="JsonRpcException Constructor (String)" Url="html/c1819047-6809-a9a5-f5c9-14f8b455586e.htm" />
+        <HelpTOCNode Title="JsonRpcException Constructor (ResponseError)" Url="html/f243b3db-d493-0436-1bfb-91d869e509cd.htm" />
+        <HelpTOCNode Title="JsonRpcException Constructor (String, ResponseError)" Url="html/5459260c-edee-02e8-1f5c-17543ca3a3d5.htm" />
+        <HelpTOCNode Title="JsonRpcException Constructor (String, Exception)" Url="html/2691b145-4675-33d4-7977-3befb21c3ca6.htm" />
+        <HelpTOCNode Title="JsonRpcException Constructor (String, ResponseError, Exception)" Url="html/1446fa49-5303-a753-000e-fbb066c2ff5e.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="7b4691e6-2c6a-4df4-9a34-cb9edfc28fef" Title="JsonRpcException Properties" Url="html/9a4a6775-4934-8705-7774-2d3d1813cf5b.htm">
+        <HelpTOCNode Title="Error Property " Url="html/9371ec65-5616-1d36-1bb7-0de9e5902da8.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="JsonRpcException Methods" Url="html/b9d0fe44-66df-d0ee-7f2a-6e98b9f2edc4.htm" />
+      <HelpTOCNode Title="JsonRpcException Events" Url="html/4be29508-5440-921c-6a9a-f8c94d482244.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="ea0198cf-6888-407d-8c5e-331518f26b74" Title="Message Class" Url="html/bfbd8b8e-dba2-2039-ad17-ff7965f8a010.htm">
+      <HelpTOCNode Id="fdda284a-9a35-4e73-a30e-f676396bf66d" Title="Message Properties" Url="html/bb069658-5a3f-6b11-8b88-23a334ed304d.htm">
+        <HelpTOCNode Title="Version Property " Url="html/fd94cd62-b27f-ffee-3eaa-9761ace4fb11.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="48baa9f0-7410-4d7d-8c4a-598c8af0e612" Title="Message Methods" Url="html/05e2d377-e930-3a4c-883a-6d512bcc6149.htm">
+        <HelpTOCNode Id="8990b9f3-3e12-4786-9b87-27c5e6a5ed25" Title="LoadJson Method " Url="html/0eccaac6-71dc-d067-bef3-77ca9f5c58c1.htm">
+          <HelpTOCNode Title="LoadJson Method (TextReader)" Url="html/da2f5535-5956-7f26-2192-9efd08845069.htm" />
+          <HelpTOCNode Title="LoadJson Method (String)" Url="html/8f328ab9-c6df-9a5a-fcc2-dc24c027a2f3.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="ToString Method " Url="html/44bbb6f8-10cc-6cb4-f977-2d7338c104d7.htm" />
+        <HelpTOCNode Title="WriteJson Method " Url="html/3877da77-2b8c-f88f-345e-07f3339ec509.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="e61ebcf9-aa81-45a0-93ec-38097bac0ca6" Title="MessageEventArgs Class" Url="html/2b28c381-36e0-618b-2b5e-e9606a3c608f.htm">
+      <HelpTOCNode Title="MessageEventArgs Constructor " Url="html/cd6cdb34-c65f-9746-63ad-a43ba17ddae2.htm" />
+      <HelpTOCNode Id="6621f535-573d-4f9c-8159-978a7d9cbe05" Title="MessageEventArgs Properties" Url="html/a99fceee-bf23-ebb0-73e4-4aceea804e2a.htm">
+        <HelpTOCNode Title="Message Property " Url="html/0c0989bd-7c8c-88c2-41be-2d57a2cfb758.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="MessageEventArgs Methods" Url="html/77cbe5ec-0cb6-b993-69f6-98353a2d6b30.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="7ec6b835-90b9-4620-8d9e-97db1a47edfc" Title="MessageId Structure" Url="html/b2e3dc4c-16be-00bf-579c-68149fbde855.htm">
+      <HelpTOCNode Id="b7d7e223-88fe-4539-be9f-7b635d1facba" Title="MessageId Constructor " Url="html/700514e7-dcfc-ba7c-e1b1-35efd55c6efc.htm">
+        <HelpTOCNode Title="MessageId Constructor (Int32)" Url="html/d90627ae-6fae-2ece-e7a6-7e67d95e27af.htm" />
+        <HelpTOCNode Title="MessageId Constructor (Int64)" Url="html/2294714d-b5ce-2df7-449a-116b49b25c2c.htm" />
+        <HelpTOCNode Title="MessageId Constructor (String)" Url="html/46c7cd69-e751-9ffe-bc3a-040d81a2b5e2.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="09e27b82-f297-474f-8787-666915f70250" Title="MessageId Properties" Url="html/35d516c7-fb3e-7c56-8795-b7fe54c404ea.htm">
+        <HelpTOCNode Title="Value Property " Url="html/0edadc2e-f7ed-8629-30f2-04d4b5fcaad1.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="5af1f9e9-9d73-4137-abec-09e413716feb" Title="MessageId Methods" Url="html/66e6315e-34f9-2693-21af-2d17a122daa4.htm">
+        <HelpTOCNode Id="b7b66e75-dd5f-44c9-aed2-3382b2fcd88c" Title="Equals Method " Url="html/7098ff99-31bb-4679-88c0-57add2ef6ea8.htm">
+          <HelpTOCNode Title="Equals Method (Object)" Url="html/776ab2a9-9991-97b2-3c67-787a95ec458f.htm" />
+          <HelpTOCNode Title="Equals Method (MessageId)" Url="html/3d2bfcd2-ca9c-46b4-62e3-cc790b0c26c4.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="GetHashCode Method " Url="html/61ea7054-b315-0796-0248-9d6faafce1fe.htm" />
+        <HelpTOCNode Title="ToString Method " Url="html/de26a9bb-2234-d561-20e7-d4fd9899de49.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="4e7645c8-4704-46ef-9092-340d7592e05e" Title="MessageId Operators and Type Conversions" Url="html/13347950-95e2-4aed-87ed-57f936e880fb.htm">
+        <HelpTOCNode Title="Equality Operator " Url="html/84146806-f9c4-f91c-1ef7-758848b89083.htm" />
+        <HelpTOCNode Id="0c560cea-6e8f-45b5-8c29-dbe2d06ab4f1" Title="Explicit Conversion Operators" Url="html/f91a160a-bacd-337d-3fe2-8f368a9b9863.htm">
+          <HelpTOCNode Title="Explicit Conversion (MessageId to String)" Url="html/3f892c24-eb08-0714-ffa4-c906429527f1.htm" />
+          <HelpTOCNode Title="Explicit Conversion (MessageId to Int32)" Url="html/463c14b9-57e2-9f86-7fc0-0dca1234f165.htm" />
+          <HelpTOCNode Title="Explicit Conversion (MessageId to Int64)" Url="html/ce30b928-b00b-8600-0af7-0e99b9b234e5.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="1f39b961-0119-4564-a348-53c5766d1234" Title="Implicit Conversion Operators" Url="html/46d08b27-7325-4277-77ac-4e4f13abe861.htm">
+          <HelpTOCNode Title="Implicit Conversion (Int32 to MessageId)" Url="html/5edf92be-0160-e364-e3a6-a7f774d4f0e8.htm" />
+          <HelpTOCNode Title="Implicit Conversion (Int64 to MessageId)" Url="html/cbbb5ffd-1cd7-b4fe-f2c4-c8c1efa20973.htm" />
+          <HelpTOCNode Title="Implicit Conversion (String to MessageId)" Url="html/a35e485f-6254-7dd3-b8d2-164d219ec0dc.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="Inequality Operator " Url="html/e0b0d8bc-5b57-4947-49df-6223c8fb25b9.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="9ef8d909-cc23-4cf0-9640-4eefaf880b4b" Title="MessageId Fields" Url="html/8a9bb7db-aee8-94e4-e760-a0a73118094c.htm">
+        <HelpTOCNode Title="Empty Field" Url="html/d6a65835-c7b4-06ab-a54c-f24ef429eaae.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="77042eb9-3308-4d2d-aacd-c908d7fa90dc" Title="MessageIdJsonConverter Class" Url="html/d47dae6b-16c6-b14f-7ba6-b6ed05361fb0.htm">
+      <HelpTOCNode Title="MessageIdJsonConverter Constructor " Url="html/27cfb89e-bdbd-31a9-d87e-625d2c37affd.htm" />
+      <HelpTOCNode Title="MessageIdJsonConverter Properties" Url="html/d3c54332-a9c2-8450-6be4-a0956e44e7ee.htm" />
+      <HelpTOCNode Id="5f130f08-5c55-4084-ae49-85a45a2f4305" Title="MessageIdJsonConverter Methods" Url="html/9787687d-58d0-a0b6-161c-87c590063b8d.htm">
+        <HelpTOCNode Title="CanConvert Method " Url="html/51e86312-e0f0-3db3-7a82-2f616683ed22.htm" />
+        <HelpTOCNode Title="ReadJson Method " Url="html/91337f97-1483-2887-43a6-e6a28865b1f9.htm" />
+        <HelpTOCNode Title="WriteJson Method " Url="html/cbca1708-7d31-6cd2-d7d7-6f8ad78a2963.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="c0e1fea9-a624-4ce5-bd5e-ce01e402a2d1" Title="RequestMessage Class" Url="html/1f48e6b3-d72a-3e78-6be5-ccde9202a837.htm">
+      <HelpTOCNode Id="c527a10a-2a08-4242-a8f8-8e4b9c76de7d" Title="RequestMessage Constructor " Url="html/ea3a327c-3b05-c350-cd87-c3dc532421f0.htm">
+        <HelpTOCNode Title="RequestMessage Constructor " Url="html/f41282ca-d45a-961c-9a52-9165d2f5c5f2.htm" />
+        <HelpTOCNode Title="RequestMessage Constructor (String)" Url="html/208edf9c-b26a-a20b-e75f-f21e75833117.htm" />
+        <HelpTOCNode Title="RequestMessage Constructor (MessageId)" Url="html/00ecda0e-fdb3-c06b-e09d-04d2496aaab1.htm" />
+        <HelpTOCNode Title="RequestMessage Constructor (String, JToken)" Url="html/a1bd60a1-ac91-81f2-7da5-1d343fdad35e.htm" />
+        <HelpTOCNode Title="RequestMessage Constructor (MessageId, String)" Url="html/c970c8bf-944f-bbdd-0027-075b6252c9be.htm" />
+        <HelpTOCNode Title="RequestMessage Constructor (MessageId, String, JToken)" Url="html/25e10c0e-5bbf-c7db-595b-91d98747e0bd.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="f6936ae5-d892-485e-9a5a-8a31359d9595" Title="RequestMessage Properties" Url="html/abc0a5fc-4002-f1a2-858a-069868986af2.htm">
+        <HelpTOCNode Title="Id Property " Url="html/2be66623-8828-f10b-8848-6216f366f631.htm" />
+        <HelpTOCNode Title="IsNotification Property " Url="html/23b1cfe5-6762-e9e6-0141-7e69d0e02b93.htm" />
+        <HelpTOCNode Title="Method Property " Url="html/1075be2c-9739-7f6b-fd6a-cb1a64f0fead.htm" />
+        <HelpTOCNode Title="Parameters Property " Url="html/d25c8193-df72-1fdd-6513-3ea1f599937e.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="RequestMessage Methods" Url="html/3ace8cf5-7099-d4c1-1e14-945cb29857ae.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="b0f1dc49-654c-4659-a06f-cc33a16492fd" Title="ResponseError Class" Url="html/89aede19-3545-c18d-2e83-fbc1f82c9352.htm">
+      <HelpTOCNode Id="f1e994a9-a021-4a92-a0b6-8520afd62a6b" Title="ResponseError Constructor " Url="html/624d799e-b690-0043-056f-9fc8f20d3195.htm">
+        <HelpTOCNode Title="ResponseError Constructor " Url="html/ee05e8bd-8ade-798d-0b34-d4b2a20aefac.htm" />
+        <HelpTOCNode Title="ResponseError Constructor (Int32, String)" Url="html/21facf03-32ac-2fa3-5c3f-a5d402a295eb.htm" />
+        <HelpTOCNode Title="ResponseError Constructor (JsonRpcErrorCode, String)" Url="html/8742756b-a405-175e-2d4c-6dc574420fe3.htm" />
+        <HelpTOCNode Title="ResponseError Constructor (Int32, String, Object)" Url="html/fcac2228-e095-6d12-5135-836aaed6e13c.htm" />
+        <HelpTOCNode Title="ResponseError Constructor (JsonRpcErrorCode, String, Object)" Url="html/b6098917-9d61-086c-e8a5-810bde629ec7.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="b2cca03d-6ab2-42c3-b49a-93b5b420f0eb" Title="ResponseError Properties" Url="html/2180aa8d-8ea9-64e5-cf8b-1acba5614f26.htm">
+        <HelpTOCNode Title="Code Property " Url="html/c0ee3f04-ed58-5d29-aa6e-cf96fde999a6.htm" />
+        <HelpTOCNode Title="Data Property " Url="html/807c46e4-54e6-f17a-f2e8-88eef6e0ae41.htm" />
+        <HelpTOCNode Title="Message Property " Url="html/e477f042-a00b-c9e2-740d-989ef072a0ea.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="c452be5e-48a6-4ca6-af0f-067f8174fcb5" Title="ResponseError Methods" Url="html/83f664b0-3851-7268-97e5-17379954f86c.htm">
+        <HelpTOCNode Id="a52d944d-5993-4370-9bd5-e7175e625400" Title="FromException Method " Url="html/32e8609e-aa6c-d368-de8e-dddc0f0dfc13.htm">
+          <HelpTOCNode Title="FromException Method (Exception)" Url="html/de8fdaa4-25ff-2066-55d6-108558cb775f.htm" />
+          <HelpTOCNode Title="FromException Method (ClrExceptionErrorData)" Url="html/b9b84ecb-b817-6fdf-9269-e100592669dd.htm" />
+          <HelpTOCNode Title="FromException Method (Exception, Boolean)" Url="html/5f8a6173-0ec5-978b-3322-cb7513c1be12.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="33640c2a-6c4a-419a-a5eb-68060aa5f9d4" Title="GetData Method " Url="html/edb9048f-15e8-1e2d-7a32-3206f11ec968.htm">
+          <HelpTOCNode Title="GetData(T) Method " Url="html/5813b3e8-e872-0d7f-0f36-37c3d12bc2f3.htm" />
+          <HelpTOCNode Title="GetData Method (Type)" Url="html/061c15ea-9e32-7dea-ea2b-230ea5079520.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="SetData Method " Url="html/62ce6275-3bc0-2c89-c51a-cc741bce9231.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="29f515d4-6d35-4aa4-9e1b-3228375789df" Title="ResponseMessage Class" Url="html/7a47b92a-bbc2-f7df-e6db-82740970eee7.htm">
+      <HelpTOCNode Id="ddf40226-ef55-4f01-a370-a7403075fcda" Title="ResponseMessage Constructor " Url="html/2846bc56-4c6a-685e-92c1-fcb10e552d3a.htm">
+        <HelpTOCNode Title="ResponseMessage Constructor " Url="html/4c421437-8793-2fa1-e36e-848c9f0ccd04.htm" />
+        <HelpTOCNode Title="ResponseMessage Constructor (MessageId)" Url="html/550a9ebe-e9db-b426-5171-9c09545603fa.htm" />
+        <HelpTOCNode Title="ResponseMessage Constructor (MessageId, ResponseError)" Url="html/a2a441d3-8e70-9b4d-fc0b-4dbfd09717c3.htm" />
+        <HelpTOCNode Title="ResponseMessage Constructor (MessageId, JToken)" Url="html/089138ff-70db-863b-3224-bec2c058fcac.htm" />
+        <HelpTOCNode Title="ResponseMessage Constructor (MessageId, JToken, ResponseError)" Url="html/462b924a-912b-6551-84a1-d2c42b7791b1.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="0d8a6321-7294-49e6-bf5d-5612a5dfccc2" Title="ResponseMessage Properties" Url="html/22c3c734-0d80-ddb9-fa0e-ec25c771dc83.htm">
+        <HelpTOCNode Title="Error Property " Url="html/cbe9d1b4-828f-63d6-b84a-013586cba2ef.htm" />
+        <HelpTOCNode Title="Id Property " Url="html/77b69875-d7eb-606e-2679-8cece42aa304.htm" />
+        <HelpTOCNode Title="Result Property " Url="html/3d5c1405-aeb7-051a-6657-2fb2e606c3d4.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="ResponseMessage Methods" Url="html/652b4e7d-4b33-61c7-d59f-2cf8597f6fa8.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="ed770bc4-393d-4228-848f-dafcb9a32481" Title="JsonRpc.Standard.Client" Url="html/7d116291-7a1e-37cf-39ec-092902a1f36f.htm">
+    <HelpTOCNode Id="26f6442d-d934-4abe-825f-441440deef93" Title="IJsonRpcClientHandler Interface" Url="html/b32bf82c-bd21-1fa1-7b64-06960c0b6208.htm">
+      <HelpTOCNode Id="e80d9d5e-7c71-402e-bf8b-823d71df6a86" Title="IJsonRpcClientHandler Methods" Url="html/410e68d0-b832-7b47-04d7-33bd24d3b198.htm">
+        <HelpTOCNode Title="SendAsync Method " Url="html/8761a844-ebaa-1242-2fcc-ae41e0272949.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="94382b2f-9caf-4991-aa21-87b2ef745d30" Title="JsonRpcClient Class" Url="html/873729f9-ea00-2690-880e-136b73ec4c80.htm">
+      <HelpTOCNode Title="JsonRpcClient Constructor " Url="html/8a1aae15-cc8c-3a36-ff79-d995a550c9be.htm" />
+      <HelpTOCNode Id="38f23336-c9ac-4541-b539-a286aa2dea47" Title="JsonRpcClient Properties" Url="html/8334b815-3e0d-c60e-aecc-cc29fe3965cd.htm">
+        <HelpTOCNode Title="Handler Property " Url="html/1c320e0d-5c48-9ddd-4938-5326d4b9b411.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="1fe9f7b7-054a-4289-8e4c-2ae21ee1a3e6" Title="JsonRpcClient Methods" Url="html/b34e6059-87f0-c54a-2b73-8d5570cd8294.htm">
+        <HelpTOCNode Title="NextRequestId Method " Url="html/e5008f41-1b61-547d-cb42-174dc6984d3c.htm" />
+        <HelpTOCNode Title="OnRequestCancelling Method " Url="html/003fa5e9-89eb-da7f-10b0-e4b3204327af.htm" />
+        <HelpTOCNode Title="SendAsync Method " Url="html/5db5cbb4-7c62-cc9e-5306-dbaf1c87075f.htm" />
+        <HelpTOCNode Title="SendNotificationAsync Method " Url="html/587eb5d6-87b0-78d0-ae03-763473c23fb6.htm" />
+        <HelpTOCNode Title="SendRequestAsync Method " Url="html/26b060a8-2cce-0513-288c-8a4ed1ca0a03.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="b83c5737-96bb-426f-ba8b-12c6462b193a" Title="JsonRpcClient Events" Url="html/79d209c5-40ed-2f30-2d56-6efe8e38b899.htm">
+        <HelpTOCNode Title="RequestCancelling Event" Url="html/025937ad-7428-eb26-d4a9-6b2d75e352a8.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="a6f887a7-c88a-4dfd-8fad-4b7acd8c7db3" Title="JsonRpcClientException Class" Url="html/3c55f613-14d3-a6cd-bf4a-7e7a036d9e8c.htm">
+      <HelpTOCNode Id="67d0c769-62c6-4094-9d3b-bf9b1275b761" Title="JsonRpcClientException Constructor " Url="html/c09a4cd2-2e07-128c-82fb-f0b9a39f957c.htm">
+        <HelpTOCNode Title="JsonRpcClientException Constructor (String)" Url="html/07c85cd6-06d9-0200-c449-586b0e26c7b2.htm" />
+        <HelpTOCNode Title="JsonRpcClientException Constructor (String, Exception)" Url="html/6da0ec70-0f88-6f3b-65b9-1b5526794a8a.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="JsonRpcClientException Properties" Url="html/11b1f59d-f907-2b64-7315-a9038ce3d0a6.htm" />
+      <HelpTOCNode Title="JsonRpcClientException Methods" Url="html/a3330022-e0f9-bd7d-4ca8-ee822a5aefc9.htm" />
+      <HelpTOCNode Title="JsonRpcClientException Events" Url="html/31f767e6-a9d9-7a81-cefc-7b2b904dee0c.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="4c9fa496-9e95-4372-8a11-98ce4ea0ce4b" Title="JsonRpcClientHandler Class" Url="html/0361fc6d-d9d1-f487-0f0b-ffd2d73cd281.htm">
+      <HelpTOCNode Title="JsonRpcClientHandler Constructor " Url="html/273c86aa-f8da-267e-ef62-a5d45b4b4943.htm" />
+      <HelpTOCNode Id="3b394fc2-d453-4f56-a0a6-1b4ad6cccfdb" Title="JsonRpcClientHandler Methods" Url="html/a1121d9b-3dd4-9310-e58c-4d8daa00db30.htm">
+        <HelpTOCNode Title="OnMessageReceiving Method " Url="html/5e66e896-b820-bf0e-b3a3-94b49248cb56.htm" />
+        <HelpTOCNode Title="OnMessageSending Method " Url="html/9768ece3-426a-6b39-71f2-20e2707d0c3c.htm" />
+        <HelpTOCNode Title="SendAsync Method " Url="html/ab66ba8a-4edc-c620-0cfc-1da12f1af7be.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="a9c63d9d-430a-47b2-aea0-f278f1980e1d" Title="JsonRpcClientHandler Events" Url="html/721fa86f-929d-c4dc-303e-b623455f1a3b.htm">
+        <HelpTOCNode Title="MessageReceiving Event" Url="html/b71c44f6-2441-5880-af70-f8e4a50e8cb6.htm" />
+        <HelpTOCNode Title="MessageSending Event" Url="html/ccfde710-9a95-6595-b813-4a5079a017ef.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="01048d27-eee9-4116-a373-7ccfdb0b6dae" Title="JsonRpcContractException Class" Url="html/b6dce9ce-87ce-61f5-3591-d732f8b7128b.htm">
+      <HelpTOCNode Id="155b6ee7-55c7-46e1-90de-ea858176af14" Title="JsonRpcContractException Constructor " Url="html/acbcc0fe-1094-a569-c3c8-e518cb55ddc1.htm">
+        <HelpTOCNode Title="JsonRpcContractException Constructor (String, Message)" Url="html/9011ee8b-cdf1-98bd-cf16-66fb2a0e0c4c.htm" />
+        <HelpTOCNode Title="JsonRpcContractException Constructor (String, Exception)" Url="html/3b155e54-dab2-75c2-b73b-fcf40b81a72c.htm" />
+        <HelpTOCNode Title="JsonRpcContractException Constructor (String, Message, Exception)" Url="html/26c88d77-8ce3-68cb-7a40-86dc0b149adc.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="6b6b7e8a-29b6-4970-9509-49e0760f8c6e" Title="JsonRpcContractException Properties" Url="html/15ebb060-b08d-73a4-d5c2-bd370bceb11a.htm">
+        <HelpTOCNode Title="RpcMessage Property " Url="html/62495c31-9e39-b867-88dc-20bc73f40839.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="JsonRpcContractException Methods" Url="html/9b8e148a-c6c3-0204-b661-60424eae69a1.htm" />
+      <HelpTOCNode Title="JsonRpcContractException Events" Url="html/6c3e3725-dccc-4724-d6e1-1a39b8ba50ff.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="7a5f4600-528c-4aff-b2f6-777839522aeb" Title="JsonRpcRemoteException Class" Url="html/0093fffd-d934-ea93-0a5a-57cdc7c60988.htm">
+      <HelpTOCNode Id="075b669e-443a-44fc-826a-26db8915a453" Title="JsonRpcRemoteException Constructor " Url="html/1cd600b0-cf59-7be8-db7b-615737767550.htm">
+        <HelpTOCNode Title="JsonRpcRemoteException Constructor (ResponseError)" Url="html/8be21755-dfef-2147-9c87-7cd329e19960.htm" />
+        <HelpTOCNode Title="JsonRpcRemoteException Constructor (String, Exception)" Url="html/2fde6854-b65d-1c80-94d1-bbff8d357ae5.htm" />
+        <HelpTOCNode Title="JsonRpcRemoteException Constructor (String, ResponseError, Exception)" Url="html/a1113d2c-cc37-07f6-ac66-3eddc8360023.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="cc71f4a1-fae8-434a-9a95-0afbef0d1466" Title="JsonRpcRemoteException Properties" Url="html/6dd1ed5f-40d5-d19d-781f-4db2469c7f49.htm">
+        <HelpTOCNode Title="Error Property " Url="html/ceb0d607-5f42-59b0-584b-f0dfa6fc00d5.htm" />
+        <HelpTOCNode Title="RemoteException Property " Url="html/af32ee97-d25e-94c2-c9fe-33f7b68baa0f.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="6d9c0431-58f4-4adb-bbb4-f7c67b1e6055" Title="JsonRpcRemoteException Methods" Url="html/77059d33-cd72-657d-dbeb-00b97ddcede4.htm">
+        <HelpTOCNode Title="ToString Method " Url="html/cd0fce0a-c511-087d-fa23-6762fec3f225.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="JsonRpcRemoteException Events" Url="html/5ad1ba88-5f3e-8fc7-89e6-80874f9481f3.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="d2077345-4ce1-4cba-82d0-34ed64fe709c" Title="RequestCancellingEventArgs Class" Url="html/be05f02c-7c6c-94e6-c86f-d2f9048a7eac.htm">
+      <HelpTOCNode Title="RequestCancellingEventArgs Constructor " Url="html/a6f84486-0b2f-69d3-3cbf-24b44ce7b388.htm" />
+      <HelpTOCNode Id="ba4b8da0-c468-4319-9359-278e33321336" Title="RequestCancellingEventArgs Properties" Url="html/f3d035e3-47fa-9f99-b8c4-8e544cdf6adf.htm">
+        <HelpTOCNode Title="RequestId Property " Url="html/0193650c-a9d7-1b52-ce2c-d9117087ce1f.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="RequestCancellingEventArgs Methods" Url="html/57cf24ea-fbda-2d2a-6837-fff636e7b06e.htm" />
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="7827a45a-beb0-42de-b5d5-e79d81faa7cf" Title="JsonRpc.Standard.Contracts" Url="html/df85881e-6070-a4bd-d08b-d702058cadeb.htm">
+    <HelpTOCNode Id="4e9286b9-8824-4e19-8fc3-e3ea7ca6ab41" Title="CamelCaseJsonRpcNamingStrategy Class" Url="html/0eebc78f-122b-b351-2ca0-887b392012a1.htm">
+      <HelpTOCNode Title="CamelCaseJsonRpcNamingStrategy Constructor " Url="html/17c2c0bc-ecf1-e466-ece5-4b0fe1bdf7eb.htm" />
+      <HelpTOCNode Id="e66142d2-a09e-4d83-9bf9-d0aafc02bb0f" Title="CamelCaseJsonRpcNamingStrategy Methods" Url="html/353d3e03-c90c-e240-6738-8509b79ad435.htm">
+        <HelpTOCNode Title="GetRpcMethodName Method " Url="html/c3050a3f-b079-0358-cee5-319a3a8ebd34.htm" />
+        <HelpTOCNode Title="GetRpcParameterName Method " Url="html/94defbbf-f483-f6b4-4e92-cb1b890cd9fc.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="95395019-8f7b-4b6b-a92e-022cb03342fc" Title="CamelCaseJsonValueConverter Class" Url="html/785794b2-fa0d-de34-153e-a377e11558a5.htm">
+      <HelpTOCNode Title="CamelCaseJsonValueConverter Constructor " Url="html/4e7f347a-6ab0-f5a8-feab-44bec490f41c.htm" />
+      <HelpTOCNode Title="CamelCaseJsonValueConverter Methods" Url="html/306bbe85-fa6b-516c-6e42-111d00df6920.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="a4b1a5ec-412e-49a8-ab20-ea37ad9e498a" Title="IJsonRpcContractResolver Interface" Url="html/11af1a60-cdc6-b773-99d0-ac55302c8d1b.htm">
+      <HelpTOCNode Id="e652b668-cef7-4045-bbc9-bee1a58ce1ee" Title="IJsonRpcContractResolver Methods" Url="html/ede64318-866b-2332-176e-de001630887e.htm">
+        <HelpTOCNode Title="CreateClientContract Method " Url="html/6389ee0c-583b-a4c0-ce52-502062f2f0b8.htm" />
+        <HelpTOCNode Title="CreateServerContract Method " Url="html/1851b86c-f3e3-0de7-8ec4-acd54f996833.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="8585ef50-b59c-4e48-a382-ab9439b72a40" Title="IJsonRpcMethodBinder Interface" Url="html/1d58e29f-886c-b41c-71d8-23cc3dcdf370.htm">
+      <HelpTOCNode Id="ee025fd2-b26a-4a6a-beb4-56e0c9624cd5" Title="IJsonRpcMethodBinder Methods" Url="html/fec69289-5e98-cbe0-e7f0-061538d0d306.htm">
+        <HelpTOCNode Title="BindParameters Method " Url="html/a00a10ad-ec8f-2188-4963-06259a16fee0.htm" />
+        <HelpTOCNode Title="TryBindToMethod Method " Url="html/5b505172-9c5a-25e9-11a9-7d0c5a40f3d2.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="cf5f6511-3e07-4627-839f-926a7d74f1de" Title="IJsonRpcMethodInvoker Interface" Url="html/79f073e0-4def-2ca8-a118-5ee8d956ff65.htm">
+      <HelpTOCNode Id="214d6e61-c405-4c7c-bbb0-80aa3ea66857" Title="IJsonRpcMethodInvoker Methods" Url="html/35b0549c-3479-7fe2-be6b-af1c579808df.htm">
+        <HelpTOCNode Title="InvokeAsync Method " Url="html/a0bad5e6-ebd0-aaaf-4d0e-ba9031699e08.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="d0d378d6-d46d-4c62-bae7-e27838fe486d" Title="IJsonRpcRequestMarshaler Interface" Url="html/3f577e86-9c50-b2c6-d882-c04b43a22c56.htm">
+      <HelpTOCNode Id="90a243ca-5f5c-46d6-8052-01fd3be72741" Title="IJsonRpcRequestMarshaler Methods" Url="html/31acd8ae-2358-3228-f269-8a2ef366d238.htm">
+        <HelpTOCNode Title="MarshalParameters Method " Url="html/679261ae-9013-1f30-b802-f83943a4239a.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="0c30619d-b77d-416f-b80b-9d76f5483cfa" Title="IJsonValueConverter Interface" Url="html/8a2c9009-2fd5-859e-d656-93c88199c86a.htm">
+      <HelpTOCNode Id="2e7d27e9-faf6-41ae-bcff-9816051e31e8" Title="IJsonValueConverter Methods" Url="html/d24dcb0c-dc4e-2f62-75d5-26fb9e164fe9.htm">
+        <HelpTOCNode Title="JsonToValue Method " Url="html/e02eaae0-80f7-717b-519f-bedf946a02b7.htm" />
+        <HelpTOCNode Title="ValueToJson Method " Url="html/719b0266-fcb1-a655-7c4f-9ee66c8bbb18.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="43efae07-9c3d-4aa1-9be6-6d6210c9abdc" Title="JsonRpcClientContract Class" Url="html/94106402-1185-2f1e-a1e7-ec6a6d8941cb.htm">
+      <HelpTOCNode Title="JsonRpcClientContract Constructor " Url="html/b3d3b2f8-3a0a-7518-a066-363fe29eda37.htm" />
+      <HelpTOCNode Id="b70ed9c7-cc72-4be5-87e7-570a1dfc962e" Title="JsonRpcClientContract Properties" Url="html/1109bc97-f3ff-8dc9-f031-68da57cea824.htm">
+        <HelpTOCNode Title="Methods Property " Url="html/25220b8c-0fcb-ad26-aa80-3329f0c5dde5.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="JsonRpcClientContract Methods" Url="html/ce9bc28e-5017-f4ca-bcbe-e1c9029bf0be.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="d5ab1e0e-3c6b-463b-a95a-b54d930a89d4" Title="JsonRpcContractResolver Class" Url="html/98ce921e-89e5-cf57-cf55-fd6a4ab62c01.htm">
+      <HelpTOCNode Title="JsonRpcContractResolver Constructor " Url="html/6f9fd960-cb30-34cd-9deb-e662f5342743.htm" />
+      <HelpTOCNode Id="e9faf383-7e02-4c74-8cba-a2a771a3e946" Title="JsonRpcContractResolver Properties" Url="html/76b48132-bf3d-da05-9f30-13f389e6a00c.htm">
+        <HelpTOCNode Title="NamingStrategy Property " Url="html/da9aae3a-235c-1c7f-5c0e-806c3bd0fa48.htm" />
+        <HelpTOCNode Title="ParameterValueConverter Property " Url="html/c65f4242-8bbe-ad68-23f2-e5dafc559859.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="248e06f4-241f-454f-abd3-f10933681360" Title="JsonRpcContractResolver Methods" Url="html/2e5963cc-ca88-9bf8-d6f7-0911bb4a73d2.htm">
+        <HelpTOCNode Title="CreateClientContract Method " Url="html/7ac0a3c0-c314-f0e0-418f-7c7c05e8f68a.htm" />
+        <HelpTOCNode Title="CreateMethod Method " Url="html/3e0c08ef-0692-c876-a9fb-15037ffd40a8.htm" />
+        <HelpTOCNode Title="CreateParameter Method " Url="html/45e95896-b373-0338-8202-7288585245d1.htm" />
+        <HelpTOCNode Title="CreateServerContract Method " Url="html/ff424919-eb29-057f-4079-58347f0a6fc1.htm" />
+        <HelpTOCNode Title="MethodsFromType Method " Url="html/b7faede1-d09f-6584-69d3-060255a31009.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="29839597-0b74-4456-b27f-c9c3badd49c8" Title="JsonRpcMethod Class" Url="html/0923140b-0de8-1d64-8b37-af0a566087a2.htm">
+      <HelpTOCNode Title="JsonRpcMethod Constructor " Url="html/0bd0bf68-a9c8-9112-25d0-378ac29deb1f.htm" />
+      <HelpTOCNode Id="0b42bb4a-3684-49e1-a8ee-4e7c9ef4aad1" Title="JsonRpcMethod Properties" Url="html/70f4b670-2e94-fbf4-f02c-40e6f77e61a5.htm">
+        <HelpTOCNode Title="AllowExtensionData Property " Url="html/d2796503-b78c-5992-acf9-4b10b75588ee.htm" />
+        <HelpTOCNode Title="Invoker Property " Url="html/51774932-db39-c770-366e-08a9565b0ae8.htm" />
+        <HelpTOCNode Title="IsNotification Property " Url="html/2d1d93ce-0e0d-253e-9a57-fd8f652db33d.htm" />
+        <HelpTOCNode Title="MethodName Property " Url="html/46a1c586-8736-26f1-e55e-581e61d7b3b3.htm" />
+        <HelpTOCNode Title="Parameters Property " Url="html/d0e337cd-30e1-8005-f275-83371699f0f5.htm" />
+        <HelpTOCNode Title="ReturnParameter Property " Url="html/a64e315f-a031-e168-f8b5-25f4dcf9160a.htm" />
+        <HelpTOCNode Title="ServiceType Property " Url="html/a1a76c9f-f7b0-4eec-0007-00e3a20a50ca.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="fcfd973b-0501-4431-a5ac-572340069d6c" Title="JsonRpcMethod Methods" Url="html/f8e8294a-ff9d-1074-dd3c-d6cbaa2898ef.htm">
+        <HelpTOCNode Title="ToString Method " Url="html/1de6ea06-381e-622a-af30-1b7f08b3ad89.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="ca4645cb-1062-43e2-8669-14a9c66da8ab" Title="JsonRpcMethodAttribute Class" Url="html/0a49b9cd-1d02-2df4-a8ce-7731bc633325.htm">
+      <HelpTOCNode Id="861501b9-e439-4bde-bfaf-01bc8b3a29a2" Title="JsonRpcMethodAttribute Constructor " Url="html/f48f5fd3-ae3e-147c-9323-08f1183a02b2.htm">
+        <HelpTOCNode Title="JsonRpcMethodAttribute Constructor " Url="html/4c4a9e6e-305e-27b3-9dbf-66b4206f283c.htm" />
+        <HelpTOCNode Title="JsonRpcMethodAttribute Constructor (String)" Url="html/f28ae04c-1f76-f98a-432f-216a51be496e.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="43d15a0f-1910-4c3f-a036-4da61ff88b27" Title="JsonRpcMethodAttribute Properties" Url="html/b7e33f83-f7a4-411c-4559-9867c2c32ed8.htm">
+        <HelpTOCNode Title="AllowExtensionData Property " Url="html/fcc0cce8-139c-9699-390e-74f643ee9e3e.htm" />
+        <HelpTOCNode Title="IsNotification Property " Url="html/db350a7e-dd8f-ff79-1bf8-41f9bb959f50.htm" />
+        <HelpTOCNode Title="MethodName Property " Url="html/95d1e107-2f22-60e6-f1c4-32c444176703.htm" />
+        <HelpTOCNode Title="NamingStrategyParameters Property " Url="html/0be30e02-64f7-ccb9-9a4c-528d6d141569.htm" />
+        <HelpTOCNode Title="NamingStrategyType Property " Url="html/1d3506f6-56ee-ae9f-da59-7bc20360dbaa.htm" />
+        <HelpTOCNode Title="ValueConverterParameters Property " Url="html/ecd6c3d5-a651-a45b-6215-b79428c4f026.htm" />
+        <HelpTOCNode Title="ValueConverterType Property " Url="html/4eb6d251-b4ff-dfb1-54f5-dd5d0ee83817.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="JsonRpcMethodAttribute Methods" Url="html/3bcdf9cf-5b60-8e21-f642-8e3dbd8f5be5.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="c944e565-a516-40d2-9780-dae71ae70e6f" Title="JsonRpcNamingStrategy Class" Url="html/52a6fc28-55af-7060-2f08-12615019b839.htm">
+      <HelpTOCNode Title="JsonRpcNamingStrategy Constructor " Url="html/c46cae6b-00c6-de8b-b673-4d1fe6dc128f.htm" />
+      <HelpTOCNode Id="fb9b1770-b018-45b2-89e2-6fc1fc017f0a" Title="JsonRpcNamingStrategy Methods" Url="html/c0fb3d6d-54d4-5bc7-637e-8bd1abfe6ca8.htm">
+        <HelpTOCNode Title="GetRpcMethodName Method " Url="html/47cee1e9-aa0e-f348-3a84-981bd1543fa8.htm" />
+        <HelpTOCNode Title="GetRpcParameterName Method " Url="html/8c7f2933-23ab-f0c3-653a-18b7e4e7922c.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="29f3f4ab-21e9-4464-84a6-ce1180171846" Title="JsonRpcParameter Class" Url="html/3484a110-e60b-6d75-e9ea-6434e66d3923.htm">
+      <HelpTOCNode Title="JsonRpcParameter Constructor " Url="html/ccec827f-2622-7504-399c-59c0ec266764.htm" />
+      <HelpTOCNode Id="b727a28d-b572-4750-960d-86b41d61ed60" Title="JsonRpcParameter Properties" Url="html/d91b0c78-8516-8283-7b08-c7023bb72584.htm">
+        <HelpTOCNode Title="Converter Property " Url="html/17f9eeb0-0322-ad4e-876c-c201acd9980d.htm" />
+        <HelpTOCNode Title="DefaultValue Property " Url="html/379bf397-5a93-cce1-1896-95ea62bf2f60.htm" />
+        <HelpTOCNode Title="IsOptional Property " Url="html/b79440e7-63c5-c05e-19bc-cbff1003ebac.htm" />
+        <HelpTOCNode Title="IsTask Property " Url="html/6e3264ea-b0e1-8fe1-97c9-bb0d15b5e85f.htm" />
+        <HelpTOCNode Title="ParameterName Property " Url="html/b5ce54b7-b806-ac9a-48d1-ce3bb1540b58.htm" />
+        <HelpTOCNode Title="ParameterType Property " Url="html/0428e84e-e265-db4d-d568-c17cf7b86b3a.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="d515d1c6-06ab-4932-8e54-c86eb40e5376" Title="JsonRpcParameter Methods" Url="html/76a7a67c-a0fc-4dd7-db22-99652898d418.htm">
+        <HelpTOCNode Title="ToString Method " Url="html/18bdcc07-84e9-6551-0a31-3969e77e1872.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="010e12bd-ffff-4813-9ede-efea7a7fcc15" Title="JsonRpcParameterAttribute Class" Url="html/03636016-d777-acbe-a568-1737020ff8fe.htm">
+      <HelpTOCNode Id="e31d2917-7720-47dc-a8cf-29ca2eb395e0" Title="JsonRpcParameterAttribute Constructor " Url="html/023abf2f-76e5-46a6-3599-5adf9c19656b.htm">
+        <HelpTOCNode Title="JsonRpcParameterAttribute Constructor " Url="html/c29014fd-d1d9-8eec-5e66-7bbee799efd4.htm" />
+        <HelpTOCNode Title="JsonRpcParameterAttribute Constructor (String)" Url="html/24ef1282-6634-b290-1f38-2e4f29e91410.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="8b9a6c7b-97ae-4a21-87c2-edd273509931" Title="JsonRpcParameterAttribute Properties" Url="html/d27f55f3-3ab1-1c45-0ef6-86d608dc02a9.htm">
+        <HelpTOCNode Title="DefaultValue Property " Url="html/7fad6096-36d4-3bec-713f-4bef302452ff.htm" />
+        <HelpTOCNode Title="IsOptional Property " Url="html/c0636ad9-ed00-6f3d-5af7-371cd4230423.htm" />
+        <HelpTOCNode Title="ParameterName Property " Url="html/281d5c1d-7534-1fa4-1c88-dbee056f7689.htm" />
+        <HelpTOCNode Title="ValueConverterParameters Property " Url="html/d31bc848-c3a3-14a9-ce0a-24885676321d.htm" />
+        <HelpTOCNode Title="ValueConverterType Property " Url="html/8df0ba59-d526-7bd7-0fb0-bc336e0a54a3.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="JsonRpcParameterAttribute Methods" Url="html/08cf5c2f-351e-8456-6453-8b3a0a672cd8.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="e9e84b2c-8daa-48f3-bc71-d440e1489f5b" Title="JsonRpcScopeAttribute Class" Url="html/ced2bedb-0043-5d37-5bb0-1f785124f902.htm">
+      <HelpTOCNode Title="JsonRpcScopeAttribute Constructor " Url="html/4f201e1d-3bf0-412b-f775-0636185e2270.htm" />
+      <HelpTOCNode Id="32d27c4d-b8a8-4a1d-97de-1c93c7b1c3e0" Title="JsonRpcScopeAttribute Properties" Url="html/725b9c53-2db1-2f6b-ec83-bff6caa16726.htm">
+        <HelpTOCNode Title="MethodPrefix Property " Url="html/7ae87a7a-fd2e-6cc3-86cf-1789fbef3ca7.htm" />
+        <HelpTOCNode Title="NamingStrategyParameters Property " Url="html/23ed1370-ac54-9af0-c521-e6cc80a4d87e.htm" />
+        <HelpTOCNode Title="NamingStrategyType Property " Url="html/7eed5564-0d15-0466-9928-aa1081327eb3.htm" />
+        <HelpTOCNode Title="ValueConverterParameters Property " Url="html/90debf5d-4d8e-3a7b-0496-52ec08fb60bd.htm" />
+        <HelpTOCNode Title="ValueConverterType Property " Url="html/d83ce432-9423-7b6b-b222-c4b2ae792e05.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="JsonRpcScopeAttribute Methods" Url="html/95f09075-7beb-8336-cd2a-b35b8df66c35.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="fa93279a-7005-4e60-8571-3a4e7bcbff76" Title="JsonRpcServerContract Class" Url="html/b24d4ef8-b881-caf4-c942-ea1274d5c08d.htm">
+      <HelpTOCNode Title="JsonRpcServerContract Constructor " Url="html/e2327622-e76d-dae3-32e5-e4e3a5bb533a.htm" />
+      <HelpTOCNode Id="13f0f354-e600-4692-a1cc-9cd3d638999c" Title="JsonRpcServerContract Properties" Url="html/3bdfc169-7178-14f6-4f96-d63b4cddedbc.htm">
+        <HelpTOCNode Title="Methods Property " Url="html/8cf71247-21a1-9558-24c3-4822c1715eba.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="JsonRpcServerContract Methods" Url="html/bd90b684-ebb3-f7a1-b418-419c57d43894.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="39fa00c4-7801-4af3-a164-37f6bfee0040" Title="JsonValueConverter Class" Url="html/9068b15b-5438-c13c-f17c-67f737abea2d.htm">
+      <HelpTOCNode Id="08dcff21-2044-4052-928f-77a65758f20c" Title="JsonValueConverter Constructor " Url="html/0d9c710b-8c1c-9ae4-43d6-26e882beb4b9.htm">
+        <HelpTOCNode Title="JsonValueConverter Constructor " Url="html/69e399ff-4d56-7774-73b0-3326cc2e9057.htm" />
+        <HelpTOCNode Title="JsonValueConverter Constructor (JsonSerializer)" Url="html/df5970e7-6f32-cec3-9325-247651d5b6f5.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="26e8fc5e-2ce7-4d4d-b9b9-a0c8ef1509c2" Title="JsonValueConverter Methods" Url="html/a3766a7a-77e2-6919-53b5-df2e9c7dd239.htm">
+        <HelpTOCNode Title="JsonToValue Method " Url="html/a7e73c0c-925c-3ccd-dd45-276ac2d86b14.htm" />
+        <HelpTOCNode Title="ValueToJson Method " Url="html/dc87a960-6e4c-a45c-8fb1-86560e470387.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="9a8449c3-3bfb-4f5c-8d44-447aa2d946a5" Title="MarshaledRequestParameters Structure" Url="html/e5ca7d81-df07-c593-a865-112c2457aae9.htm">
+      <HelpTOCNode Title="MarshaledRequestParameters Constructor " Url="html/05a1ee28-ee8b-0faa-a95d-20ec66ad091d.htm" />
+      <HelpTOCNode Id="c654525e-54f8-489b-a972-dcec1dbcd93c" Title="MarshaledRequestParameters Properties" Url="html/b2599a61-6c02-19fb-c9f1-c2b150f4dfed.htm">
+        <HelpTOCNode Title="CancellationToken Property " Url="html/419bf5da-c013-71ed-e4e8-d8a3f4569b40.htm" />
+        <HelpTOCNode Title="Parameters Property " Url="html/21f193ef-8d2a-dd5c-f895-6c8b5df26886.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="MarshaledRequestParameters Methods" Url="html/d882794e-7e47-1423-7138-76f92cb7e117.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="4792d58f-dcf6-4b58-b84e-c42fa7d1f282" Title="NamedRequestMarshaler Class" Url="html/5d06d11a-2a45-bccb-d52a-e6fdef3909d0.htm">
+      <HelpTOCNode Title="NamedRequestMarshaler Constructor " Url="html/978060bb-945d-5d30-e8d5-4dbd50fee75b.htm" />
+      <HelpTOCNode Id="1e4990cb-d15d-4419-9205-aded5d8a6cd4" Title="NamedRequestMarshaler Methods" Url="html/896784ea-511d-5f21-540f-7998d5a41950.htm">
+        <HelpTOCNode Title="MarshalParameters Method " Url="html/58ba6af3-9887-1b60-9c94-2286c565c682.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="523e225d-286f-4033-8dd2-e776caa45e6e" Title="JsonRpc.Standard.Server" Url="html/d6bb71fc-dcae-118f-b3ce-d918a4b58ade.htm">
+    <HelpTOCNode Id="06c218ce-42aa-4473-8851-c3f5e2235311" Title="DefaultServiceFactory Class" Url="html/12c53036-6589-1bb7-88f6-acb856f58960.htm">
+      <HelpTOCNode Title="DefaultServiceFactory Constructor " Url="html/0a980882-315f-b07a-f996-4b6f7b93b1c4.htm" />
+      <HelpTOCNode Id="f92ec09c-721b-419a-bfa2-3a0ad1fee055" Title="DefaultServiceFactory Methods" Url="html/025ed89a-2df8-2dd6-b04b-43a291aeaed6.htm">
+        <HelpTOCNode Title="CreateService Method " Url="html/31620461-d1d7-3840-8d9e-2a612cedd9ca.htm" />
+        <HelpTOCNode Title="ReleaseService Method " Url="html/75cfa784-d621-efdd-7a6f-dd3589935bdd.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="4777c267-d0c6-4ec5-b2b2-0dc78e8d3a62" Title="FeatureCollection Class" Url="html/2ba075d5-55b0-f127-0293-a148d62cfd08.htm">
+      <HelpTOCNode Id="a1353366-91fb-4e09-a2b6-704c53ea110b" Title="FeatureCollection Constructor " Url="html/e807e63f-b2f8-6d8c-b6f0-b6d332d3c565.htm">
+        <HelpTOCNode Title="FeatureCollection Constructor " Url="html/f925b9bf-edb8-c349-cf3b-f94861a2f54d.htm" />
+        <HelpTOCNode Title="FeatureCollection Constructor (IFeatureCollection)" Url="html/3d6f42b7-5c8e-b023-715f-e700ce6f4a58.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="b8c338c1-5dbf-4cf6-9a84-aceeeac9be0d" Title="FeatureCollection Methods" Url="html/9368ce4a-aa83-ba4b-7227-ecfaa55c5f71.htm">
+        <HelpTOCNode Title="Get Method " Url="html/132ce401-b7bd-116e-1471-72e0ddaaade4.htm" />
+        <HelpTOCNode Title="Set Method " Url="html/324d6a6d-c932-2a5f-e13c-a835ea00869f.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="20801511-d1fa-4c2a-9bd6-13dd695a6a5d" Title="FeatureCollectionExtensions Class" Url="html/0e339690-c977-fb85-70c2-10225cbc8f27.htm">
+      <HelpTOCNode Id="46c79f96-69b1-4840-b3c0-e413113d0332" Title="FeatureCollectionExtensions Methods" Url="html/1b90273c-16c4-19a0-e667-8ae56cf13714.htm">
+        <HelpTOCNode Title="Get(TFeature) Method " Url="html/30c13d49-6a88-2a4a-fed5-1b2cd5cba9b6.htm" />
+        <HelpTOCNode Title="Set(TFeature) Method " Url="html/a8e9961c-1809-1325-3467-54f9e1f1582c.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="8108a4a5-9e9f-403d-8067-4bde4b56aa38" Title="IFeatureCollection Interface" Url="html/1264f82c-4bc8-81c6-f419-76688db28129.htm">
+      <HelpTOCNode Id="fab27c74-807c-4a10-94bb-965dc44b4bc3" Title="IFeatureCollection Methods" Url="html/0ebe41e1-9b36-2a15-24dc-07d5fdf0daaf.htm">
+        <HelpTOCNode Title="Get Method " Url="html/64da4e1b-b026-ef9f-d6fe-fa9649935527.htm" />
+        <HelpTOCNode Title="Set Method " Url="html/a4245a07-6309-ddf0-a778-6e7ee089d8a4.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="4710536a-bc48-428b-a11f-05024a6a97e5" Title="IJsonRpcService Interface" Url="html/688d9024-8407-cb89-a281-4d9d22c66eac.htm">
+      <HelpTOCNode Id="f3ebecf4-ec7e-49bf-be66-a37c579c100a" Title="IJsonRpcService Properties" Url="html/d33c5eff-426a-27ce-a94e-e5d41e002b39.htm">
+        <HelpTOCNode Title="RequestContext Property " Url="html/83f40e20-72e4-af75-8722-c26358217572.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="dc2e21c0-05f2-4087-9593-ace8662096cc" Title="IJsonRpcServiceHost Interface" Url="html/b9ab5cd6-dd70-5b4d-26ba-90d713091d09.htm">
+      <HelpTOCNode Id="622a88a8-e7a9-4baa-aa8c-71fd9a056d11" Title="IJsonRpcServiceHost Methods" Url="html/828076f4-1882-0146-c632-fe3559614549.htm">
+        <HelpTOCNode Title="InvokeAsync Method " Url="html/73b3f73b-e175-dbd2-f10f-7d20bdf9c319.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="1861b132-c6b5-4583-a964-6a79f9ca4109" Title="IRequestCancellationFeature Interface" Url="html/bad8e0fb-fc21-2cff-1614-86a9401862af.htm">
+      <HelpTOCNode Id="e97ce723-af25-455f-83b3-e40c9941aa1f" Title="IRequestCancellationFeature Methods" Url="html/c6e7d538-14e1-238a-b56f-bb0f87a3babe.htm">
+        <HelpTOCNode Title="TryCancel Method " Url="html/d1f729a9-ffa0-8b43-63fa-899ccc2cd25b.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="98b35e52-a943-4419-8299-eae8eee0e743" Title="IServiceFactory Interface" Url="html/af982836-c205-2008-dcd8-992bb024e04b.htm">
+      <HelpTOCNode Id="a5b21dc3-ba39-4c94-a046-97929e1bcbd3" Title="IServiceFactory Methods" Url="html/a7a3519b-dd1b-9f9f-9859-6c35730958f1.htm">
+        <HelpTOCNode Title="CreateService Method " Url="html/797ebace-cbe9-8e15-2b19-2b2ddbc3436c.htm" />
+        <HelpTOCNode Title="ReleaseService Method " Url="html/b3bcf461-8fc3-eb60-4281-b284a51db687.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="99370199-331e-4f2b-a9b2-c0157f908cda" Title="JsonRpcServerHandler Class" Url="html/331b44f9-a4be-8f2a-5925-9bc56bda2951.htm">
+      <HelpTOCNode Title="JsonRpcServerHandler Constructor " Url="html/21f54d78-6123-90d1-5791-53e9af954533.htm" />
+      <HelpTOCNode Id="96f029ea-e8d0-412d-9e04-8094e93f4b32" Title="JsonRpcServerHandler Properties" Url="html/8d111636-eeb0-6344-f234-7537f185d498.htm">
+        <HelpTOCNode Title="DefaultFeatures Property " Url="html/1194e295-4060-b130-7a41-0006322bd1a6.htm" />
+        <HelpTOCNode Title="ServiceHost Property " Url="html/d6d710ef-3eae-ef3a-affc-96c386fde3f6.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="JsonRpcServerHandler Methods" Url="html/0355c613-22b0-54aa-1eee-26a055728baa.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="a3d1365f-f559-4730-948b-b30dce2ac33b" Title="JsonRpcService Class" Url="html/b078c251-0020-054d-2002-8171fd067f86.htm">
+      <HelpTOCNode Title="JsonRpcService Constructor " Url="html/514ac290-3dc0-e6d8-7c61-0048e4248955.htm" />
+      <HelpTOCNode Id="05da86cf-cef4-40b4-bc01-5e1371d5169e" Title="JsonRpcService Properties" Url="html/23bba4e5-1f8c-b740-e681-308876f293df.htm">
+        <HelpTOCNode Title="RequestContext Property " Url="html/d69840a3-3ac5-4924-a755-f317370a5a28.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="JsonRpcService Methods" Url="html/9dfc8635-2ae0-3ad8-dbb3-8f3ae9861e99.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="330fae8e-52ab-46c3-921f-9f2cc24f723e" Title="JsonRpcServiceHostBuilder Class" Url="html/6fc04f7f-098e-e4cb-83de-e4f50ec5b9d9.htm">
+      <HelpTOCNode Title="JsonRpcServiceHostBuilder Constructor " Url="html/def74f71-86db-f461-aedd-923c821bfc0d.htm" />
+      <HelpTOCNode Id="0169c103-9eff-42ac-8773-1ee43cd351d5" Title="JsonRpcServiceHostBuilder Properties" Url="html/d11c258e-72e1-4bf5-24fb-3ee19d134c83.htm">
+        <HelpTOCNode Title="ContractResolver Property " Url="html/feb3ed65-b5ba-c9fd-f40d-1e601d7cc914.htm" />
+        <HelpTOCNode Title="LoggerFactory Property " Url="html/27cfe1ec-e5bd-17c3-ad3b-96806e68d8e9.htm" />
+        <HelpTOCNode Title="MethodBinder Property " Url="html/cc94c871-2665-ecfd-5104-af648d52001c.htm" />
+        <HelpTOCNode Title="ServiceFactory Property " Url="html/c2789e3e-8640-75f7-8a73-fee0444e96e2.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="4790c832-8f12-4ed8-81aa-05dad655eda8" Title="JsonRpcServiceHostBuilder Methods" Url="html/bfcfd895-1bc6-7ae5-f5a6-d74a69156e9e.htm">
+        <HelpTOCNode Title="Build Method " Url="html/0a2bfd17-a2ee-e5b5-ced0-14936ccc82ab.htm" />
+        <HelpTOCNode Id="8a7fe604-5e71-4a95-ace3-128408350452" Title="Intercept Method " Url="html/183f8f18-ed73-ae8a-1c88-717c961aeed9.htm">
+          <HelpTOCNode Title="Intercept Method (Func(RequestContext, Func(Task), Task))" Url="html/d6e4dcb8-1732-0432-de72-f040a74447c8.htm" />
+          <HelpTOCNode Title="Intercept Method (Func(RequestHandler, RequestHandler))" Url="html/3b61fede-4e3d-cb07-e12e-3086267ec6d6.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="eba8f9f5-0edc-4d01-96c7-55487e0105f8" Title="Register Method " Url="html/8f8feb22-21a8-1383-2128-19cd17d63411.htm">
+          <HelpTOCNode Title="Register(TService) Method " Url="html/a4d5720b-7e86-caa5-01c0-89d52b595ee0.htm" />
+          <HelpTOCNode Title="Register Method (Assembly)" Url="html/ec940f04-afca-4ab0-8a62-6936b39f5710.htm" />
+          <HelpTOCNode Title="Register Method (Type)" Url="html/a1c401ae-d5a7-2dea-7022-c656ee8ae671.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="b4285145-01b9-4cbd-98d5-7fc0615456d6" Title="RequestContext Class" Url="html/31e4253a-fd4b-d8d8-e979-e9d58d2ebe01.htm">
+      <HelpTOCNode Title="RequestContext Constructor " Url="html/35f0cd1d-ad2a-9d7e-8437-b93315ee8ef3.htm" />
+      <HelpTOCNode Id="fb3e9eaa-2e73-47d9-b6a4-854d8d837f9a" Title="RequestContext Properties" Url="html/029b2930-77bc-2e10-3ff3-a2a138fb2934.htm">
+        <HelpTOCNode Title="CancellationToken Property " Url="html/214dff9e-97cc-6921-f641-893bad818585.htm" />
+        <HelpTOCNode Title="Features Property " Url="html/a7ffbc14-5324-410b-b3d0-b92d60673e7d.htm" />
+        <HelpTOCNode Title="Request Property " Url="html/984f976d-d9b7-7b27-5d8e-efdc86e53f1b.htm" />
+        <HelpTOCNode Title="Response Property " Url="html/0033e160-5a41-27d9-676b-ae8db1622e08.htm" />
+        <HelpTOCNode Title="ServiceFactory Property " Url="html/ce502b68-b18e-73d7-1936-c74d6faf8226.htm" />
+        <HelpTOCNode Title="ServiceHost Property " Url="html/f7bd859f-f74c-92ec-c378-d9ff9339774e.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="RequestContext Methods" Url="html/3c4ccc22-04b1-5a75-f38e-3a5ce3edd6da.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Title="RequestHandler Delegate" Url="html/f6623dc6-2ac3-67b9-a197-103b579ac7fb.htm" />
+    <HelpTOCNode Id="5e36639d-63cf-4049-a10e-c7b8b5c4a847" Title="SingleFeatureCollection(TFeature) Class" Url="html/e079f7dc-394e-0951-2fdb-3013dd5d891f.htm">
+      <HelpTOCNode Id="c3ee563b-1c58-41e0-9aa4-345064eda6e1" Title="SingleFeatureCollection(TFeature) Constructor " Url="html/be8b57cf-98c7-8291-5c75-a11841a44d37.htm">
+        <HelpTOCNode Title="SingleFeatureCollection(TFeature) Constructor " Url="html/80964c07-a937-c296-3f55-6fd305bdc477.htm" />
+        <HelpTOCNode Title="SingleFeatureCollection(TFeature) Constructor (TFeature)" Url="html/f439ffeb-fa82-74a0-5417-8cadfac4bc7d.htm" />
+        <HelpTOCNode Title="SingleFeatureCollection(TFeature) Constructor (IFeatureCollection)" Url="html/457bb106-5b72-9433-8cdc-cc3044ab42a7.htm" />
+        <HelpTOCNode Title="SingleFeatureCollection(TFeature) Constructor (IFeatureCollection, TFeature)" Url="html/da5e96b7-b506-48a7-191e-d800e7facfa6.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="fe5696e9-67d0-418a-94f5-84fec0528f28" Title="SingleFeatureCollection(TFeature) Methods" Url="html/d215a228-e183-b50f-cbe4-5c3f32500a83.htm">
+        <HelpTOCNode Title="Get Method " Url="html/9e57afb0-7a04-61fd-b2a8-844825ba0fe6.htm" />
+        <HelpTOCNode Title="Set Method " Url="html/f79d332f-7e40-d304-4d00-e340a20d8958.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+  <HelpTOCNode Id="188e8c6a-ecfb-4f74-876d-55b8d57d279b" Title="JsonRpc.Streams" Url="html/c69c0eca-6b87-f8bf-2011-a9de19bbe2d8.htm">
+    <HelpTOCNode Id="affdc910-d974-46f1-aa94-70dbb3e572a2" Title="ByLineTextMessageReader Class" Url="html/6f32b9be-1fda-e27e-7882-9f9db3fb1eb7.htm">
+      <HelpTOCNode Id="2e018f83-26f6-464f-b7cc-def03ef2b6b5" Title="ByLineTextMessageReader Constructor " Url="html/536291cc-a58c-a8df-d718-01a83d30b394.htm">
+        <HelpTOCNode Title="ByLineTextMessageReader Constructor (Stream)" Url="html/3512cb78-7484-f429-768d-c2508f583709.htm" />
+        <HelpTOCNode Title="ByLineTextMessageReader Constructor (TextReader)" Url="html/9ff4aaa5-10af-f4ea-6055-605af6f089f6.htm" />
+        <HelpTOCNode Title="ByLineTextMessageReader Constructor (Stream, String)" Url="html/4fe003bd-a709-cb95-6af1-1276b31249d1.htm" />
+        <HelpTOCNode Title="ByLineTextMessageReader Constructor (TextReader, String)" Url="html/2941e12b-2e82-ce8a-9702-7fec369aa422.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="892d9559-4cbf-426d-98ac-3a4a987d2a7d" Title="ByLineTextMessageReader Properties" Url="html/54612c69-a405-0173-8657-13a1fe9fd1e3.htm">
+        <HelpTOCNode Title="Delimiter Property " Url="html/81edbe9b-22b2-29ad-8b43-29ab5b7fb911.htm" />
+        <HelpTOCNode Title="LeaveReaderOpen Property " Url="html/a3ba1cf2-c391-a85e-3cd5-31bdf78271d9.htm" />
+        <HelpTOCNode Title="Reader Property " Url="html/2590cf5d-ffa7-4211-110b-e71d1b66f4b5.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="3c0b7364-cae6-4a18-8de4-40c8fb99d429" Title="ByLineTextMessageReader Methods" Url="html/7d1d7a99-84ab-1422-f44f-3dac1b21a1c1.htm">
+        <HelpTOCNode Id="ab537c2e-3db9-421f-a264-5d1d39fdbcf4" Title="Dispose Method " Url="html/16db7843-9ded-0d7e-8879-c76f1c135fce.htm">
+          <HelpTOCNode Title="Dispose Method (Boolean)" Url="html/b1858320-1e10-a4bb-1df4-245467986138.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="ReadDirectAsync Method " Url="html/964d3bae-4c6b-3303-e296-acde0edcddd8.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="dc200047-4ea3-4cf8-8557-2bc66508f1e5" Title="ByLineTextMessageWriter Class" Url="html/93fe4b0c-1e36-c144-0473-01b80453fd25.htm">
+      <HelpTOCNode Id="17e3ee38-8e94-48f5-aaab-72da7dcf5358" Title="ByLineTextMessageWriter Constructor " Url="html/e2761257-4f31-ea22-afe1-ef29b0127349.htm">
+        <HelpTOCNode Title="ByLineTextMessageWriter Constructor (Stream)" Url="html/6647cf73-dbaa-00c8-f755-ef5bfa7adf06.htm" />
+        <HelpTOCNode Title="ByLineTextMessageWriter Constructor (TextWriter)" Url="html/dab83aad-39c9-294b-c3e9-72595d973980.htm" />
+        <HelpTOCNode Title="ByLineTextMessageWriter Constructor (Stream, String)" Url="html/54819a7b-f81a-ee8c-2ad9-0565fc9aaf2c.htm" />
+        <HelpTOCNode Title="ByLineTextMessageWriter Constructor (TextWriter, String)" Url="html/2e19ee0d-ba86-8701-d55d-29c52c45a742.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="c6ee97c7-c89d-46b9-a798-cd974bf91d19" Title="ByLineTextMessageWriter Properties" Url="html/14c97f1b-db4f-82f1-ea5c-f326e3f13a0a.htm">
+        <HelpTOCNode Title="Delimiter Property " Url="html/a19f13a0-484e-67dc-a411-71797091024e.htm" />
+        <HelpTOCNode Title="LeaveWriterOpen Property " Url="html/0df6ffb7-63d0-0799-f209-66487b7d6698.htm" />
+        <HelpTOCNode Title="Writer Property " Url="html/3bf1781a-623c-6c8f-2689-060ae7009076.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="62b05cfd-1158-4fe7-bafd-112731697d50" Title="ByLineTextMessageWriter Methods" Url="html/14f6b353-e313-0a0f-c4fb-ee02eb2955d1.htm">
+        <HelpTOCNode Id="854049b0-b9d3-49ef-aa68-7ca0afd854c6" Title="Dispose Method " Url="html/c59e746c-4d2c-8e95-3758-459550a690a5.htm">
+          <HelpTOCNode Title="Dispose Method (Boolean)" Url="html/a1662310-25c8-d9e4-ae58-dd9512b832f7.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="WriteAsync Method " Url="html/676d2fd4-e394-d3e1-6362-89fdfefe2e27.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="f72d8ed3-0ba2-41bd-a323-6705706d0076" Title="MessageReader Class" Url="html/e6279808-7c01-10bf-fcfc-afff401d9877.htm">
+      <HelpTOCNode Title="MessageReader Constructor " Url="html/ff8e24ae-05fb-d81e-6bc5-7600d94c4864.htm" />
+      <HelpTOCNode Id="586fa7d3-896a-4c6b-8a5f-f8b03f7d5ea1" Title="MessageReader Properties" Url="html/56a42813-7194-5317-a9ca-211ce34adff2.htm">
+        <HelpTOCNode Title="DisposalToken Property " Url="html/e24134e5-6fce-9810-e33e-ef7c549c8a16.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="99bdc3e1-118f-451e-97f6-bf2221cc5bb9" Title="MessageReader Methods" Url="html/f9d09721-a1a6-85fa-07ce-27bd47411a39.htm">
+        <HelpTOCNode Id="ffdbbe40-b7d5-48c7-a2ca-cce2b6ba3da9" Title="Dispose Method " Url="html/c1bcf9bc-bef1-55af-9f11-2a5cb0bb54a1.htm">
+          <HelpTOCNode Title="Dispose Method " Url="html/dfd25768-ae10-d15b-4d2f-98cc8d0c84bf.htm" />
+          <HelpTOCNode Title="Dispose Method (Boolean)" Url="html/798e8475-9a5a-0e2c-a4bd-6420add503e7.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="ReadAsync Method " Url="html/17e00e56-6c35-0f5f-5a92-3180b805700e.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="34d1589f-3a53-4679-bdc1-af3edd4faf72" Title="MessageReaderException Class" Url="html/66402f38-d805-25f4-112b-29a3ad9148b6.htm">
+      <HelpTOCNode Id="ae3d4d71-4a98-479a-971d-7d5891a60b7a" Title="MessageReaderException Constructor " Url="html/74759179-512b-9357-72af-0d5030ccea41.htm">
+        <HelpTOCNode Title="MessageReaderException Constructor " Url="html/c59f3f4f-b4ce-a790-3025-834cb9925261.htm" />
+        <HelpTOCNode Title="MessageReaderException Constructor (String)" Url="html/c4ab9c43-f070-53dc-657a-c01089e38df1.htm" />
+        <HelpTOCNode Title="MessageReaderException Constructor (SerializationInfo, StreamingContext)" Url="html/70eddd29-91dc-3cd9-0dd8-54e1c2cb85df.htm" />
+        <HelpTOCNode Title="MessageReaderException Constructor (String, Exception)" Url="html/1809e439-ce6d-6039-7fd9-9a7a84a58b72.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Title="MessageReaderException Properties" Url="html/96dab8a1-01bc-bc31-69f7-ac2d797d3610.htm" />
+      <HelpTOCNode Title="MessageReaderException Methods" Url="html/e5ee32ec-cd97-9d3d-3b68-7f4666123529.htm" />
+      <HelpTOCNode Title="MessageReaderException Events" Url="html/a3650854-6b5f-a176-b0f3-3d18175be88f.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Id="bdc09d38-abf9-401e-819b-dec498618c33" Title="MessageWriter Class" Url="html/533c4157-b12d-8d69-69d7-299ff7fffe04.htm">
+      <HelpTOCNode Title="MessageWriter Constructor " Url="html/5b0b885f-b9cf-b810-d43f-91436b23e0a1.htm" />
+      <HelpTOCNode Id="9ea26abd-014e-4dab-92ac-6ce0c930c91f" Title="MessageWriter Properties" Url="html/787606eb-cabe-9d78-b136-9e01a7ccb210.htm">
+        <HelpTOCNode Title="DisposalToken Property " Url="html/3c6e7d44-3aba-7ed8-5d6e-f07ed9c83843.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="29b2389e-4e52-4de8-8a94-74fc234743cc" Title="MessageWriter Methods" Url="html/04a0c53b-b2bb-1cf7-883b-08bcaefaf81b.htm">
+        <HelpTOCNode Id="1f9b24b2-495c-4b82-86c6-4055f553ab88" Title="Dispose Method " Url="html/4618616d-0544-0f0f-f2d3-777af69aca30.htm">
+          <HelpTOCNode Title="Dispose Method " Url="html/aba0eeda-5424-ce19-8e13-4ccc73b9a28a.htm" />
+          <HelpTOCNode Title="Dispose Method (Boolean)" Url="html/022f70e8-fce0-96d9-c2a7-576a6bbb07ab.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="WriteAsync Method " Url="html/dd12e433-7315-5377-40c1-9d7bd65b66f6.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="9e67c501-f392-442a-bbee-3ea51e426299" Title="PartwiseStreamMessageReader Class" Url="html/cc441b7a-e998-4c0d-6199-7e5818b5864b.htm">
+      <HelpTOCNode Title="PartwiseStreamMessageReader Constructor " Url="html/8360bc39-6ae5-76e3-1612-af14a92d4252.htm" />
+      <HelpTOCNode Id="243839e5-f975-4c03-80fa-aa004de776bf" Title="PartwiseStreamMessageReader Properties" Url="html/50e52f81-3707-1a88-7a52-461228c57b42.htm">
+        <HelpTOCNode Title="Encoding Property " Url="html/9051d0a7-5449-a14e-bc32-2a056c1abe69.htm" />
+        <HelpTOCNode Title="LeaveStreamOpen Property " Url="html/daaa943f-8f2b-dfd8-5ad5-56a5f5e70981.htm" />
+        <HelpTOCNode Title="Stream Property " Url="html/a230d9c7-bb1c-5186-a542-cc3e41691c79.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="145d22da-205a-499f-bced-bdef3d2c91ec" Title="PartwiseStreamMessageReader Methods" Url="html/b9fc860c-89eb-dbac-70d0-563ebca830c9.htm">
+        <HelpTOCNode Id="4e71de05-54fe-4b33-94b1-f9e5f58377a9" Title="Dispose Method " Url="html/16f0f215-6609-ea73-da6a-2507478863d6.htm">
+          <HelpTOCNode Title="Dispose Method (Boolean)" Url="html/d81e0eb5-03e6-3a9c-7505-fd1a64dd9602.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="ReadDirectAsync Method " Url="html/e3b51eee-626f-dd71-857b-b706d039343c.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="56910f2d-6ca9-4fe9-9a92-ea9c800f1d9d" Title="PartwiseStreamMessageWriter Class" Url="html/d3f3b7ba-5a61-ab07-27b6-4941a801ffd7.htm">
+      <HelpTOCNode Title="PartwiseStreamMessageWriter Constructor " Url="html/d84d66fd-3da4-0ba6-fa7d-104fe2719f1f.htm" />
+      <HelpTOCNode Id="12751d70-c998-49a2-a34a-cac47203042d" Title="PartwiseStreamMessageWriter Properties" Url="html/185b03b5-5a52-50de-2445-cd27fcaa2bcb.htm">
+        <HelpTOCNode Title="ContentType Property " Url="html/93e57460-c940-5b95-7d45-b971f5183c8d.htm" />
+        <HelpTOCNode Title="EmitContentCharset Property " Url="html/2ad57d91-e9ca-78a0-318f-74830d96e7a9.htm" />
+        <HelpTOCNode Title="Encoding Property " Url="html/f40a08c4-6453-3856-a047-acc54a06b399.htm" />
+        <HelpTOCNode Title="LeaveStreamOpen Property " Url="html/2eea9b8c-ea97-42e3-77c8-e0d8f19feb71.htm" />
+        <HelpTOCNode Title="Stream Property " Url="html/b584c794-7c89-49fa-0625-8ac52d3e2261.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="7fa3c182-273e-4f51-9a92-c7586c4afd6d" Title="PartwiseStreamMessageWriter Methods" Url="html/b45772ae-2b8f-ca2d-e391-82d91139b51c.htm">
+        <HelpTOCNode Id="58736ef3-ab5d-4748-8548-551682d9579b" Title="Dispose Method " Url="html/e19adbed-bd96-fcf9-c03f-3d8dfbcb1fbc.htm">
+          <HelpTOCNode Title="Dispose Method (Boolean)" Url="html/3d63a17a-7fd5-8494-86db-275a84ea95d0.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="WriteAsync Method " Url="html/b77298c5-89c8-4255-b6cb-8aa96f41f195.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="423d5435-786a-482c-bfde-ac29cf00afdd" Title="QueuedMessageReader Class" Url="html/bdbfb826-cb8f-7679-207a-d830995a35a1.htm">
+      <HelpTOCNode Title="QueuedMessageReader Constructor " Url="html/ef6c72ea-8d58-f248-5ac0-9915b7f81e51.htm" />
+      <HelpTOCNode Title="QueuedMessageReader Properties" Url="html/98bbc9a2-722a-65a5-9ab9-69480f1f95bf.htm" />
+      <HelpTOCNode Id="a9578b59-e1f9-4038-aa88-c54b6c67e0ff" Title="QueuedMessageReader Methods" Url="html/d8cd0c0b-a4d4-7e80-9124-b512c846940f.htm">
+        <HelpTOCNode Id="ac82dd55-a22b-4b33-86ae-5a15aaf18806" Title="Dispose Method " Url="html/5f0087aa-fad8-d785-ccb8-7ad967726d11.htm">
+          <HelpTOCNode Title="Dispose Method (Boolean)" Url="html/80f0ff33-8123-674b-8f8d-39c1ed45a062.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="ReadAsync Method " Url="html/12665760-3e52-6ef7-9af8-cb251051f0cd.htm" />
+        <HelpTOCNode Title="ReadDirectAsync Method " Url="html/3c551474-0973-656c-4f9c-7c4caa5f5e9c.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="c7c59dc0-a908-456b-9eee-887ac5bdeb14" Title="StreamRpcClientHandler Class" Url="html/7da25800-1cb7-2263-976a-e212dcfa8cfb.htm">
+      <HelpTOCNode Id="f16c21ec-86b2-4bdc-ae53-04d3a2d60dfb" Title="StreamRpcClientHandler Constructor " Url="html/28d455d2-f5b1-0b43-226a-14c4cc9ca179.htm">
+        <HelpTOCNode Title="StreamRpcClientHandler Constructor " Url="html/728bccc1-9e21-756b-f6c2-7fbddcaf66cf.htm" />
+        <HelpTOCNode Title="StreamRpcClientHandler Constructor (StreamRpcClientOptions)" Url="html/6fc0149b-8591-9cbe-5a83-2c74d72a24b6.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="29943867-475a-4914-9c2b-24f4c844b17e" Title="StreamRpcClientHandler Properties" Url="html/7d889076-32c7-dca2-e212-6c49a5f69be0.htm">
+        <HelpTOCNode Title="ImpendingRequestCount Property " Url="html/5b97ff27-6c86-7706-4537-2c682e2d18b9.htm" />
+        <HelpTOCNode Title="Options Property " Url="html/fdb04f6f-ad0d-e187-119b-bc8ff55a72c5.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="bf8ad972-8ffd-4b80-ac05-9c5f236cb724" Title="StreamRpcClientHandler Methods" Url="html/5a8d63ef-11ec-3603-20e4-1c10e9106e6f.htm">
+        <HelpTOCNode Title="Attach Method " Url="html/fa044340-4f01-a143-4128-5d3d71d7299d.htm" />
+        <HelpTOCNode Id="a3498ecf-c5bc-433e-bf38-7f223519ece8" Title="SendAsync Method " Url="html/c3b05480-a4d6-5219-77cf-ed35343fc1da.htm">
+          <HelpTOCNode Title="SendAsync Method (RequestMessage, CancellationToken)" Url="html/6291bc14-493f-b3f0-b7f4-ee7de1774793.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Title="StreamRpcClientHandler Events" Url="html/8247a19e-b3a7-bf4a-44f0-0d5311fa3da9.htm" />
+    </HelpTOCNode>
+    <HelpTOCNode Title="StreamRpcClientOptions Enumeration" Url="html/bfe7ef5f-2aa6-c317-a5be-222689288e0f.htm" />
+    <HelpTOCNode Id="b15107a5-a6e8-4377-93b7-56bdfc9e2422" Title="StreamRpcServerHandler Class" Url="html/aa8f3191-c134-4831-d324-b960502f4991.htm">
+      <HelpTOCNode Id="8ac520ef-6510-436c-a261-06e9cbfc2e60" Title="StreamRpcServerHandler Constructor " Url="html/ccb1e906-dd2b-7fdd-3355-4d2ba2bfecd7.htm">
+        <HelpTOCNode Title="StreamRpcServerHandler Constructor (IJsonRpcServiceHost)" Url="html/e7c90d45-5032-44dc-1945-f0c0a5fba9a9.htm" />
+        <HelpTOCNode Title="StreamRpcServerHandler Constructor (IJsonRpcServiceHost, StreamRpcServerHandlerOptions)" Url="html/312f86f0-a088-0904-372f-b2962d1ce1dd.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="a57edccc-e93a-43df-843d-e2809b91c373" Title="StreamRpcServerHandler Properties" Url="html/a373733f-f4a9-b165-9897-e73ce8293533.htm">
+        <HelpTOCNode Title="Options Property " Url="html/e8c7299d-44d2-8cfa-7aa3-93b074576a6a.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="786b5c42-85e3-4bc7-934b-3790b4512c24" Title="StreamRpcServerHandler Methods" Url="html/9024072a-7f76-9322-3879-fc980b39c506.htm">
+        <HelpTOCNode Title="Attach Method " Url="html/740b6244-688e-971b-8a20-47dd8d6b65c3.htm" />
+        <HelpTOCNode Title="TryCancelRequest Method " Url="html/2f00ab0a-a8d1-7556-fcd1-7efc6d89cb4d.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Title="StreamRpcServerHandlerOptions Enumeration" Url="html/d3fa2627-767c-7a6e-9e01-6740934b870d.htm" />
+  </HelpTOCNode>
+  <HelpTOCNode Id="ea584f88-84c2-4a1e-85b1-f18d1d87aab3" Title="JsonRpc.WebSockets" Url="html/26f3540c-2e92-9cb5-49b8-143c3b31ef4a.htm">
+    <HelpTOCNode Id="c7c3e132-e198-4bbd-ab46-81cb76ce6c04" Title="WebSocketMessageReader Class" Url="html/fc9794fe-ed60-d13f-136c-10806cfcd521.htm">
+      <HelpTOCNode Id="29ba3f66-9a51-41be-a661-2f4da0a3a03f" Title="WebSocketMessageReader Constructor " Url="html/0e93a626-4231-5412-50d9-e068e2cfb779.htm">
+        <HelpTOCNode Title="WebSocketMessageReader Constructor (WebSocket)" Url="html/2bd16732-faf6-e52f-b7c2-5a6bbdef275c.htm" />
+        <HelpTOCNode Title="WebSocketMessageReader Constructor (WebSocket, Int32, Int32)" Url="html/212c6b76-8f34-b865-3d99-37b98c0f8a0a.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="c3c8da6d-0082-45ae-991c-248bde6079f9" Title="WebSocketMessageReader Properties" Url="html/c18f1ebf-b641-27e4-9c97-4ee1874ed2ac.htm">
+        <HelpTOCNode Title="WebSocket Property " Url="html/30f2c94c-96ac-6d22-b2d7-8ad25a0c4a35.htm" />
+        <HelpTOCNode Title="WebSocketClose Property " Url="html/7f9d08e6-d9a8-3182-dad2-f7011b2a143c.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="c7c76234-a237-4b89-b12d-60d3c97151c6" Title="WebSocketMessageReader Methods" Url="html/e3690006-287c-2985-0a4d-a772ba1c0081.htm">
+        <HelpTOCNode Title="DeserializeMessage Method " Url="html/d862f19f-32da-3c30-2347-f910353fb683.htm" />
+        <HelpTOCNode Id="73de039e-4173-4cb6-a27a-5de761580a61" Title="ReadDirectAsync Method " Url="html/f3b1096e-6da9-e78c-7a0c-1c46b9904d50.htm">
+          <HelpTOCNode Title="ReadDirectAsync Method (CancellationToken)" Url="html/6b332964-3131-8c3c-67b3-902ab2f3f7a9.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="46a7e074-99e7-4e38-a1a4-a8811abf7954" Title="WebSocketMessageWriter Class" Url="html/7948714f-29bb-e93b-b045-648e0c4a9ed6.htm">
+      <HelpTOCNode Id="c14b581c-76b7-4786-b460-c1db02afc6ee" Title="WebSocketMessageWriter Constructor " Url="html/ecdf0854-ea3d-321e-eb13-93993ca80385.htm">
+        <HelpTOCNode Title="WebSocketMessageWriter Constructor (WebSocket)" Url="html/44dcb072-c7de-eaca-70ff-2c54ef638d40.htm" />
+        <HelpTOCNode Title="WebSocketMessageWriter Constructor (WebSocket, Int32)" Url="html/cfbc4140-ae02-1a02-93e9-fb963f6b07d2.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="cbc3cd8b-d96b-495e-8882-720e21c4ce60" Title="WebSocketMessageWriter Properties" Url="html/ba1fcf2d-b9a8-7904-c02d-5378b9c07212.htm">
+        <HelpTOCNode Title="WebSocket Property " Url="html/bc421eea-f0d8-cd69-5760-4e705980028c.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="d50cc7a0-7a62-4f21-b0de-7fe27256de27" Title="WebSocketMessageWriter Methods" Url="html/b44dc58b-f0ed-5bf3-4161-376ca15cab9a.htm">
+        <HelpTOCNode Title="DeserializeMessage Method " Url="html/a186d762-98ec-5f2c-58e1-c53969eaf3c0.htm" />
+        <HelpTOCNode Id="57c9b8ac-b19d-4187-ae63-00aa0021735b" Title="WriteAsync Method " Url="html/9154bcde-8de8-56a4-545a-cc55a013669e.htm">
+          <HelpTOCNode Title="WriteAsync Method (Message, CancellationToken)" Url="html/3f5a1904-2e64-3c5d-c5dc-da20e3a2494b.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+</HelpTOC>

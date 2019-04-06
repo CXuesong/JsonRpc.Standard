@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>JsonRpc.WebSockets</name>
+  </assembly>
+  <members>
+    <member name="T:JsonRpc.WebSockets.WebSocketMessageReader">
+      <summary>
+            A <see cref="T:JsonRpc.Streams.MessageReader" /> implementation that reads JSON-RPC message from <see cref="P:JsonRpc.WebSockets.WebSocketMessageReader.WebSocket" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.WebSockets.WebSocketMessageReader.#ctor(System.Net.WebSockets.WebSocket)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.WebSockets.WebSocketMessageReader</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="webSocket">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>webSocket</parameter>
+            <parameter>M:JsonRpc.WebSockets.WebSocketMessageReader.#ctor(System.Net.WebSockets.WebSocket)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.WebSockets.WebSocketMessageReader.#ctor(System.Net.WebSockets.WebSocket,System.Int32,System.Int32)">
+      <summary>
+            Initializes a message reader from <see cref="P:JsonRpc.WebSockets.WebSocketMessageReader.WebSocket" />.
+            </summary>
+      <param name="webSocket">The WebSocket to read messages from.</param>
+      <param name="bufferSize">Length of the internal buffer kept by the message reader.</param>
+      <param name="maxMessageLength">The maximum allowed reading message length (bytes) per JSON-RPC message.</param>
+    </member>
+    <member name="M:JsonRpc.WebSockets.WebSocketMessageReader.DeserializeMessage(System.IO.Stream)">
+      <summary>
+            Loads a JSON-RPC message from the specified stream.
+            </summary>
+      <param name="stream">A stream containing the WebSocket message received from client.</param>
+      <returns>The parsed JSON-RPC message.</returns>
+    </member>
+    <member name="M:JsonRpc.WebSockets.WebSocketMessageReader.ReadDirectAsync(System.Threading.CancellationToken)">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.WebSockets.WebSocketMessageReader.ReadDirectAsync(System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="cancellationToken">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>cancellationToken</parameter>
+            <parameter>M:JsonRpc.WebSockets.WebSocketMessageReader.ReadDirectAsync(System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.WebSockets.WebSocketMessageReader.WebSocket">
+      <summary>
+            Gets the underlying <see cref="P:JsonRpc.WebSockets.WebSocketMessageReader.WebSocket" />.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.WebSockets.WebSocketMessageReader.WebSocketClose">
+      <summary>
+            Gets a Task that completes with status code when the underlying WebSocket is closed.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.WebSockets.WebSocketMessageWriter">
+      <summary>
+            A <see cref="T:JsonRpc.Streams.MessageWriter" /> implementation that writes JSON-RPC message into <see cref="P:JsonRpc.WebSockets.WebSocketMessageWriter.WebSocket" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.WebSockets.WebSocketMessageWriter.#ctor(System.Net.WebSockets.WebSocket)">
+      <summary>
+            Initializes a message reader from <see cref="P:JsonRpc.WebSockets.WebSocketMessageWriter.WebSocket" />.
+            </summary>
+      <param name="webSocket">The WebSocket to write messages into.</param>
+      <param name="chunkSize">The maximum size in bytes of each JSON-RPC frame when sending messages.</param>
+    </member>
+    <member name="M:JsonRpc.WebSockets.WebSocketMessageWriter.#ctor(System.Net.WebSockets.WebSocket,System.Int32)">
+      <summary>
+            Initializes a message reader from <see cref="P:JsonRpc.WebSockets.WebSocketMessageWriter.WebSocket" />.
+            </summary>
+      <param name="webSocket">The WebSocket to write messages into.</param>
+      <param name="chunkSize">The maximum size in bytes of each JSON-RPC frame when sending messages.</param>
+    </member>
+    <member name="M:JsonRpc.WebSockets.WebSocketMessageWriter.DeserializeMessage(System.IO.Stream,JsonRpc.Standard.Message)">
+      <summary>
+            Writes a JSON-RPC message to the specified stream.
+            </summary>
+      <param name="stream">A stream containing the WebSocket message to be sent to the client.</param>
+      <param name="message">The JSON-RPC message to be sent to the client.</param>
+    </member>
+    <member name="P:JsonRpc.WebSockets.WebSocketMessageWriter.WebSocket">
+      <summary>
+            Gets the underlying <see cref="P:JsonRpc.WebSockets.WebSocketMessageWriter.WebSocket" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Standard.Message,System.Threading.CancellationToken)">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Standard.Message,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Standard.Message,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="cancellationToken">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>cancellationToken</parameter>
+            <parameter>M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Standard.Message,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+  </members>
+</doc>

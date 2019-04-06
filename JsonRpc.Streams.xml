@@ -1,0 +1,757 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>JsonRpc.Streams</name>
+  </assembly>
+  <members>
+    <member name="T:JsonRpc.Streams.ByLineTextMessageReader">
+      <summary>
+            Represents a message reader that parses the message line-by-line from <see cref="T:System.IO.TextReader" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.ByLineTextMessageReader.#ctor(System.IO.Stream)">
+      <summary>
+            Initialize a line-by-line message reader from <see cref="T:System.IO.Stream" />.
+            </summary>
+      <param name="stream">The underlying stream. A <see cref="T:System.IO.TextReader" /> will be created based on it.</param>
+    </member>
+    <member name="M:JsonRpc.Streams.ByLineTextMessageReader.#ctor(System.IO.Stream,System.String)">
+      <summary>
+            Initialize a message reader from <see cref="T:System.IO.Stream" />.
+            </summary>
+      <param name="stream">The underlying stream. A <see cref="T:System.IO.TextReader" /> with UTF-8 encoding will be created based on it.</param>
+      <param name="delimiter">
+            The indicator for the end of a message.
+            If the reader reads a line that is the same as this parameter, the current message is finished.
+            Use <c>null</c> to indicate that each line, as long as it is not empty,
+            should be treated a message.
+            </param>
+    </member>
+    <member name="M:JsonRpc.Streams.ByLineTextMessageReader.#ctor(System.IO.TextReader)">
+      <summary>
+            Initialize a line-by-line message reader from <see cref="T:System.IO.TextReader" />.
+            </summary>
+      <param name="reader">The underlying text reader.</param>
+    </member>
+    <member name="M:JsonRpc.Streams.ByLineTextMessageReader.#ctor(System.IO.TextReader,System.String)">
+      <summary>
+            Initialize a message reader from <see cref="T:System.IO.TextReader" />.
+            </summary>
+      <param name="reader">The underlying text reader.</param>
+      <param name="delimiter">
+            The indicator for the end of a message.
+            If the reader reads a line that is the same as this parameter, the current message is finished.
+            Use <c>null</c> to indicate that each line, as long as it is not empty,
+            should be treated a message.
+            </param>
+    </member>
+    <member name="P:JsonRpc.Streams.ByLineTextMessageReader.Delimiter">
+      <summary>
+            The indicator for the end of a message.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.ByLineTextMessageReader.Dispose(System.Boolean)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocDisposeBool">
+            <parameter>JsonRpc.Streams.ByLineTextMessageReader</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="disposing">
+        <markup>
+          <include item="SMCAutoDocDisposeParam">
+            <parameter>JsonRpc.Streams.ByLineTextMessageReader</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Streams.ByLineTextMessageReader.LeaveReaderOpen">
+      <summary>
+            Whether to leave <see cref="P:JsonRpc.Streams.ByLineTextMessageReader.Reader" /> or <see cref="T:System.IO.Stream" /> (if this instance is initialized with a Stream)
+            open when disposing this instance.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.ByLineTextMessageReader.ReadDirectAsync(System.Threading.CancellationToken)">
+      <summary>
+            When overridden in the derived class, directly asynchronously reads the next message.
+            </summary>
+      <param name="cancellationToken">A token that cancels the operation OR indicates the current instance has just been disposed.</param>
+      <returns>The message just read, or <c>null</c> if EOF has reached.</returns>
+      <exception cref="T:System.OperationCanceledException">The operation has been canceled.</exception>
+    </member>
+    <member name="P:JsonRpc.Streams.ByLineTextMessageReader.Reader">
+      <summary>
+            The underlying text reader.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Streams.ByLineTextMessageWriter">
+      <summary>
+            Represents a message writer that writes the message line-by-line to <see cref="T:System.IO.TextWriter" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.ByLineTextMessageWriter.#ctor(System.IO.Stream)">
+      <summary>
+            Initialize a message writer to <see cref="T:System.IO.Stream" />.
+            </summary>
+      <param name="stream">The underlying stream. A <see cref="T:System.IO.TextWriter" /> with UTF-8 encoding will be created based on it.</param>
+    </member>
+    <member name="M:JsonRpc.Streams.ByLineTextMessageWriter.#ctor(System.IO.Stream,System.String)">
+      <summary>
+            Initialize a message writer to <see cref="T:System.IO.Stream" />.
+            </summary>
+      <param name="stream">The underlying stream. A <see cref="T:System.IO.TextWriter" /> with UTF-8 encoding will be created based on it.</param>
+      <param name="delimiter">
+            The indicator for the end of a message.
+            If the writer writes a line that is the same as this parameter, the current message is finished.
+            Use <c>null</c> to indicate that each line, as long as it is not empty,
+            should be treated a message.
+            </param>
+    </member>
+    <member name="M:JsonRpc.Streams.ByLineTextMessageWriter.#ctor(System.IO.TextWriter)">
+      <summary>
+            Initialize a line-by-line message writer to <see cref="T:System.IO.TextWriter" />.
+            </summary>
+      <param name="writer">The underlying text writer.</param>
+    </member>
+    <member name="M:JsonRpc.Streams.ByLineTextMessageWriter.#ctor(System.IO.TextWriter,System.String)">
+      <summary>
+            Initialize a message writer to <see cref="T:System.IO.TextWriter" />.
+            </summary>
+      <param name="writer">The underlying text writer.</param>
+      <param name="delimiter">
+            The indicator for the end of a message.
+            If the writer writes a line that is the same as this parameter, the current message is finished.
+            Use <c>null</c> to indicate that each line, as long as it is not empty,
+            should be treated a message.
+            </param>
+    </member>
+    <member name="P:JsonRpc.Streams.ByLineTextMessageWriter.Delimiter">
+      <summary>
+            The indicator for the end of a message.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.ByLineTextMessageWriter.Dispose(System.Boolean)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocDisposeBool">
+            <parameter>JsonRpc.Streams.ByLineTextMessageWriter</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="disposing">
+        <markup>
+          <include item="SMCAutoDocDisposeParam">
+            <parameter>JsonRpc.Streams.ByLineTextMessageWriter</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Streams.ByLineTextMessageWriter.LeaveWriterOpen">
+      <summary>
+            Whether to leave <see cref="P:JsonRpc.Streams.ByLineTextMessageWriter.Writer" /> or <see cref="T:System.IO.Stream" /> (if this instance is initialized with a Stream)
+            open when disposing this instance.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.ByLineTextMessageWriter.WriteAsync(JsonRpc.Standard.Message,System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously writes a message.
+            </summary>
+      <param name="message">The message to write.</param>
+      <param name="cancellationToken">A token that cancels the operation.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="message" /> is <c>null</c>.</exception>
+    </member>
+    <member name="P:JsonRpc.Streams.ByLineTextMessageWriter.Writer">
+      <summary>
+            The underlying text writer.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Streams.MessageReader">
+      <summary>
+            Represents a JSON RPC message reader.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.MessageReader.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Streams.MessageReader</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Streams.MessageReader.DisposalToken">
+      <summary>
+            A <see cref="T:System.Threading.CancellationToken" /> that is cancelled when the current object has been disposed.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.MessageReader.Dispose">
+      <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+    </member>
+    <member name="M:JsonRpc.Streams.MessageReader.Dispose(System.Boolean)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocDisposeBool">
+            <parameter>JsonRpc.Streams.MessageReader</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="disposing">
+        <markup>
+          <include item="SMCAutoDocDisposeParam">
+            <parameter>JsonRpc.Streams.MessageReader</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Streams.MessageReader.ReadAsync(System.Predicate{JsonRpc.Standard.Message},System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously reads the next message that matches the 
+            </summary>
+      <param name="filter">The expected type of the message.</param>
+      <param name="cancellationToken">A token that cancels the operation.</param>
+      <returns>
+            The next JSON RPC message, or <c>null</c> if no more messages exist.
+            </returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="filter" /> is <c>null</c>.</exception>
+      <exception cref="T:System.OperationCanceledException">The operation has been canceled.</exception>
+    </member>
+    <member name="T:JsonRpc.Streams.MessageReaderException">
+      <summary>
+            An exception that indicates the wrong message reader status.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.MessageReaderException.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Streams.MessageReaderException</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.MessageReaderException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Streams.MessageReaderException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="info">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>info</parameter>
+            <parameter>M:JsonRpc.Streams.MessageReaderException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="context">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>context</parameter>
+            <parameter>M:JsonRpc.Streams.MessageReaderException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Streams.MessageReaderException.#ctor(System.String)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Streams.MessageReaderException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Streams.MessageReaderException.#ctor(System.String)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Streams.MessageReaderException.#ctor(System.String,System.Exception)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Streams.MessageReaderException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Streams.MessageReaderException.#ctor(System.String,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="inner">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>inner</parameter>
+            <parameter>M:JsonRpc.Streams.MessageReaderException.#ctor(System.String,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="T:JsonRpc.Streams.MessageWriter">
+      <summary>
+            Represents a JSON RPC message writer.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.MessageWriter.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Streams.MessageWriter</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Streams.MessageWriter.DisposalToken">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Streams.MessageWriter.DisposalToken</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.MessageWriter.Dispose">
+      <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+    </member>
+    <member name="M:JsonRpc.Streams.MessageWriter.Dispose(System.Boolean)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocDisposeBool">
+            <parameter>JsonRpc.Streams.MessageWriter</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="disposing">
+        <markup>
+          <include item="SMCAutoDocDisposeParam">
+            <parameter>JsonRpc.Streams.MessageWriter</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Streams.MessageWriter.WriteAsync(JsonRpc.Standard.Message,System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously writes a message.
+            </summary>
+      <param name="message">The message to write.</param>
+      <param name="cancellationToken">A token that cancels the operation.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="message" /> is <c>null</c>.</exception>
+    </member>
+    <member name="T:JsonRpc.Streams.PartwiseStreamMessageReader">
+      <summary>
+            Reads JSON RPC messages from a <see cref="T:System.IO.Stream" />,
+            in the format specified in Microsoft Language Server Protocol
+            (https://github.com/Microsoft/language-server-protocol/blob/master/protocol.md).
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.PartwiseStreamMessageReader.#ctor(System.IO.Stream)">
+      <summary>
+            Initializes a message reader from <see cref="P:JsonRpc.Streams.PartwiseStreamMessageReader.Stream" />.
+            </summary>
+      <param name="stream">The stream to read messages from.</param>
+    </member>
+    <member name="M:JsonRpc.Streams.PartwiseStreamMessageReader.Dispose(System.Boolean)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocDisposeBool">
+            <parameter>JsonRpc.Streams.PartwiseStreamMessageReader</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="disposing">
+        <markup>
+          <include item="SMCAutoDocDisposeParam">
+            <parameter>JsonRpc.Streams.PartwiseStreamMessageReader</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Streams.PartwiseStreamMessageReader.Encoding">
+      <summary>
+            Default encoding of the received messages.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Streams.PartwiseStreamMessageReader.LeaveStreamOpen">
+      <summary>
+            Whether to leave <see cref="P:JsonRpc.Streams.PartwiseStreamMessageReader.Stream" /> open when disposing this instance.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.PartwiseStreamMessageReader.ReadDirectAsync(System.Threading.CancellationToken)">
+      <summary>
+            Directly reads a message out of the <see cref="P:JsonRpc.Streams.PartwiseStreamMessageReader.Stream" />.
+            </summary>
+      <param name="cancellationToken">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>cancellationToken</parameter>
+            <parameter>M:JsonRpc.Streams.PartwiseStreamMessageReader.ReadDirectAsync(System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+      <exception cref="T:System.OperationCanceledException">The operation has been cancelled before a message has been read.</exception>
+    </member>
+    <member name="P:JsonRpc.Streams.PartwiseStreamMessageReader.Stream">
+      <summary>
+            The underlying stream to read messages from.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Streams.PartwiseStreamMessageWriter">
+      <summary>
+            Writes JSON RPC messages to a <see cref="T:System.IO.Stream" />,
+            in the format specified in Microsoft Language Server Protocol
+            (https://github.com/Microsoft/language-server-protocol/blob/master/protocol.md).
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.PartwiseStreamMessageWriter.#ctor(System.IO.Stream)">
+      <summary>
+            Initializes a message writer from <see cref="P:JsonRpc.Streams.PartwiseStreamMessageWriter.Stream" />.
+            </summary>
+      <param name="stream">The stream to write messages to.</param>
+    </member>
+    <member name="P:JsonRpc.Streams.PartwiseStreamMessageWriter.ContentType">
+      <summary>
+            Content-Type header value of the emitted messages.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.PartwiseStreamMessageWriter.Dispose(System.Boolean)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocDisposeBool">
+            <parameter>JsonRpc.Streams.PartwiseStreamMessageWriter</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="disposing">
+        <markup>
+          <include item="SMCAutoDocDisposeParam">
+            <parameter>JsonRpc.Streams.PartwiseStreamMessageWriter</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Streams.PartwiseStreamMessageWriter.EmitContentCharset">
+      <summary>
+            Whether to follow the <see cref="P:JsonRpc.Streams.PartwiseStreamMessageWriter.ContentType" /> with a "charset=xxx" part
+            when writing messages to the stream. This property has no effect if <see cref="P:JsonRpc.Streams.PartwiseStreamMessageWriter.ContentType" />
+            is null.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Streams.PartwiseStreamMessageWriter.Encoding">
+      <summary>
+            Encoding of the emitted messages.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Streams.PartwiseStreamMessageWriter.LeaveStreamOpen">
+      <summary>
+            Whether to leave <see cref="P:JsonRpc.Streams.PartwiseStreamMessageWriter.Stream" /> open when disposing this instance.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Streams.PartwiseStreamMessageWriter.Stream">
+      <summary>
+            The underlying stream to write messages into.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.PartwiseStreamMessageWriter.WriteAsync(JsonRpc.Standard.Message,System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously writes a message.
+            </summary>
+      <param name="message">The message to write.</param>
+      <param name="cancellationToken">A token that cancels the operation.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="message" /> is <c>null</c>.</exception>
+    </member>
+    <member name="T:JsonRpc.Streams.QueuedMessageReader">
+      <summary>
+            A JSON RPC message reader that implements selective read by buffering all the
+            received messages into a queue (or list) first.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.QueuedMessageReader.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Streams.QueuedMessageReader</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.QueuedMessageReader.Dispose(System.Boolean)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocDisposeBool">
+            <parameter>JsonRpc.Streams.QueuedMessageReader</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="disposing">
+        <markup>
+          <include item="SMCAutoDocDisposeParam">
+            <parameter>JsonRpc.Streams.QueuedMessageReader</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Streams.QueuedMessageReader.ReadAsync(System.Predicate{JsonRpc.Standard.Message},System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously reads the next message that matches the 
+            </summary>
+      <param name="filter">The expected type of the message.</param>
+      <param name="cancellationToken">A token that cancels the operation.</param>
+      <returns>
+            The next JSON RPC message, or <c>null</c> if no more messages exist.
+            </returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="filter" /> is <c>null</c>.</exception>
+      <exception cref="T:System.OperationCanceledException">The operation has been canceled.</exception>
+    </member>
+    <member name="M:JsonRpc.Streams.QueuedMessageReader.ReadDirectAsync(System.Threading.CancellationToken)">
+      <summary>
+            When overridden in the derived class, directly asynchronously reads the next message.
+            </summary>
+      <param name="cancellationToken">A token that cancels the operation OR indicates the current instance has just been disposed.</param>
+      <returns>The message just read, or <c>null</c> if EOF has reached.</returns>
+      <exception cref="T:System.OperationCanceledException">The operation has been canceled.</exception>
+    </member>
+    <member name="T:JsonRpc.Streams.StreamRpcClientHandler">
+      <summary>
+            A client request handler that uses <see cref="T:JsonRpc.Streams.MessageReader" /> and <see cref="T:JsonRpc.Streams.MessageWriter" />
+            to transmit requests and receive responses.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.StreamRpcClientHandler.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Streams.StreamRpcClientHandler</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.StreamRpcClientHandler.#ctor(JsonRpc.Streams.StreamRpcClientOptions)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Streams.StreamRpcClientHandler</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="options">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>options</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.#ctor(JsonRpc.Streams.StreamRpcClientOptions)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Streams.StreamRpcClientHandler.Attach(JsonRpc.Streams.MessageReader,JsonRpc.Streams.MessageWriter)">
+      <summary>
+            Attaches <see cref="T:JsonRpc.Streams.MessageReader" /> and/or <see cref="T:JsonRpc.Streams.MessageWriter" /> to the handler.
+            </summary>
+      <param name="reader">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>reader</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.Attach(JsonRpc.Streams.MessageReader,JsonRpc.Streams.MessageWriter)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="writer">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>writer</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.Attach(JsonRpc.Streams.MessageReader,JsonRpc.Streams.MessageWriter)</parameter>
+          </include>
+        </markup>
+      </param>
+      <returns>A <see cref="T:System.IDisposable" /> that detaches the handlers when disposed.</returns>
+    </member>
+    <member name="P:JsonRpc.Streams.StreamRpcClientHandler.ImpendingRequestCount">
+      <summary>
+            Gets how many non-notification request messages has been sent and is yet to receive the responses.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Streams.StreamRpcClientHandler.Options">
+      <summary>
+            Client options.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Standard.RequestMessage,System.Threading.CancellationToken)">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Standard.RequestMessage,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="request">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>request</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Standard.RequestMessage,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="cancellationToken">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>cancellationToken</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Standard.RequestMessage,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="T:JsonRpc.Streams.StreamRpcClientOptions">
+      <summary>
+            Provides options for <see cref="T:JsonRpc.Standard.Client.JsonRpcClient" />.
+            </summary>
+    </member>
+    <member name="F:JsonRpc.Streams.StreamRpcClientOptions.None">
+      <summary>
+            No special configurations.
+            </summary>
+    </member>
+    <member name="F:JsonRpc.Streams.StreamRpcClientOptions.PreserveForeignResponses">
+      <summary>
+            Preserves the responses whose Id doesn't match any requests sent by this client.
+            The default behavior will just discard them.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Streams.StreamRpcServerHandler">
+      <summary>
+            A request server handler that uses <see cref="T:JsonRpc.Streams.MessageReader" /> and <see cref="T:JsonRpc.Streams.MessageWriter" />
+            to receive the requests, dispatch them, and send the responses.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Standard.Server.IJsonRpcServiceHost)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Streams.StreamRpcServerHandler</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="serviceHost">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>serviceHost</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Standard.Server.IJsonRpcServiceHost)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Standard.Server.IJsonRpcServiceHost,JsonRpc.Streams.StreamRpcServerHandlerOptions)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Streams.StreamRpcServerHandler</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="serviceHost">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>serviceHost</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Standard.Server.IJsonRpcServiceHost,JsonRpc.Streams.StreamRpcServerHandlerOptions)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="options">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>options</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Standard.Server.IJsonRpcServiceHost,JsonRpc.Streams.StreamRpcServerHandlerOptions)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Streams.StreamRpcServerHandler.Attach(JsonRpc.Streams.MessageReader,JsonRpc.Streams.MessageWriter)">
+      <summary>
+            Attaches <see cref="T:JsonRpc.Streams.MessageReader" /> and/or <see cref="T:JsonRpc.Streams.MessageWriter" /> to the handler.
+            </summary>
+      <param name="reader">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>reader</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcServerHandler.Attach(JsonRpc.Streams.MessageReader,JsonRpc.Streams.MessageWriter)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="writer">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>writer</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcServerHandler.Attach(JsonRpc.Streams.MessageReader,JsonRpc.Streams.MessageWriter)</parameter>
+          </include>
+        </markup>
+      </param>
+      <returns>A <see cref="T:System.IDisposable" /> that detaches the handlers when disposed.</returns>
+    </member>
+    <member name="P:JsonRpc.Streams.StreamRpcServerHandler.Options">
+      <summary>
+            Server options.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Streams.StreamRpcServerHandler.TryCancelRequest(JsonRpc.Standard.MessageId)">
+      <summary>
+            Tries to cancel the specified request by request id.
+            </summary>
+      <param name="id">Id of the request to cancel.</param>
+      <returns>
+        <c>true</c> if the specified request has been cancelled. <c>false</c> if the specified request id has not found.</returns>
+      <exception cref="T:System.NotSupportedException">
+        <see cref="F:JsonRpc.Streams.StreamRpcServerHandlerOptions.SupportsRequestCancellation" /> is not specified in the constructor, so cancellation is not supported.</exception>
+    </member>
+    <member name="T:JsonRpc.Streams.StreamRpcServerHandlerOptions">
+      <summary>
+            Provides options for <see cref="T:JsonRpc.Standard.Server.JsonRpcServiceHost" />.
+            </summary>
+    </member>
+    <member name="F:JsonRpc.Streams.StreamRpcServerHandlerOptions.None">
+      <summary>
+            No options.
+            </summary>
+    </member>
+    <member name="F:JsonRpc.Streams.StreamRpcServerHandlerOptions.ConsistentResponseSequence">
+      <summary>
+            Makes the response sequence consistent with the request order.
+            </summary>
+    </member>
+    <member name="F:JsonRpc.Streams.StreamRpcServerHandlerOptions.SupportsRequestCancellation">
+      <summary>
+            Enables request cancellation via <see cref="M:JsonRpc.Streams.StreamRpcServerHandler.TryCancelRequest(JsonRpc.Standard.MessageId)" />.
+            </summary>
+    </member>
+  </members>
+</doc>

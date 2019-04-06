@@ -1,0 +1,370 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>JsonRpc.AspNetCore</name>
+  </assembly>
+  <members>
+    <member name="T:JsonRpc.AspNetCore.AspNetCoreFeature">
+      <summary>
+            The default implementation of <see cref="T:JsonRpc.AspNetCore.IAspNetCoreFeature" />,
+            which is simply a wrapper of <see cref="P:JsonRpc.AspNetCore.AspNetCoreFeature.HttpContext" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.AspNetCoreFeature.FromHttpContext(Microsoft.AspNetCore.Http.HttpContext)">
+      <summary>
+            Gets an <see cref="T:JsonRpc.AspNetCore.AspNetCoreFeature" /> wrapper from the specified <see cref="P:JsonRpc.AspNetCore.AspNetCoreFeature.HttpContext" /> instance.
+            </summary>
+      <param name="httpContext">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>httpContext</parameter>
+            <parameter>M:JsonRpc.AspNetCore.AspNetCoreFeature.FromHttpContext(Microsoft.AspNetCore.Http.HttpContext)</parameter>
+          </include>
+        </markup>
+      </param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="httpContext" /> is <c>null</c>.</exception>
+    </member>
+    <member name="P:JsonRpc.AspNetCore.AspNetCoreFeature.HttpContext">
+      <summary>
+            Gets the <see cref="P:JsonRpc.AspNetCore.IAspNetCoreFeature.HttpContext" /> containing the JSON RPC request.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler">
+      <summary>
+            A <see cref="T:JsonRpc.Standard.Server.JsonRpcServerHandler" /> that transfers the requests from either a middleware
+            or in the MVC controller.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler.#ctor(JsonRpc.Standard.Server.IJsonRpcServiceHost)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.AspNetCore.AspNetCoreRpcServerHandler</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="serviceHost">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>serviceHost</parameter>
+            <parameter>M:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler.#ctor(JsonRpc.Standard.Server.IJsonRpcServiceHost)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler.EmitContentCharset">
+      <summary>
+            Whether to follow the <see cref="P:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler.ResponseContentType" /> with a "charset=xxx" part
+            when writing messages to the stream. This property has no effect if <see cref="P:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler.ResponseContentType" />
+            is null.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler.Encoding">
+      <summary>
+            Encoding of the emitted messages.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler.ProcessRequestAsync(JsonRpc.Standard.RequestMessage,Microsoft.AspNetCore.Http.HttpContext)">
+      <summary>
+            Processes the specified JSON-RPC request with certain <see cref="T:Microsoft.AspNetCore.Http.HttpContext" />, and returns the response.
+            </summary>
+      <param name="message">The message to be processed.</param>
+      <param name="context">The HTTP request context.</param>
+      <returns>The JSON-RPC response, or <c>null</c> if there's no such response.</returns>
+      <exception cref="T:System.ArgumentNullException">Either <paramref name="message" /> or <paramref name="context" /> is <c>null</c>.</exception>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler.ProcessRequestAsync(JsonRpc.Standard.RequestMessage,Microsoft.AspNetCore.Http.HttpContext,System.Boolean)">
+      <summary>
+            Processes the specified JSON-RPC request with certain <see cref="T:Microsoft.AspNetCore.Http.HttpContext" />, and returns the response.
+            </summary>
+      <param name="message">The message to be processed.</param>
+      <param name="context">The HTTP request context.</param>
+      <param name="waitForNotification">Either to wait for the handler for the notification request to finish before completing the task.</param>
+      <returns>The JSON-RPC response, or <c>null</c> if there's no such response.</returns>
+      <exception cref="T:System.ArgumentNullException">Either <paramref name="message" /> or <paramref name="context" /> is <c>null</c>.</exception>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler.ProcessRequestAsync(Microsoft.AspNetCore.Http.HttpContext)">
+      <summary>
+            Processes the JSON-RPC request contained in the HTTP request body,
+            and writes the response to the HTTP response body.
+            </summary>
+      <param name="context">The HTTP request context.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="context" /> is <c>null</c>.</exception>
+    </member>
+    <member name="P:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler.ResponseContentType">
+      <summary>
+            Content-Type header value of the emitted messages.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.AspNetCore.HttpContextServiceFactory">
+      <summary>
+            Instantiates service from the <see cref="T:System.IServiceProvider" /> found in the <see cref="T:Microsoft.AspNetCore.Http.HttpContext" />
+            of the provided requests.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.HttpContextServiceFactory.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.AspNetCore.HttpContextServiceFactory</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.HttpContextServiceFactory.CreateService(System.Type,JsonRpc.Standard.Server.RequestContext)">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.AspNetCore.HttpContextServiceFactory.CreateService(System.Type,JsonRpc.Standard.Server.RequestContext)</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="serviceType">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>serviceType</parameter>
+            <parameter>M:JsonRpc.AspNetCore.HttpContextServiceFactory.CreateService(System.Type,JsonRpc.Standard.Server.RequestContext)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="context">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>context</parameter>
+            <parameter>M:JsonRpc.AspNetCore.HttpContextServiceFactory.CreateService(System.Type,JsonRpc.Standard.Server.RequestContext)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="F:JsonRpc.AspNetCore.HttpContextServiceFactory.Default">
+      <summary>
+            The default instance of <see cref="T:JsonRpc.AspNetCore.HttpContextServiceFactory" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.HttpContextServiceFactory.ReleaseService(JsonRpc.Standard.Server.IJsonRpcService)">
+      <summary>
+            Releases the specified service instance.
+            </summary>
+      <param name="service">The service instance to be released.</param>
+    </member>
+    <member name="T:JsonRpc.AspNetCore.IAspNetCoreFeature">
+      <summary>
+            Provides information on ASP.NET Core context on the JSON RPC requests.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.AspNetCore.IAspNetCoreFeature.HttpContext">
+      <summary>
+            Gets the <see cref="P:JsonRpc.AspNetCore.IAspNetCoreFeature.HttpContext" /> containing the JSON RPC request.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.AspNetCore.IJsonRpcBuilder">
+      <summary>
+            An interface used to configure JSON RPC server.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.IJsonRpcBuilder.Intercept(System.Func{JsonRpc.Standard.Server.RequestHandler,JsonRpc.Standard.Server.RequestHandler})">
+      <summary>
+            Adds a middleware to intercept the JSON RPC requests.
+            </summary>
+      <param name="middleware">The middleware to be added.</param>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.IJsonRpcBuilder.Register(System.Type)">
+      <summary>
+            Adds a JSON-RPC service to the built <see cref="T:JsonRpc.Standard.Server.IJsonRpcServiceHost" />.
+            </summary>
+      <param name="serviceType">The <see cref="T:System.Type" /> of a class that inherits from <see cref="T:JsonRpc.Standard.Server.JsonRpcService" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="serviceType" /> is <c>null</c>.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="serviceType" /> does not inherit from <see cref="T:JsonRpc.Standard.Server.JsonRpcService" />.</exception>
+    </member>
+    <member name="T:JsonRpc.AspNetCore.JsonRpcAspNetExtensions">
+      <summary>
+            Provides extension methods for JSON RPC on ASP.NET Core.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.JsonRpcAspNetExtensions.AddJsonRpc(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{JsonRpc.AspNetCore.JsonRpcOptions})">
+      <summary>
+            Registers <see cref="T:JsonRpc.Standard.Server.IJsonRpcServiceHost" /> and <see cref="T:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler" /> singletons
+            in <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+            </summary>
+      <param name="serviceCollection">The service collection.</param>
+      <param name="setupAction">The delegate used to configure the <see cref="T:JsonRpc.Standard.Server.JsonRpcServiceHostBuilder" />.</param>
+      <returns>A builder used to register JSON RPC services and middlewares.</returns>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.JsonRpcAspNetExtensions.GetHttpContext(JsonRpc.Standard.Server.RequestContext)">
+      <summary>
+            Gets the <see cref="T:Microsoft.AspNetCore.Http.HttpContext" /> containing the JSON RPC request.
+            </summary>
+      <param name="requestContext">The <see cref="T:JsonRpc.Standard.Server.RequestContext" /> instance.</param>
+      <returns>The HttpContext provided by the JSON RPC request context, or <c>null</c> if no such context is available.</returns>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.JsonRpcAspNetExtensions.UseJsonRpc(Microsoft.AspNetCore.Builder.IApplicationBuilder,System.String)">
+      <summary>
+            Uses <see cref="T:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler" /> to handle the JSON RPC requests on certain URL.
+            </summary>
+      <param name="builder">The application builder.</param>
+      <param name="requestPath">The request path that should be treated as JSON RPC call.</param>
+      <returns>The application builder.</returns>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.JsonRpcAspNetExtensions.UseJsonRpc(Microsoft.AspNetCore.Builder.IApplicationBuilder,System.String,JsonRpc.AspNetCore.AspNetCoreRpcServerHandler)">
+      <summary>
+            Uses <see cref="T:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler" /> to handle the JSON RPC requests on certain URL.
+            </summary>
+      <param name="builder">The application builder.</param>
+      <param name="requestPath">The request path that should be treated as JSON RPC call.</param>
+      <param name="serverHandler">The server handler to handle the requests.</param>
+      <returns>The application builder.</returns>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.JsonRpcAspNetExtensions.UseJsonRpc(Microsoft.AspNetCore.Builder.IApplicationBuilder,System.String,System.Func{Microsoft.AspNetCore.Http.HttpContext,JsonRpc.AspNetCore.AspNetCoreRpcServerHandler})">
+      <summary>
+            Uses <see cref="T:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler" /> to handle the JSON RPC requests on certain URL.
+            </summary>
+      <param name="builder">The application builder.</param>
+      <param name="requestPath">The request path that should be treated as JSON RPC call.</param>
+      <param name="serverHandlerFactory">The factory that builds server handler to handle the requests.</param>
+      <returns>The application builder.</returns>
+    </member>
+    <member name="T:JsonRpc.AspNetCore.JsonRpcBuilderExtensions">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>T:JsonRpc.AspNetCore.JsonRpcBuilderExtensions</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.JsonRpcBuilderExtensions.Intercept(JsonRpc.AspNetCore.IJsonRpcBuilder,System.Func{JsonRpc.Standard.Server.RequestContext,System.Func{System.Threading.Tasks.Task},System.Threading.Tasks.Task})">
+      <summary>
+            Adds a handler to intercept the JSON RPC requests.
+            </summary>
+      <param name="handler">The handler to be added.</param>
+      <param name="builder">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>builder</parameter>
+            <parameter>M:JsonRpc.AspNetCore.JsonRpcBuilderExtensions.Intercept(JsonRpc.AspNetCore.IJsonRpcBuilder,System.Func{JsonRpc.Standard.Server.RequestContext,System.Func{System.Threading.Tasks.Task},System.Threading.Tasks.Task})</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.JsonRpcBuilderExtensions.Register``1(JsonRpc.AspNetCore.IJsonRpcBuilder)">
+      <summary>
+            Adds a JSON-RPC service to the built <see cref="T:JsonRpc.Standard.Server.IJsonRpcServiceHost" />.
+            </summary>
+      <param name="builder">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>builder</parameter>
+            <parameter>M:JsonRpc.AspNetCore.JsonRpcBuilderExtensions.Register``1(JsonRpc.AspNetCore.IJsonRpcBuilder)</parameter>
+          </include>
+        </markup>
+      </param>
+      <typeparam name="TService">The type of the service.</typeparam>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.JsonRpcBuilderExtensions.Register(JsonRpc.AspNetCore.IJsonRpcBuilder,System.Reflection.Assembly)">
+      <summary>
+            Adds all the public JSON-RPC service types in the assembly to the built <see cref="T:JsonRpc.Standard.Server.IJsonRpcServiceHost" />.
+            </summary>
+      <param name="assembly">The assembly to search services in.</param>
+      <param name="builder">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>builder</parameter>
+            <parameter>M:JsonRpc.AspNetCore.JsonRpcBuilderExtensions.Register(JsonRpc.AspNetCore.IJsonRpcBuilder,System.Reflection.Assembly)</parameter>
+          </include>
+        </markup>
+      </param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="assembly" /> is <c>null</c>.</exception>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.JsonRpcBuilderExtensions.RegisterFromAssembly``1(JsonRpc.AspNetCore.IJsonRpcBuilder)">
+      <summary>
+            Adds all the public JSON-RPC service types in the assembly of specified <see cref="T:System.Type" />
+            to the built <see cref="T:JsonRpc.Standard.Server.IJsonRpcServiceHost" />.
+            </summary>
+      <param name="builder">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>builder</parameter>
+            <parameter>M:JsonRpc.AspNetCore.JsonRpcBuilderExtensions.RegisterFromAssembly``1(JsonRpc.AspNetCore.IJsonRpcBuilder)</parameter>
+          </include>
+        </markup>
+      </param>
+      <typeparam name="T">A type. The search will be performed in the assembly where this type is in.</typeparam>
+    </member>
+    <member name="T:JsonRpc.AspNetCore.JsonRpcOptions">
+      <summary>
+            Options for JSON RPC server.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.JsonRpcOptions.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.AspNetCore.JsonRpcOptions</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.AspNetCore.JsonRpcOptions.ContractResolver">
+      <summary>
+            Contract resolver that maps the JSON RPC methods to CLR service methods.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.AspNetCore.JsonRpcOptions.InjectServiceTypes">
+      <summary>
+            Whether to automatically register all the <see cref="T:JsonRpc.Standard.Server.IJsonRpcService" /> types
+            used in the service host in the current <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" />
+            with transient lifetime.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.AspNetCore.JsonRpcOptions.LoggerFactory">
+      <summary>
+            The logger factory used to get a logger for the service host.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.AspNetCore.JsonRpcOptions.MethodBinder">
+      <summary>
+            The binder that chooses the best match among a set of RPC methods.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.AspNetCore.JsonRpcOptions.ServiceFactory">
+      <summary>
+            The factory that creates the JSON RPC service instances to handle the requests.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.AspNetCore.JsonRpcOptionsExtensions">
+      <summary>
+            Extension methods for <see cref="T:JsonRpc.AspNetCore.JsonRpcOptions" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.JsonRpcOptionsExtensions.UseCamelCaseContractResolver(JsonRpc.AspNetCore.JsonRpcOptions)">
+      <summary>
+            Uses a <see cref="T:JsonRpc.Standard.Contracts.JsonRpcContractResolver" /> with <see cref="T:JsonRpc.Standard.Contracts.CamelCaseJsonRpcNamingStrategy" /> and
+            <see cref="T:JsonRpc.Standard.Contracts.CamelCaseJsonValueConverter" />.
+            </summary>
+      <param name="options">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>options</parameter>
+            <parameter>M:JsonRpc.AspNetCore.JsonRpcOptionsExtensions.UseCamelCaseContractResolver(JsonRpc.AspNetCore.JsonRpcOptions)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+  </members>
+</doc>

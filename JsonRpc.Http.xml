@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>JsonRpc.Http</name>
+  </assembly>
+  <members>
+    <member name="T:JsonRpc.Http.HttpRpcClientHandler">
+      <summary>
+            Transmits JSON RPC calls in HTTP requests.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Http.HttpRpcClientHandler.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Http.HttpRpcClientHandler</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Http.HttpRpcClientHandler.#ctor(System.Net.Http.HttpClient)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Http.HttpRpcClientHandler</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="httpClient">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>httpClient</parameter>
+            <parameter>M:JsonRpc.Http.HttpRpcClientHandler.#ctor(System.Net.Http.HttpClient)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Http.HttpRpcClientHandler.#ctor(System.Net.Http.HttpMessageHandler)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Http.HttpRpcClientHandler</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="handler">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>handler</parameter>
+            <parameter>M:JsonRpc.Http.HttpRpcClientHandler.#ctor(System.Net.Http.HttpMessageHandler)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Http.HttpRpcClientHandler.ContentType">
+      <summary>
+            Content-Type header value of the emitted messages.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Http.HttpRpcClientHandler.Dispose">
+      <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+    </member>
+    <member name="P:JsonRpc.Http.HttpRpcClientHandler.Encoding">
+      <summary>
+            Encoding of the emitted messages.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Http.HttpRpcClientHandler.EndpointUrl">
+      <summary>
+            Endpoint URL of the JSON RPC web API.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Http.HttpRpcClientHandler.GetHttpRequestMessage(JsonRpc.Standard.RequestMessage)">
+      <summary>
+            Converts <see cref="T:JsonRpc.Standard.RequestMessage" /> to <see cref="T:System.Net.Http.HttpRequestMessage" />.
+            </summary>
+      <param name="request">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>request</parameter>
+            <parameter>M:JsonRpc.Http.HttpRpcClientHandler.GetHttpRequestMessage(JsonRpc.Standard.RequestMessage)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Http.HttpRpcClientHandler.HttpMethod">
+      <summary>
+            HTTP method used when sending the client request.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Http.HttpRpcClientHandler.ParseHttpResponseMessageAsync(System.Net.Http.HttpResponseMessage,System.Threading.CancellationToken)">
+      <summary>
+            Converts <see cref="T:System.Net.Http.HttpResponseMessage" /> to <see cref="T:JsonRpc.Standard.ResponseMessage" />.
+            </summary>
+      <param name="response">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>response</parameter>
+            <parameter>M:JsonRpc.Http.HttpRpcClientHandler.ParseHttpResponseMessageAsync(System.Net.Http.HttpResponseMessage,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="cancellationToken">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>cancellationToken</parameter>
+            <parameter>M:JsonRpc.Http.HttpRpcClientHandler.ParseHttpResponseMessageAsync(System.Net.Http.HttpResponseMessage,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Http.HttpRpcClientHandler.SendAsync(JsonRpc.Standard.RequestMessage,System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously sends a JSON RPC Request message, and wait for the Response (if the Request is not a Notification).
+            </summary>
+      <param name="request">The request message to be sent.</param>
+      <param name="cancellationToken">A token used to cancel the transmitting request, or to stop waiting for the Response.</param>
+      <returns>A task that returns JSON RPC response, or <c>null</c> if the Request is a Notification.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="request" /> is <c>null</c>.</exception>
+      <exception cref="T:JsonRpc.Standard.Client.JsonRpcClientException">An exception has occurred while transmitting the request.
+            Note that a JSON RPC Response with Error will be returned and no exception should be thrown.</exception>
+    </member>
+    <member name="P:JsonRpc.Http.HttpRpcClientHandler.UserAgent">
+      <summary>
+            Client User-Agent. The UA of JsonRpc.Http will be append to this value when sending the requests.
+            </summary>
+    </member>
+  </members>
+</doc>
