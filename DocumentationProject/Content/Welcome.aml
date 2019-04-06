@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<topic id="7836b300-e8f3-40ae-bf6e-9bc1dc4883d7" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        JsonRpc.Standard is an asynchronous .NET Standard implementation for <externalLink>
+          <linkText>JSON-RPC 2.0</linkText>
+          <linkUri>https://www.jsonrpc.org/specification</linkUri>
+        </externalLink>, an RPC contract based on JSON serialization.
+      </para>
+    </introduction>
+
+    <section>
+      <title>About the help</title>
+      <content>
+        <para>
+          This documentation contains the auto-generated API reference for JsonRpc.Standard. For more conceptual topics, see <externalLink>
+            <linkText>"Wiki" tab on GitHub</linkText>
+            <linkUri>https://github.com/CXuesong/JsonRpc.Standard/wiki</linkUri>
+          </externalLink>. To help improving this API reference, you may add XML documentation to the respective members in the source code,
+          and open a <externalLink>
+            <linkText>pull request</linkText>
+            <linkUri>https://github.com/CXuesong/JsonRpc.Standard/pulls</linkUri>
+          </externalLink>.
+        </para>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="d8421648-a900-4f76-98bd-75bceebcce56" />
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

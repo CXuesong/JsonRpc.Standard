@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Topics>
+  <Topic id="7836b300-e8f3-40ae-bf6e-9bc1dc4883d7" visible="True" isDefault="true" isSelected="true" title="Welcome to the JsonRpc.Standard">
+    <HelpKeywords>
+      <HelpKeyword index="K" term="Welcome" />
+    </HelpKeywords>
+  </Topic>
+</Topics>
