@@ -2,13 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>0.4.3</Version>
     <Authors>CXuesong</Authors>
     <Company />
-    <PackageId>CXuesong.JsonRpc.WebSocket</PackageId>
+    <PackageId>CXuesong.JsonRpc.WebSockets</PackageId>
     <Description>Websocket-based JSON-RPC message reader and writer implementations for CXuesong.JsonRpc.Standard.</Description>
     <PackageTags>json rpc json-rpc json-rpc-server json-rpc-client websocket</PackageTags>
     <PackageProjectUrl>https://github.com/CXuesong/JsonRpc.Standard</PackageProjectUrl>
@@ -18,8 +19,7 @@
     <Copyright>Copyright 2019 CXuesong</Copyright>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>../JsonRpc.Standard.snk</AssemblyOriginatorKeyFile>
-    <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0.html</PackageLicenseUrl>
-
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
