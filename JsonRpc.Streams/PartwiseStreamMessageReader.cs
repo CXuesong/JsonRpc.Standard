@@ -71,7 +71,7 @@ namespace JsonRpc.Streams
             {
                 // Read until \r\n\r\n is found.
                 var headerSubBuffer = new byte[headerBufferSize];
-                var readLength = await Stream.ReadAsync(headerSubBuffer, 0, headerBufferSize, cancellationToken);
+                var readLength = await Stream.ReadAsync(headerSubBuffer, 0, headerBufferSize, cancellationToken).ConfigureAwait(false);
                 if (readLength == 0)
                 {
                     if (headerBuffer.Count == 0)

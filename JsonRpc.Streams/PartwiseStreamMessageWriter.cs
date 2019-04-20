@@ -75,31 +75,31 @@ namespace JsonRpc.Streams
                 {
                     using (var writer = new StreamWriter(ms, Encoding, 4096, true)) message.WriteJson(writer);
                     linkedTokenSource.Token.ThrowIfCancellationRequested();
-                    await streamSemaphore.WaitAsync(linkedTokenSource.Token);
+                    await streamSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
                     try
                     {
                         using (var writer = new StreamWriter(Stream, Encoding, 4096, true))
                         {
-                            await writer.WriteAsync("Content-Length: ");
-                            await writer.WriteAsync(ms.Length.ToString());
-                            await writer.WriteAsync("\r\n");
+                            await writer.WriteAsync("Content-Length: ").ConfigureAwait(false);
+                            await writer.WriteAsync(ms.Length.ToString()).ConfigureAwait(false);
+                            await writer.WriteAsync("\r\n").ConfigureAwait(false);
                             if (ContentType != null)
                             {
-                                await writer.WriteAsync("Content-Type: ");
-                                await writer.WriteAsync(ContentType);
+                                await writer.WriteAsync("Content-Type: ").ConfigureAwait(false);
+                                await writer.WriteAsync(ContentType).ConfigureAwait(false);
                                 if (EmitContentCharset)
                                 {
-                                    await writer.WriteAsync(";charset=");
-                                    await writer.WriteAsync(Encoding.WebName);
+                                    await writer.WriteAsync(";charset=").ConfigureAwait(false);
+                                    await writer.WriteAsync(Encoding.WebName).ConfigureAwait(false);
                                 }
-                                await writer.WriteAsync("\r\n");
+                                await writer.WriteAsync("\r\n").ConfigureAwait(false);
                             }
-                            await writer.WriteAsync("\r\n");
-                            await writer.FlushAsync();
+                            await writer.WriteAsync("\r\n").ConfigureAwait(false);
+                            await writer.FlushAsync().ConfigureAwait(false);
                         }
                         ms.Seek(0, SeekOrigin.Begin);
                         // ReSharper disable once MethodSupportsCancellation
-                        await ms.CopyToAsync(Stream, 81920 /*, linkedTokenSource.Token*/);
+                        await ms.CopyToAsync(Stream, 81920 /*, linkedTokenSource.Token*/).ConfigureAwait(false);
                     }
                     finally
                     {
