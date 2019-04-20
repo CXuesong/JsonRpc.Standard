@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -14,8 +15,8 @@ namespace JsonRpc.Streams
     /// </summary>
     public class ByLineTextMessageReader : QueuedMessageReader
     {
-        private readonly SemaphoreSlim readerSemaphore = new SemaphoreSlim(1, 1);
 
+        private readonly SemaphoreSlim readerSemaphore = new SemaphoreSlim(1, 1);
         private Stream underlyingStream;
 
         /// <summary>
@@ -94,7 +95,7 @@ namespace JsonRpc.Streams
         protected override async Task<Message> ReadDirectAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await readerSemaphore.WaitAsync(cancellationToken);
+            await readerSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
                 string line;
@@ -103,7 +104,7 @@ namespace JsonRpc.Streams
                     do
                     {
                         cancellationToken.ThrowIfCancellationRequested();
-                        line = await Reader.ReadLineAsync();
+                        line = await Reader.ReadLineAsync().ConfigureAwait(false);
                         if (line == null) return null;
                     } while (string.IsNullOrWhiteSpace(line));
                 }
@@ -113,7 +114,7 @@ namespace JsonRpc.Streams
                     do
                     {
                         if (builder.Length == 0) cancellationToken.ThrowIfCancellationRequested();
-                        line = await Reader.ReadLineAsync();
+                        line = await Reader.ReadLineAsync().ConfigureAwait(false);
                         if (!string.IsNullOrWhiteSpace(line)) builder.AppendLine(line);
                     } while (line != null);
                     if (builder.Length == 0) return null;
@@ -135,7 +136,9 @@ namespace JsonRpc.Streams
             }
             finally
             {
-                if (!DisposalToken.IsCancellationRequested) readerSemaphore.Release();
+                // Note: when DisposalToken cancels, this part of code might execute concurrently with Dispose().
+                // We might receive ObjectDisposedException if we are taking longer time than expected (>1s) to reach here.
+                readerSemaphore.Release();
             }
         }
 
@@ -144,19 +147,25 @@ namespace JsonRpc.Streams
         {
             base.Dispose(disposing);
             if (Reader == null) return;
+            // Give ReadDirectAsync some time to complete the operation gracefully.
+            // Hold the semaphore before disposal.
+            var readerSemaphoreVacant = readerSemaphore.Wait(1000);
+            // If we are still in StreamReader.ReadAsync, Disposing StreamReader may cause Exception.
+            // Inspecting full call stack at this point may be helpful.
+            Debug.Assert(readerSemaphoreVacant, "Attempt to dispose ByLineTextMessageReader when ReadDirectAsync hasn't finished yet.");
             if (underlyingStream != null)
             {
-                Utility.TryDispose(Reader, readerSemaphore, this);
+                Utility.TryDispose(Reader, this);
             }
             if (!LeaveReaderOpen)
             {
                 if (underlyingStream != null)
                 {
-                    Utility.TryDispose(underlyingStream, readerSemaphore, this);
+                    Utility.TryDispose(underlyingStream, this);
                 }
                 else
                 {
-                    Utility.TryDispose(Reader, readerSemaphore, this);
+                    Utility.TryDispose(Reader, this);
                 }
             }
             readerSemaphore.Dispose();

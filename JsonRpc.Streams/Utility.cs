@@ -30,19 +30,15 @@ namespace JsonRpc.Streams
                     if (!comparer.Equals(source[i + j], match[j])) goto NEXT;
                 }
                 return i;
-                NEXT:
+            NEXT:
                 ;
             }
             return -1;
         }
 
-            // IDisposable: TextReader, TextWriter, or Stream
-        public static bool TryDispose(IDisposable disposable, SemaphoreSlim waitFor, object source)
+        // IDisposable: TextReader, TextWriter, or Stream
+        public static bool TryDispose(IDisposable disposable, object source)
         {
-            // Try to wait until the operation indicated by waitFor to finish first, elegantly.
-            // However, if the operation is blocking for too long, we will just abandon it,
-            // which may cause disposable.Dispose to fail.
-            waitFor.Wait(1000);
             try
             {
                 disposable.Dispose();
@@ -57,7 +53,6 @@ namespace JsonRpc.Streams
                 // Sadly, we can't.
                 Debug.WriteLine("{0}: Cannot dispose {1}. {2}", source, disposable, ex.Message);
             }
-
             return false;
         }
 

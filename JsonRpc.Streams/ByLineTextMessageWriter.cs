@@ -14,6 +14,7 @@ namespace JsonRpc.Streams
     /// </summary>
     public class ByLineTextMessageWriter : MessageWriter
     {
+
         private readonly SemaphoreSlim writerSemaphore = new SemaphoreSlim(1, 1);
 
         private Stream underlyingStream;
@@ -98,35 +99,39 @@ namespace JsonRpc.Streams
             if (DisposalToken.IsCancellationRequested)
                 throw new ObjectDisposedException(nameof(ByLineTextMessageWriter));
             cancellationToken.ThrowIfCancellationRequested();
-            DisposalToken.ThrowIfCancellationRequested();
-            using (var linkedTokenSource =
-                CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, DisposalToken))
+            var linkedToken = DisposalToken;
+            CancellationTokenSource linkedTokenSource = null;
+            if (cancellationToken.CanBeCanceled)
             {
-                var linkedToken = linkedTokenSource.Token;
-                var content = message.ToString();
-                await writerSemaphore.WaitAsync(linkedToken);
-                try
+                linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, DisposalToken);
+                linkedToken = linkedTokenSource.Token;
+            }
+            var content = message.ToString();
+            await writerSemaphore.WaitAsync(linkedToken);
+            try
+            {
+                await Writer.WriteLineAsync(content);
+                linkedToken.ThrowIfCancellationRequested();
+                if (Delimiter != null)
                 {
-                    await Writer.WriteLineAsync(content);
+                    await Writer.WriteLineAsync(Delimiter);
                     linkedToken.ThrowIfCancellationRequested();
-                    if (Delimiter != null)
-                    {
-                        await Writer.WriteLineAsync(Delimiter);
-                        linkedToken.ThrowIfCancellationRequested();
-                    }
+                }
 
-                    await Writer.FlushAsync();
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Throws OperationCanceledException if the cancellation has already been requested.
-                    linkedToken.ThrowIfCancellationRequested();
-                    throw;
-                }
-                finally
-                {
-                    if (!DisposalToken.IsCancellationRequested) writerSemaphore.Release();
-                }
+                await Writer.FlushAsync();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Throws OperationCanceledException if the cancellation has already been requested.
+                linkedToken.ThrowIfCancellationRequested();
+                throw;
+            }
+            finally
+            {
+                linkedTokenSource?.Dispose();
+                // Note: when DisposalToken cancels, this part of code might execute concurrently with Dispose().
+                // We might receive ObjectDisposedException if we are taking longer time than expected (>1s) to reach here.
+                writerSemaphore.Release();
             }
         }
 
@@ -135,19 +140,29 @@ namespace JsonRpc.Streams
         {
             base.Dispose(disposing);
             if (Writer == null) return;
+            // Give ReadDirectAsync some time to complete the operation gracefully.
+            // Hold the semaphore before disposal.
+            var writerSemaphoreVacant = writerSemaphore.Wait(1000);
+            // If we are still in StreamWriter.WriteAsync, Disposing StreamWriter may cause Exception.
+            // Inspecting full call stack at this point may be helpful.
+            // A typical case is when you are using obsoleted Nerdbank.FullDuplexStream,
+            // where Writer.WriteAsync may cause the counterpart ReadAsync to immediately finish operation on the same thread,
+            // and if you are disposing ByLineTextMessageWriter after ReadAsync, you will have this assertion failure,
+            // because WriteAsync hasn't finished yet.
+            Debug.Assert(writerSemaphoreVacant, "Attempt to dispose ByLineTextMessageWriter when WriteAsync hasn't finished yet.");
             if (underlyingStream != null)
             {
-                Utility.TryDispose(Writer, writerSemaphore, this);
+                Utility.TryDispose(Writer, this);
             }
             if (!LeaveWriterOpen)
             {
                 if (underlyingStream != null)
                 {
-                    Utility.TryDispose(underlyingStream, writerSemaphore, this);
+                    Utility.TryDispose(underlyingStream, this);
                 }
                 else
                 {
-                    Utility.TryDispose(Writer, writerSemaphore, this);
+                    Utility.TryDispose(Writer, this);
                 }
             }
             writerSemaphore.Dispose();
