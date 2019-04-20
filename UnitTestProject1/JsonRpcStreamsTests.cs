@@ -11,10 +11,9 @@ using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Server;
 using JsonRpc.Streams;
-using Nerdbank;
+using Nerdbank.Streams;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using UnitTestProject1;
 using UnitTestProject1.Helpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -99,7 +98,7 @@ namespace UnitTestProject1
         public async Task ServerHandlerTest()
         {
             var request = new RequestMessage(123, "add", JToken.FromObject(new {x = 20, y = 35}));
-            (var ss, var cs) = FullDuplexStream.CreateStreams();
+            (var ss, var cs) = FullDuplexStream.CreatePair();
             using (var clientReader = new StreamReader(cs))
             using (var clientWriter = new StreamWriter(cs))
             using (var serverReader = new ByLineTextMessageReader(ss))
@@ -138,7 +137,7 @@ namespace UnitTestProject1
         [Fact]
         public async Task PartwiseStreamInteropTest()
         {
-            (var ss, var cs) = FullDuplexStream.CreateStreams();
+            (var ss, var cs) = FullDuplexStream.CreatePair();
             using (var clientReader = new ByLineTextMessageReader(cs))
             using (var clientWriter = new ByLineTextMessageWriter(cs))
             using (var serverReader = new ByLineTextMessageReader(ss))
@@ -163,7 +162,7 @@ namespace UnitTestProject1
         [Fact]
         public async Task PartwiseStreamCancellationTest()
         {
-            (var ss, var cs) = FullDuplexStream.CreateStreams();
+            (var ss, var cs) = FullDuplexStream.CreatePair();
             using (var clientReader = new ByLineTextMessageReader(cs))
             using (var clientWriter = new ByLineTextMessageWriter(cs))
             using (var serverReader = new ByLineTextMessageReader(ss))
@@ -179,7 +178,7 @@ namespace UnitTestProject1
         [Fact]
         public async Task ConsistentResponseSequenceTest()
         {
-            (var ss, var cs) = FullDuplexStream.CreateStreams();
+            (var ss, var cs) = FullDuplexStream.CreatePair();
             using (var clientReader = new ByLineTextMessageReader(cs))
             using (var clientWriter = new ByLineTextMessageWriter(cs))
             using (var serverReader = new ByLineTextMessageReader(ss))
@@ -220,7 +219,7 @@ namespace UnitTestProject1
         [Fact]
         public async Task PartwiseStreamConsistentSequenceCancellationTest()
         {
-            (var ss, var cs) = FullDuplexStream.CreateStreams();
+            (var ss, var cs) = FullDuplexStream.CreatePair();
             using (var clientReader = new ByLineTextMessageReader(cs))
             using (var clientWriter = new ByLineTextMessageWriter(cs))
             using (var serverReader = new ByLineTextMessageReader(ss))
