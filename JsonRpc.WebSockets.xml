@@ -90,7 +90,7 @@
       <param name="webSocket">The WebSocket to write messages into.</param>
       <param name="chunkSize">The maximum size in bytes of each JSON-RPC frame when sending messages.</param>
     </member>
-    <member name="M:JsonRpc.WebSockets.WebSocketMessageWriter.DeserializeMessage(System.IO.Stream,JsonRpc.Standard.Message)">
+    <member name="M:JsonRpc.WebSockets.WebSocketMessageWriter.DeserializeMessage(System.IO.Stream,JsonRpc.Messages.Message)">
       <summary>
             Writes a JSON-RPC message to the specified stream.
             </summary>
@@ -102,12 +102,12 @@
             Gets the underlying <see cref="P:JsonRpc.WebSockets.WebSocketMessageWriter.WebSocket" />.
             </summary>
     </member>
-    <member name="M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Standard.Message,System.Threading.CancellationToken)">
+    <member name="M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Messages.Message,System.Threading.CancellationToken)">
       <summary>
         <markup>
           <include item="SMCMissingTag">
             <parameter>summary</parameter>
-            <parameter>M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Standard.Message,System.Threading.CancellationToken)</parameter>
+            <parameter>M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Messages.Message,System.Threading.CancellationToken)</parameter>
           </include>
         </markup>
       </summary>
@@ -116,7 +116,7 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>message</parameter>
-            <parameter>M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Standard.Message,System.Threading.CancellationToken)</parameter>
+            <parameter>M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Messages.Message,System.Threading.CancellationToken)</parameter>
           </include>
         </markup>
       </param>
@@ -125,7 +125,7 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>cancellationToken</parameter>
-            <parameter>M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Standard.Message,System.Threading.CancellationToken)</parameter>
+            <parameter>M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Messages.Message,System.Threading.CancellationToken)</parameter>
           </include>
         </markup>
       </param>

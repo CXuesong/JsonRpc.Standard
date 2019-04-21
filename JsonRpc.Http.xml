@@ -72,16 +72,16 @@
             Endpoint URL of the JSON RPC web API.
             </summary>
     </member>
-    <member name="M:JsonRpc.Http.HttpRpcClientHandler.GetHttpRequestMessage(JsonRpc.Standard.RequestMessage)">
+    <member name="M:JsonRpc.Http.HttpRpcClientHandler.GetHttpRequestMessage(JsonRpc.Messages.RequestMessage)">
       <summary>
-            Converts <see cref="T:JsonRpc.Standard.RequestMessage" /> to <see cref="T:System.Net.Http.HttpRequestMessage" />.
+            Converts <see cref="T:JsonRpc.Messages.RequestMessage" /> to <see cref="T:System.Net.Http.HttpRequestMessage" />.
             </summary>
       <param name="request">
         <markup>
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>request</parameter>
-            <parameter>M:JsonRpc.Http.HttpRpcClientHandler.GetHttpRequestMessage(JsonRpc.Standard.RequestMessage)</parameter>
+            <parameter>M:JsonRpc.Http.HttpRpcClientHandler.GetHttpRequestMessage(JsonRpc.Messages.RequestMessage)</parameter>
           </include>
         </markup>
       </param>
@@ -93,7 +93,7 @@
     </member>
     <member name="M:JsonRpc.Http.HttpRpcClientHandler.ParseHttpResponseMessageAsync(System.Net.Http.HttpResponseMessage,System.Threading.CancellationToken)">
       <summary>
-            Converts <see cref="T:System.Net.Http.HttpResponseMessage" /> to <see cref="T:JsonRpc.Standard.ResponseMessage" />.
+            Converts <see cref="T:System.Net.Http.HttpResponseMessage" /> to <see cref="T:JsonRpc.Messages.ResponseMessage" />.
             </summary>
       <param name="response">
         <markup>
@@ -114,7 +114,7 @@
         </markup>
       </param>
     </member>
-    <member name="M:JsonRpc.Http.HttpRpcClientHandler.SendAsync(JsonRpc.Standard.RequestMessage,System.Threading.CancellationToken)">
+    <member name="M:JsonRpc.Http.HttpRpcClientHandler.SendAsync(JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)">
       <summary>
             Asynchronously sends a JSON RPC Request message, and wait for the Response (if the Request is not a Notification).
             </summary>
@@ -123,7 +123,7 @@
       <returns>A task that returns JSON RPC response, or <c>null</c> if the Request is a Notification.</returns>
       <exception cref="T:System.ArgumentNullException">
         <paramref name="request" /> is <c>null</c>.</exception>
-      <exception cref="T:JsonRpc.Standard.Client.JsonRpcClientException">An exception has occurred while transmitting the request.
+      <exception cref="T:JsonRpc.Client.JsonRpcClientException">An exception has occurred while transmitting the request.
             Note that a JSON RPC Response with Error will be returned and no exception should be thrown.</exception>
     </member>
     <member name="P:JsonRpc.Http.HttpRpcClientHandler.UserAgent">

@@ -1,0 +1,2946 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>JsonRpc.Commons</name>
+  </assembly>
+  <members>
+    <member name="T:JsonRpc.Client.IJsonRpcClientHandler">
+      <summary>
+            Provides methods for transmitting the client-side JSON RPC messages.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Client.IJsonRpcClientHandler.SendAsync(JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously sends a JSON RPC Request message, and wait for the Response (if the Request is not a Notification).
+            </summary>
+      <param name="request">The request message to be sent.</param>
+      <param name="cancellationToken">A token used to cancel the transmitting request, or to stop waiting for the Response.</param>
+      <returns>A task that returns JSON RPC response, or <c>null</c> if the Request is a Notification.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="request" /> is <c>null</c>.</exception>
+      <exception cref="T:JsonRpc.Client.JsonRpcClientException">An exception has occurred while transmitting the request.
+            Note that a JSON RPC Response with Error will be returned and no exception should be thrown.</exception>
+    </member>
+    <member name="T:JsonRpc.Client.JsonRpcClient">
+      <summary>
+            Used to compose and send JSON RPC requests.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcClient.#ctor(JsonRpc.Client.IJsonRpcClientHandler)">
+      <summary>
+            Initializes a JSON RPC client.
+            </summary>
+      <param name="handler">Handler used to transmit the messages.</param>
+    </member>
+    <member name="P:JsonRpc.Client.JsonRpcClient.Handler">
+      <summary>
+            Gets the handler used to transmit the messages.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcClient.NextRequestId">
+      <summary>
+            Generates the next unique value that can be used as <see cref="P:JsonRpc.Messages.RequestMessage.Id" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcClient.OnRequestCancelling(JsonRpc.Messages.MessageId)">
+      <summary>
+            Raises <see cref="E:JsonRpc.Client.JsonRpcClient.RequestCancelling" /> event.
+            </summary>
+      <param name="id">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>id</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcClient.OnRequestCancelling(JsonRpc.Messages.MessageId)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="E:JsonRpc.Client.JsonRpcClient.RequestCancelling">
+      <summary>
+            Raises when a JSON RPC Request call is to be cancelled.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcClient.SendAsync(JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously send a JSON RPC request or notification message.
+            </summary>
+      <param name="request">The request message to be sent.</param>
+      <param name="cancellationToken">A token used to cancel the operation.</param>
+      <returns>A task contains the response of the request, or that contains <c>null</c> if the specified request does not need a response.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="request" /> is <c>null</c>.</exception>
+      <exception cref="T:System.ArgumentException">A <paramref name="request" /> with the same id has been sent. You need to try with a different id.</exception>
+      <exception cref="T:System.OperationCanceledException">(Can be <see cref="T:System.Threading.Tasks.TaskCanceledException" />.) The operation has been cancelled.</exception>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcClient.SendNotificationAsync(System.String,Newtonsoft.Json.Linq.JToken,System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously send a JSON RPC notification message.
+            </summary>
+      <param name="methodName">RPC method name.</param>
+      <param name="parameters">The parameters of the invocation. Can be null.</param>
+      <param name="cancellationToken">A token used to cancel the operation.</param>
+      <returns>A task contains the response of the request, or that contains <c>null</c> if the specified request does not need a response.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="methodName" /> is <c>null</c>.</exception>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcClient.SendRequestAsync(System.String,Newtonsoft.Json.Linq.JToken,System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously send a JSON RPC request message.
+            </summary>
+      <param name="methodName">RPC method name.</param>
+      <param name="parameters">The parameters of the invocation. Can be null.</param>
+      <param name="cancellationToken">A token used to cancel the operation.</param>
+      <returns>A task contains the response of the request, or that contains <c>null</c> if the specified request does not need a response.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="methodName" /> is <c>null</c>.</exception>
+      <exception cref="T:System.OperationCanceledException">(Can be <see cref="T:System.Threading.Tasks.TaskCanceledException" />.) The operation has been cancelled.</exception>
+    </member>
+    <member name="T:JsonRpc.Client.JsonRpcClientException">
+      <summary>
+            The base exception class that indicates the general error of JSON RPC client.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcClientException.#ctor(System.String)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcClientException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcClientException.#ctor(System.String)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcClientException.#ctor(System.String,System.Exception)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcClientException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcClientException.#ctor(System.String,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="innerException">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>innerException</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcClientException.#ctor(System.String,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="T:JsonRpc.Client.JsonRpcClientHandler">
+      <summary>
+            Provides basic infrastructures for <see cref="T:JsonRpc.Client.IJsonRpcClientHandler" /> implementation.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcClientHandler.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcClientHandler</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="E:JsonRpc.Client.JsonRpcClientHandler.MessageReceiving">
+      <summary>
+            Raises when a JSON RPC message will be received.
+            </summary>
+    </member>
+    <member name="E:JsonRpc.Client.JsonRpcClientHandler.MessageSending">
+      <summary>
+            Raises when a JSON RPC message will be sent.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcClientHandler.OnMessageReceiving(JsonRpc.Messages.ResponseMessage)">
+      <summary>
+            Raises <see cref="E:JsonRpc.Client.JsonRpcClientHandler.MessageReceiving" /> event.
+            </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcClientHandler.OnMessageReceiving(JsonRpc.Messages.ResponseMessage)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcClientHandler.OnMessageSending(JsonRpc.Messages.RequestMessage)">
+      <summary>
+            Raises <see cref="E:JsonRpc.Client.JsonRpcClientHandler.MessageSending" /> event.
+            </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcClientHandler.OnMessageSending(JsonRpc.Messages.RequestMessage)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcClientHandler.SendAsync(JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously sends a JSON RPC Request message, and wait for the Response (if the Request is not a Notification).
+            </summary>
+      <param name="request">The request message to be sent.</param>
+      <param name="cancellationToken">A token used to cancel the transmitting request, or to stop waiting for the Response.</param>
+      <returns>A task that returns JSON RPC response, or <c>null</c> if the Request is a Notification.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="request" /> is <c>null</c>.</exception>
+      <exception cref="T:JsonRpc.Client.JsonRpcClientException">An exception has occurred while transmitting the request.
+            Note that a JSON RPC Response with Error will be returned and no exception should be thrown.</exception>
+    </member>
+    <member name="T:JsonRpc.Client.JsonRpcContractException">
+      <summary>
+            The exception that indicates the violation of a server/client-side RPC contract.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcContractException.#ctor(System.String,JsonRpc.Messages.Message)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcContractException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcContractException.#ctor(System.String,JsonRpc.Messages.Message)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="rpcMessage">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>rpcMessage</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcContractException.#ctor(System.String,JsonRpc.Messages.Message)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcContractException.#ctor(System.String,JsonRpc.Messages.Message,System.Exception)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcContractException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcContractException.#ctor(System.String,JsonRpc.Messages.Message,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="rpcMessage">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>rpcMessage</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcContractException.#ctor(System.String,JsonRpc.Messages.Message,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="innerException">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>innerException</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcContractException.#ctor(System.String,JsonRpc.Messages.Message,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcContractException.#ctor(System.String,System.Exception)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcContractException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcContractException.#ctor(System.String,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="innerException">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>innerException</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcContractException.#ctor(System.String,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Client.JsonRpcContractException.RpcMessage">
+      <summary>
+            Gets the JSON RPC message that caused this exception.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Client.JsonRpcRemoteException">
+      <summary>
+            The exception that indicates an error from remote RPC endpoint.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcRemoteException.#ctor(JsonRpc.Messages.ResponseError)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcRemoteException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="error">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>error</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcRemoteException.#ctor(JsonRpc.Messages.ResponseError)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcRemoteException.#ctor(System.String,JsonRpc.Messages.ResponseError,System.Exception)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcRemoteException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcRemoteException.#ctor(System.String,JsonRpc.Messages.ResponseError,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="error">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>error</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcRemoteException.#ctor(System.String,JsonRpc.Messages.ResponseError,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="innerException">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>innerException</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcRemoteException.#ctor(System.String,JsonRpc.Messages.ResponseError,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcRemoteException.#ctor(System.String,System.Exception)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcRemoteException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcRemoteException.#ctor(System.String,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="innerException">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>innerException</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcRemoteException.#ctor(System.String,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Client.JsonRpcRemoteException.Error">
+      <summary>
+            The JSON RPC Error object that raises the exception.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Client.JsonRpcRemoteException.RemoteException">
+      <summary>
+            Remote CLR exception data, if available.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcRemoteException.ToString">
+      <summary>Creates and returns a string representation of the current exception.</summary>
+      <returns>A string representation of the current exception.</returns>
+    </member>
+    <member name="T:JsonRpc.Client.RequestCancellingEventArgs">
+      <summary>
+            Provides arguments for <see cref="E:JsonRpc.Client.JsonRpcClient.RequestCancelling" /> event.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Client.RequestCancellingEventArgs.#ctor(JsonRpc.Messages.MessageId)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.RequestCancellingEventArgs</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="requestId">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>requestId</parameter>
+            <parameter>M:JsonRpc.Client.RequestCancellingEventArgs.#ctor(JsonRpc.Messages.MessageId)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Client.RequestCancellingEventArgs.RequestId">
+      <summary>
+            Id of the JSON RPC Request.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Contracts.CamelCaseJsonRpcNamingStrategy">
+      <summary>
+            Maps camelCase JSON RPC method and argument names into PascalCase CLR counterparts.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.CamelCaseJsonRpcNamingStrategy.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Contracts.CamelCaseJsonRpcNamingStrategy</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.CamelCaseJsonRpcNamingStrategy.GetRpcMethodName(System.String,System.Boolean)">
+      <summary>
+            Maps a CLR method name into JSON RPC method name.
+            </summary>
+      <param name="methodName">The CLR method name, or user-specified method name (e.g. via Attributes).</param>
+      <param name="isSpecified">Whether the <paramref name="methodName" /> is specified explicitly by user.</param>
+      <returns>The mapped JSON RPC method name.</returns>
+    </member>
+    <member name="M:JsonRpc.Contracts.CamelCaseJsonRpcNamingStrategy.GetRpcParameterName(System.String,System.Boolean)">
+      <summary>
+            Maps a CLR parameter name into JSON RPC parameter name.
+            </summary>
+      <param name="parameterName">The CLR parameter name, or user-specified parameter name (e.g. via Attributes).</param>
+      <param name="isSpecified">Whether the <paramref name="parameterName" /> is specified explicitly by user.</param>
+      <returns>The mapped JSON RPC parameter name.</returns>
+    </member>
+    <member name="T:JsonRpc.Contracts.CamelCaseJsonValueConverter">
+      <summary>
+            A JSON converter based on <see cref="T:Newtonsoft.Json.JsonSerializer" /> with <see cref="T:Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.CamelCaseJsonValueConverter.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Contracts.CamelCaseJsonValueConverter</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="T:JsonRpc.Contracts.IJsonRpcContractResolver">
+      <summary>
+            Provides methods that can build <see cref="T:JsonRpc.Contracts.JsonRpcServerContract" /> for service and client.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.IJsonRpcContractResolver.CreateClientContract(System.Collections.Generic.IEnumerable{System.Type})">
+      <summary>
+            Builds a <see cref="T:JsonRpc.Contracts.JsonRpcServerContract" /> out of the specified JSON RPC client types.
+            </summary>
+      <param name="contractTypes">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>contractTypes</parameter>
+            <parameter>M:JsonRpc.Contracts.IJsonRpcContractResolver.CreateClientContract(System.Collections.Generic.IEnumerable{System.Type})</parameter>
+          </include>
+        </markup>
+      </param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="contractTypes" /> is <c>null</c>.</exception>
+      <exception cref="T:System.ArgumentException">There is <c>null</c> element in <paramref name="contractTypes" />.</exception>
+    </member>
+    <member name="M:JsonRpc.Contracts.IJsonRpcContractResolver.CreateServerContract(System.Collections.Generic.IEnumerable{System.Type})">
+      <summary>
+            Builds a <see cref="T:JsonRpc.Contracts.JsonRpcServerContract" /> out of the specified JSON RPC service types.
+            </summary>
+      <param name="contractTypes">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>contractTypes</parameter>
+            <parameter>M:JsonRpc.Contracts.IJsonRpcContractResolver.CreateServerContract(System.Collections.Generic.IEnumerable{System.Type})</parameter>
+          </include>
+        </markup>
+      </param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="contractTypes" /> is <c>null</c>.</exception>
+      <exception cref="T:System.ArgumentException">There is <c>null</c> element in <paramref name="contractTypes" />.</exception>
+    </member>
+    <member name="T:JsonRpc.Contracts.IJsonRpcMethodBinder">
+      <summary>
+            Defines method to choose the best match among a set of RPC methods according to the JSON RPC request.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.IJsonRpcMethodBinder.BindParameters(System.Collections.Generic.IList{JsonRpc.Contracts.JsonRpcParameter},JsonRpc.Server.RequestContext)">
+      <summary>
+            Binds the parameters contained in the specified JSON RPC request to the specified a parameter list.
+            </summary>
+      <param name="parameters">The target JSON RPC method parameters.</param>
+      <param name="context">The request context containing the parameters to be converted.</param>
+      <returns>An array of parameter values that will be used to invoke the actual CLR method.</returns>
+      <exception cref="T:System.ArgumentNullException">Either <paramref name="parameters" /> or <paramref name="context" /> is null.</exception>
+    </member>
+    <member name="M:JsonRpc.Contracts.IJsonRpcMethodBinder.TryBindToMethod(System.Collections.Generic.ICollection{JsonRpc.Contracts.JsonRpcMethod},JsonRpc.Server.RequestContext)">
+      <summary>
+            Resolves the target RPC method from the JSON RPC request.
+            </summary>
+      <param name="candidates">The methods to choose from.</param>
+      <param name="context">The request context.</param>
+      <returns>Target RPC method information, or <c>null</c> if no suitable method exists.</returns>
+      <exception cref="T:System.ArgumentNullException">Either <paramref name="candidates" /> or <paramref name="context" /> is null.</exception>
+      <exception cref="T:System.Reflection.AmbiguousMatchException">More than one method is found with that suits the specified request.</exception>
+    </member>
+    <member name="T:JsonRpc.Contracts.IJsonRpcMethodInvoker">
+      <summary>
+            Defines method to invoke the specified JSON RPC method.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.IJsonRpcMethodInvoker.InvokeAsync(JsonRpc.Server.RequestContext,System.Object[])">
+      <summary>
+            Invokes the specified JSON RPC method asynchronously, using the specified request context.
+            </summary>
+      <param name="context"></param>
+      <param name="arguments">The arguments of the invocation. <c>null</c> for empty params.</param>
+      <returns>
+            A task that returns a <see cref="T:System.Object" /> to indicate the response,
+            or that returns <c>null</c> for the default response.
+            </returns>
+      <exception cref="T:System.Exception">The invoked method throws an exception.</exception>
+    </member>
+    <member name="T:JsonRpc.Contracts.IJsonRpcRequestMarshaler">
+      <summary>
+            Defines methods to convert CLR method parameters into JSON RPC request parameters.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.IJsonRpcRequestMarshaler.MarshalParameters(System.Collections.Generic.IList{JsonRpc.Contracts.JsonRpcParameter},System.Collections.IList)">
+      <summary>
+            Marshals the specified parameter values into JSON used as Request.params value.
+            </summary>
+      <param name="parameters">The parameters of the method.</param>
+      <param name="values">The values of the method. <c>null</c> is treated the same as empty array.</param>
+      <returns>The marshaled parameter value object or array or <c>null</c> for Request.params to be neglected.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="parameters" /> is <c>null</c>.</exception>
+    </member>
+    <member name="T:JsonRpc.Contracts.IJsonValueConverter">
+      <summary>
+            Used to convert value from/to JToken.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.IJsonValueConverter.JsonToValue(Newtonsoft.Json.Linq.JToken,System.Type)">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Contracts.IJsonValueConverter.JsonToValue(Newtonsoft.Json.Linq.JToken,System.Type)</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="json">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>json</parameter>
+            <parameter>M:JsonRpc.Contracts.IJsonValueConverter.JsonToValue(Newtonsoft.Json.Linq.JToken,System.Type)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="valueType">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>valueType</parameter>
+            <parameter>M:JsonRpc.Contracts.IJsonValueConverter.JsonToValue(Newtonsoft.Json.Linq.JToken,System.Type)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Contracts.IJsonValueConverter.ValueToJson(System.Object)">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Contracts.IJsonValueConverter.ValueToJson(System.Object)</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="value">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>value</parameter>
+            <parameter>M:JsonRpc.Contracts.IJsonValueConverter.ValueToJson(System.Object)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="T:JsonRpc.Contracts.JsonRpcClientContract">
+      <summary>
+            Contract details used in JSON RPC calls.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcClientContract.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Contracts.JsonRpcClientContract</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcClientContract.Methods">
+      <summary>
+            Gets a dictionary that maps JSON RPC method name to a list of candidate methods.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Contracts.JsonRpcContractResolver">
+      <summary>
+            A default implementation of <see cref="T:JsonRpc.Contracts.IJsonRpcContractResolver" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcContractResolver.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Contracts.JsonRpcContractResolver</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcContractResolver.CreateClientContract(System.Collections.Generic.IEnumerable{System.Type})">
+      <summary>
+            Builds a <see cref="T:JsonRpc.Contracts.JsonRpcServerContract" /> out of the specified JSON RPC client types.
+            </summary>
+      <param name="contractTypes">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>contractTypes</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateClientContract(System.Collections.Generic.IEnumerable{System.Type})</parameter>
+          </include>
+        </markup>
+      </param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="contractTypes" /> is <c>null</c>.</exception>
+      <exception cref="T:System.ArgumentException">There is <c>null</c> element in <paramref name="contractTypes" />.</exception>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcContractResolver.CreateMethod(System.Type,System.Reflection.MethodInfo,JsonRpc.Contracts.JsonRpcScopeAttribute)">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateMethod(System.Type,System.Reflection.MethodInfo,JsonRpc.Contracts.JsonRpcScopeAttribute)</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="serviceType">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>serviceType</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateMethod(System.Type,System.Reflection.MethodInfo,JsonRpc.Contracts.JsonRpcScopeAttribute)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="method">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>method</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateMethod(System.Type,System.Reflection.MethodInfo,JsonRpc.Contracts.JsonRpcScopeAttribute)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="scopeAttribute">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>scopeAttribute</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateMethod(System.Type,System.Reflection.MethodInfo,JsonRpc.Contracts.JsonRpcScopeAttribute)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcContractResolver.CreateParameter(System.Type,System.Reflection.ParameterInfo,JsonRpc.Contracts.JsonRpcMethodAttribute,JsonRpc.Contracts.JsonRpcScopeAttribute)">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateParameter(System.Type,System.Reflection.ParameterInfo,JsonRpc.Contracts.JsonRpcMethodAttribute,JsonRpc.Contracts.JsonRpcScopeAttribute)</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="serviceType">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>serviceType</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateParameter(System.Type,System.Reflection.ParameterInfo,JsonRpc.Contracts.JsonRpcMethodAttribute,JsonRpc.Contracts.JsonRpcScopeAttribute)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="parameter">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>parameter</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateParameter(System.Type,System.Reflection.ParameterInfo,JsonRpc.Contracts.JsonRpcMethodAttribute,JsonRpc.Contracts.JsonRpcScopeAttribute)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="methodAttribute">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>methodAttribute</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateParameter(System.Type,System.Reflection.ParameterInfo,JsonRpc.Contracts.JsonRpcMethodAttribute,JsonRpc.Contracts.JsonRpcScopeAttribute)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="scopeAttribute">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>scopeAttribute</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateParameter(System.Type,System.Reflection.ParameterInfo,JsonRpc.Contracts.JsonRpcMethodAttribute,JsonRpc.Contracts.JsonRpcScopeAttribute)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcContractResolver.CreateServerContract(System.Collections.Generic.IEnumerable{System.Type})">
+      <summary>
+            Builds a <see cref="T:JsonRpc.Contracts.JsonRpcServerContract" /> out of the specified JSON RPC service types.
+            </summary>
+      <param name="contractTypes">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>contractTypes</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateServerContract(System.Collections.Generic.IEnumerable{System.Type})</parameter>
+          </include>
+        </markup>
+      </param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="contractTypes" /> is <c>null</c>.</exception>
+      <exception cref="T:System.ArgumentException">There is <c>null</c> element in <paramref name="contractTypes" />.</exception>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcContractResolver.MethodsFromType(System.Type)">
+      <summary>
+            Gets a list of all the exposed JSON PRC methods in the specified service object type.
+            </summary>
+      <param name="serviceType">A subtype of <see cref="T:JsonRpc.Server.JsonRpcService" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="serviceType" /> is <c>null</c>.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="serviceType" /> is not a derived type from <see cref="T:JsonRpc.Server.JsonRpcService" />.</exception>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcContractResolver.NamingStrategy">
+      <summary>
+            Gets/sets the naming strategy used to map the RPC method and argument names.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcContractResolver.ParameterValueConverter">
+      <summary>
+            Gets/sets the converter used to convert the arguments from and results to JSON.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Contracts.JsonRpcMethod">
+      <summary>
+            Provides information to map a JSON RPC method to a CLR method.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcMethod.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Contracts.JsonRpcMethod</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcMethod.AllowExtensionData">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Contracts.JsonRpcMethod.AllowExtensionData</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcMethod.Invoker">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Contracts.JsonRpcMethod.Invoker</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcMethod.IsNotification">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Contracts.JsonRpcMethod.IsNotification</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcMethod.MethodName">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Contracts.JsonRpcMethod.MethodName</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcMethod.Parameters">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Contracts.JsonRpcMethod.Parameters</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcMethod.ReturnParameter">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Contracts.JsonRpcMethod.ReturnParameter</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcMethod.ServiceType">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Contracts.JsonRpcMethod.ServiceType</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcMethod.ToString">
+      <summary>Returns a string that represents the current object.</summary>
+      <returns>A string that represents the current object.</returns>
+    </member>
+    <member name="T:JsonRpc.Contracts.JsonRpcMethodAttribute">
+      <summary>
+            Indicates the method is exposed for JSON RPC invocation.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcMethodAttribute.#ctor">
+      <summary>
+            Creates a default attribute instance.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcMethodAttribute.#ctor(System.String)">
+      <summary>
+            Creates an attribute instance.
+            </summary>
+      <param name="methodName">The name of the method.</param>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcMethodAttribute.AllowExtensionData">
+      <summary>
+            Used in the server. Whether allows extra parameters on this method when matching signature.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcMethodAttribute.IsNotification">
+      <summary>
+            Indicates whether the method is a notification request.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcMethodAttribute.MethodName">
+      <summary>
+            The name of the method. <c>null</c> to use the applied method name.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcMethodAttribute.NamingStrategyParameters">
+      <summary>
+            The constructor parameters used to instantiate the specified <see cref="P:JsonRpc.Contracts.JsonRpcMethodAttribute.NamingStrategyType" /></summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcMethodAttribute.NamingStrategyType">
+      <summary>
+            The <see cref="T:System.Type" /> of the <see cref="T:JsonRpc.Contracts.JsonRpcNamingStrategy" /> applied to the methods in this scope.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcMethodAttribute.ValueConverterParameters">
+      <summary>
+            The constructor parameters used to instantiate the specified <see cref="P:JsonRpc.Contracts.JsonRpcMethodAttribute.ValueConverterType" /></summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcMethodAttribute.ValueConverterType">
+      <summary>
+            The <see cref="T:System.Type" /> of <see cref="T:JsonRpc.Contracts.IJsonValueConverter" /> that applies to the parameters of this method.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Contracts.JsonRpcNamingStrategy">
+      <summary>
+            Used to map JSON RPC method and argument names into CLR counterparts.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcNamingStrategy.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Contracts.JsonRpcNamingStrategy</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcNamingStrategy.GetRpcMethodName(System.String,System.Boolean)">
+      <summary>
+            Maps a CLR method name into JSON RPC method name.
+            </summary>
+      <param name="methodName">The CLR method name, or user-specified method name (e.g. via Attributes).</param>
+      <param name="isSpecified">Whether the <paramref name="methodName" /> is specified explicitly by user.</param>
+      <returns>The mapped JSON RPC method name.</returns>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcNamingStrategy.GetRpcParameterName(System.String,System.Boolean)">
+      <summary>
+            Maps a CLR parameter name into JSON RPC parameter name.
+            </summary>
+      <param name="parameterName">The CLR parameter name, or user-specified parameter name (e.g. via Attributes).</param>
+      <param name="isSpecified">Whether the <paramref name="parameterName" /> is specified explicitly by user.</param>
+      <returns>The mapped JSON RPC parameter name.</returns>
+    </member>
+    <member name="T:JsonRpc.Contracts.JsonRpcParameter">
+      <summary>
+            Provides information to map an argument in JSON RPC method to a CLR method argument.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcParameter.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Contracts.JsonRpcParameter</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcParameter.Converter">
+      <summary>
+            The serializer used to convert the parameter.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcParameter.DefaultValue">
+      <summary>
+            The default value for the specified optional parameter.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcParameter.IsOptional">
+      <summary>
+            Whether the parameter is optional.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcParameter.IsTask">
+      <summary>
+            Whether the parameter is a Task or Task&lt;ParameterType&gt; instead of ParameterType itself.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcParameter.ParameterName">
+      <summary>
+            The parameter name used in JSON.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcParameter.ParameterType">
+      <summary>
+            The bare type of the parameter.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcParameter.ToString">
+      <summary>Returns a string that represents the current object.</summary>
+      <returns>A string that represents the current object.</returns>
+    </member>
+    <member name="T:JsonRpc.Contracts.JsonRpcParameterAttribute">
+      <summary>
+            Specifies the parameter options of a JSON RPC method.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcParameterAttribute.#ctor">
+      <summary>
+            Creates a default attribute instance.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcParameterAttribute.#ctor(System.String)">
+      <summary>
+            Creates an attribute instance.
+            </summary>
+      <param name="parameterName">The name of the parameter.</param>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcParameterAttribute.DefaultValue">
+      <summary>
+            The default value for the optional parameter.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcParameterAttribute.IsOptional">
+      <summary>
+            Whether the parameter is optional.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcParameterAttribute.ParameterName">
+      <summary>
+            The name of the parameter. <c>null</c> to use the applied Parameter name.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcParameterAttribute.ValueConverterParameters">
+      <summary>
+            The constructor parameters used to instantiate the specified <see cref="P:JsonRpc.Contracts.JsonRpcParameterAttribute.ValueConverterType" /></summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcParameterAttribute.ValueConverterType">
+      <summary>
+            The <see cref="T:System.Type" /> of <see cref="T:JsonRpc.Contracts.IJsonValueConverter" /> that applies to this parameter.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Contracts.JsonRpcScopeAttribute">
+      <summary>
+            Declares a JSON RPC method scope. Defines some common traits of the methods in the scope.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcScopeAttribute.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Contracts.JsonRpcScopeAttribute</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcScopeAttribute.MethodPrefix">
+      <summary>
+            The prefix that is prepended to all the names of the JSON RPC methods in the scope.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcScopeAttribute.NamingStrategyParameters">
+      <summary>
+            The constructor parameters used to instantiate the specified <see cref="P:JsonRpc.Contracts.JsonRpcScopeAttribute.NamingStrategyType" /></summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcScopeAttribute.NamingStrategyType">
+      <summary>
+            The <see cref="T:System.Type" /> of the <see cref="T:JsonRpc.Contracts.JsonRpcNamingStrategy" /> applied to the methods in this scope.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcScopeAttribute.ValueConverterParameters">
+      <summary>
+            The constructor parameters used to instantiate the specified <see cref="P:JsonRpc.Contracts.JsonRpcScopeAttribute.ValueConverterType" />.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcScopeAttribute.ValueConverterType">
+      <summary>
+            The <see cref="T:System.Type" /> of <see cref="T:JsonRpc.Contracts.IJsonValueConverter" /> that applies to the parameters of
+            all the JSON RPC methods in the scope.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Contracts.JsonRpcServerContract">
+      <summary>
+            Contract details used in JSON RPC calls.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonRpcServerContract.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Contracts.JsonRpcServerContract</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.JsonRpcServerContract.Methods">
+      <summary>
+            Gets a dictionary that maps JSON RPC method name to a list of candidate methods.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Contracts.JsonValueConverter">
+      <summary>
+            A JSON converter based on <see cref="T:Newtonsoft.Json.JsonSerializer" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonValueConverter.#ctor">
+      <summary>
+            Initializes a new instance with a default JSON serializer.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonValueConverter.#ctor(Newtonsoft.Json.JsonSerializer)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Contracts.JsonValueConverter</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="serializer">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>serializer</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonValueConverter.#ctor(Newtonsoft.Json.JsonSerializer)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonValueConverter.JsonToValue(Newtonsoft.Json.Linq.JToken,System.Type)">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonValueConverter.JsonToValue(Newtonsoft.Json.Linq.JToken,System.Type)</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="json">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>json</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonValueConverter.JsonToValue(Newtonsoft.Json.Linq.JToken,System.Type)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="valueType">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>valueType</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonValueConverter.JsonToValue(Newtonsoft.Json.Linq.JToken,System.Type)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Contracts.JsonValueConverter.ValueToJson(System.Object)">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonValueConverter.ValueToJson(System.Object)</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="value">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>value</parameter>
+            <parameter>M:JsonRpc.Contracts.JsonValueConverter.ValueToJson(System.Object)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="T:JsonRpc.Contracts.MarshaledRequestParameters">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>T:JsonRpc.Contracts.MarshaledRequestParameters</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.MarshaledRequestParameters.#ctor(Newtonsoft.Json.Linq.JToken,System.Threading.CancellationToken)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Contracts.MarshaledRequestParameters</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="parameters">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>parameters</parameter>
+            <parameter>M:JsonRpc.Contracts.MarshaledRequestParameters.#ctor(Newtonsoft.Json.Linq.JToken,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="cancellationToken">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>cancellationToken</parameter>
+            <parameter>M:JsonRpc.Contracts.MarshaledRequestParameters.#ctor(Newtonsoft.Json.Linq.JToken,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Contracts.MarshaledRequestParameters.CancellationToken">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Contracts.MarshaledRequestParameters.CancellationToken</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Contracts.MarshaledRequestParameters.Parameters">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Contracts.MarshaledRequestParameters.Parameters</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="T:JsonRpc.Contracts.NamedRequestMarshaler">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>T:JsonRpc.Contracts.NamedRequestMarshaler</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.NamedRequestMarshaler.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Contracts.NamedRequestMarshaler</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Contracts.NamedRequestMarshaler.MarshalParameters(System.Collections.Generic.IList{JsonRpc.Contracts.JsonRpcParameter},System.Collections.IList)">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Contracts.NamedRequestMarshaler.MarshalParameters(System.Collections.Generic.IList{JsonRpc.Contracts.JsonRpcParameter},System.Collections.IList)</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="parameters">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>parameters</parameter>
+            <parameter>M:JsonRpc.Contracts.NamedRequestMarshaler.MarshalParameters(System.Collections.Generic.IList{JsonRpc.Contracts.JsonRpcParameter},System.Collections.IList)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="values">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>values</parameter>
+            <parameter>M:JsonRpc.Contracts.NamedRequestMarshaler.MarshalParameters(System.Collections.Generic.IList{JsonRpc.Contracts.JsonRpcParameter},System.Collections.IList)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="T:JsonRpc.Messages.ClrExceptionErrorData">
+      <summary>
+            A POCO object containing additional CLR exception information
+            that can be serialized into <see cref="T:JsonRpc.Messages.ResponseError" />.<see cref="P:JsonRpc.Messages.ResponseError.Data" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.ClrExceptionErrorData.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.ClrExceptionErrorData</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Messages.ClrExceptionErrorData.Data">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Messages.ClrExceptionErrorData.Data</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Messages.ClrExceptionErrorData.ExceptionType">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Messages.ClrExceptionErrorData.ExceptionType</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.ClrExceptionErrorData.FromException(System.Exception)">
+      <summary>
+            Initializes a new <see cref="T:JsonRpc.Messages.ClrExceptionErrorData" /> from an existing exception.
+            </summary>
+      <param name="ex">The exception from which to extract error data.</param>
+      <param name="includesStackTrace">Whether to set <see cref="P:JsonRpc.Messages.ClrExceptionErrorData.StackTrace" /> from the given exception. Note that the stack trace may contain sensitive information.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="ex" /> is <c>null</c>.</exception>
+    </member>
+    <member name="M:JsonRpc.Messages.ClrExceptionErrorData.FromException(System.Exception,System.Boolean)">
+      <summary>
+            Initializes a new <see cref="T:JsonRpc.Messages.ClrExceptionErrorData" /> from an existing exception.
+            </summary>
+      <param name="ex">The exception from which to extract error data.</param>
+      <param name="includesStackTrace">Whether to set <see cref="P:JsonRpc.Messages.ClrExceptionErrorData.StackTrace" /> from the given exception. Note that the stack trace may contain sensitive information.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="ex" /> is <c>null</c>.</exception>
+    </member>
+    <member name="M:JsonRpc.Messages.ClrExceptionErrorData.GetBaseException">
+      <summary>
+            Gets the root cause of the exception.
+            This method is similar to <see cref="T:System.Exception" />.<see cref="M:System.Exception.GetBaseException" />.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Messages.ClrExceptionErrorData.HelpLink">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Messages.ClrExceptionErrorData.HelpLink</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Messages.ClrExceptionErrorData.HResult">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Messages.ClrExceptionErrorData.HResult</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Messages.ClrExceptionErrorData.InnerException">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Messages.ClrExceptionErrorData.InnerException</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Messages.ClrExceptionErrorData.Message">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Messages.ClrExceptionErrorData.Message</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Messages.ClrExceptionErrorData.StackTrace">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Messages.ClrExceptionErrorData.StackTrace</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.ClrExceptionErrorData.ToString">
+      <summary>Returns a string that represents the current object.</summary>
+      <returns>A string that represents the current object.</returns>
+    </member>
+    <member name="T:JsonRpc.Messages.JsonRpcErrorCode">
+      <summary>
+            Error codes, including those who are defined by the JSON-RPC 2.0 specification.
+            </summary>
+    </member>
+    <member name="F:JsonRpc.Messages.JsonRpcErrorCode.InternalError">
+      <summary>
+            Internal JSON-RPC error. (JSON-RPC)
+            </summary>
+    </member>
+    <member name="F:JsonRpc.Messages.JsonRpcErrorCode.InvalidParams">
+      <summary>
+            Invalid method parameter(s). (JSON-RPC)
+            </summary>
+    </member>
+    <member name="F:JsonRpc.Messages.JsonRpcErrorCode.InvalidRequest">
+      <summary>
+            The JSON sent is not a valid Request object. (JSON-RPC)
+            </summary>
+    </member>
+    <member name="F:JsonRpc.Messages.JsonRpcErrorCode.MethodNotFound">
+      <summary>
+            The method does not exist / is not available. (JSON-RPC)
+            </summary>
+    </member>
+    <member name="F:JsonRpc.Messages.JsonRpcErrorCode.ParseError">
+      <summary>
+            Invalid JSON was received by the server. An error occurred on the server while parsing the JSON text. (JSON-RPC)
+            </summary>
+    </member>
+    <member name="F:JsonRpc.Messages.JsonRpcErrorCode.UnhandledClrException">
+      <summary>
+            There is unhandled CLR exception occurred during the process of request. (JsonRpc.Standard)
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Messages.Message">
+      <summary>
+            Represents the base abstract JSON-RPC message.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.Message.LoadJson(System.IO.TextReader)">
+      <summary>
+            Converts a string containing JSON RPC message into <see cref="T:JsonRpc.Messages.Message" />.
+            </summary>
+      <param name="textReader">JSON content.</param>
+      <returns>A subclass of <see cref="T:JsonRpc.Messages.Message" />.</returns>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="textReader" /> doesn't contain valid JSON RPC message.</exception>
+    </member>
+    <member name="M:JsonRpc.Messages.Message.LoadJson(System.String)">
+      <summary>
+            Converts a string containing JSON RPC message into <see cref="T:JsonRpc.Messages.Message" />.
+            </summary>
+      <param name="jsonContent">JSON content.</param>
+      <returns>A subclass of <see cref="T:JsonRpc.Messages.Message" />.</returns>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="jsonContent" /> doesn't contain valid JSON RPC message.</exception>
+    </member>
+    <member name="M:JsonRpc.Messages.Message.ToString">
+      <summary>
+            Gets the JSON representation of the message.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Messages.Message.Version">
+      <summary>
+            The version of the JSON-RPC specification in use.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.Message.WriteJson(System.IO.TextWriter)">
+      <summary>
+            Writes the JSON RPC string into specified <see cref="T:System.IO.TextWriter" />.
+            </summary>
+      <param name="textWriter">The destination to write json content to.</param>
+    </member>
+    <member name="T:JsonRpc.Messages.MessageEventArgs">
+      <summary>
+            Contains event arguments for <see cref="P:JsonRpc.Messages.MessageEventArgs.Message" /> related events.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageEventArgs.#ctor(JsonRpc.Messages.Message)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.MessageEventArgs</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Messages.MessageEventArgs.#ctor(JsonRpc.Messages.Message)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Messages.MessageEventArgs.Message">
+      <summary>
+            Gets the message that raised the event.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Messages.MessageId">
+      <summary>
+            The message id in JSON RPC requests.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.#ctor(System.Int32)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.MessageId</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="id">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>id</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.#ctor(System.Int32)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.#ctor(System.Int64)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.MessageId</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="id">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>id</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.#ctor(System.Int64)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.#ctor(System.String)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.MessageId</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="id">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>id</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.#ctor(System.String)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="F:JsonRpc.Messages.MessageId.Empty">
+      <summary>
+            Represents an empty MessageId.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.Equals(JsonRpc.Messages.MessageId)">
+      <summary>Indicates whether the current object is equal to another object of the same type.</summary>
+      <param name="other">An object to compare with this object.</param>
+      <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.Equals(System.Object)">
+      <summary>Indicates whether this instance and a specified object are equal.</summary>
+      <param name="obj">The object to compare with the current instance. </param>
+      <returns>true if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, false. </returns>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.GetHashCode">
+      <summary>Returns the hash code for this instance.</summary>
+      <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.op_Equality(JsonRpc.Messages.MessageId,JsonRpc.Messages.MessageId)">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Equality(JsonRpc.Messages.MessageId,JsonRpc.Messages.MessageId)</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="left">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>left</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Equality(JsonRpc.Messages.MessageId,JsonRpc.Messages.MessageId)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="right">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>right</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Equality(JsonRpc.Messages.MessageId,JsonRpc.Messages.MessageId)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.op_Explicit(JsonRpc.Messages.MessageId)~System.String">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Explicit(JsonRpc.Messages.MessageId)~System.String</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="id">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>id</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Explicit(JsonRpc.Messages.MessageId)~System.String</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.op_Explicit(JsonRpc.Messages.MessageId)~System.Int32">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Explicit(JsonRpc.Messages.MessageId)~System.Int32</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="id">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>id</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Explicit(JsonRpc.Messages.MessageId)~System.Int32</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.op_Explicit(JsonRpc.Messages.MessageId)~System.Int64">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Explicit(JsonRpc.Messages.MessageId)~System.Int64</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="id">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>id</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Explicit(JsonRpc.Messages.MessageId)~System.Int64</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.op_Implicit(System.Int32)~JsonRpc.Messages.MessageId">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Implicit(System.Int32)~JsonRpc.Messages.MessageId</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="x">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>x</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Implicit(System.Int32)~JsonRpc.Messages.MessageId</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.op_Implicit(System.Int64)~JsonRpc.Messages.MessageId">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Implicit(System.Int64)~JsonRpc.Messages.MessageId</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="x">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>x</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Implicit(System.Int64)~JsonRpc.Messages.MessageId</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.op_Implicit(System.String)~JsonRpc.Messages.MessageId">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Implicit(System.String)~JsonRpc.Messages.MessageId</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="str">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>str</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Implicit(System.String)~JsonRpc.Messages.MessageId</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.op_Inequality(JsonRpc.Messages.MessageId,JsonRpc.Messages.MessageId)">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Inequality(JsonRpc.Messages.MessageId,JsonRpc.Messages.MessageId)</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="left">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>left</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Inequality(JsonRpc.Messages.MessageId,JsonRpc.Messages.MessageId)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="right">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>right</parameter>
+            <parameter>M:JsonRpc.Messages.MessageId.op_Inequality(JsonRpc.Messages.MessageId,JsonRpc.Messages.MessageId)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageId.ToString">
+      <summary>Returns the fully qualified type name of this instance.</summary>
+      <returns>A <see cref="T:System.String" /> containing a fully qualified type name.</returns>
+    </member>
+    <member name="P:JsonRpc.Messages.MessageId.Value">
+      <summary>
+            The underlying value of the Id.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Messages.MessageIdJsonConverter">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>T:JsonRpc.Messages.MessageIdJsonConverter</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageIdJsonConverter.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.MessageIdJsonConverter</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageIdJsonConverter.CanConvert(System.Type)">
+      <summary>
+            Determines whether this instance can convert the specified object type.
+            </summary>
+      <param name="objectType">Type of the object.</param>
+      <returns>
+        <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
+            </returns>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageIdJsonConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
+      <summary>
+            Reads the JSON representation of the object.
+            </summary>
+      <param name="reader">The <see cref="T:Newtonsoft.Json.JsonReader" /> to read from.</param>
+      <param name="objectType">Type of the object.</param>
+      <param name="existingValue">The existing value of object being read.</param>
+      <param name="serializer">The calling serializer.</param>
+      <returns>The object value.</returns>
+    </member>
+    <member name="M:JsonRpc.Messages.MessageIdJsonConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
+      <summary>
+            Writes the JSON representation of the object.
+            </summary>
+      <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter" /> to write to.</param>
+      <param name="value">The value.</param>
+      <param name="serializer">The calling serializer.</param>
+    </member>
+    <member name="T:JsonRpc.Messages.RequestMessage">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>T:JsonRpc.Messages.RequestMessage</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.RequestMessage.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.RequestMessage</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.RequestMessage.#ctor(JsonRpc.Messages.MessageId)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.RequestMessage</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="id">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>id</parameter>
+            <parameter>M:JsonRpc.Messages.RequestMessage.#ctor(JsonRpc.Messages.MessageId)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.RequestMessage.#ctor(JsonRpc.Messages.MessageId,System.String)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.RequestMessage</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="id">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>id</parameter>
+            <parameter>M:JsonRpc.Messages.RequestMessage.#ctor(JsonRpc.Messages.MessageId,System.String)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="method">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>method</parameter>
+            <parameter>M:JsonRpc.Messages.RequestMessage.#ctor(JsonRpc.Messages.MessageId,System.String)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.RequestMessage.#ctor(JsonRpc.Messages.MessageId,System.String,Newtonsoft.Json.Linq.JToken)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.RequestMessage</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="id">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>id</parameter>
+            <parameter>M:JsonRpc.Messages.RequestMessage.#ctor(JsonRpc.Messages.MessageId,System.String,Newtonsoft.Json.Linq.JToken)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="method">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>method</parameter>
+            <parameter>M:JsonRpc.Messages.RequestMessage.#ctor(JsonRpc.Messages.MessageId,System.String,Newtonsoft.Json.Linq.JToken)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="parameters">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>parameters</parameter>
+            <parameter>M:JsonRpc.Messages.RequestMessage.#ctor(JsonRpc.Messages.MessageId,System.String,Newtonsoft.Json.Linq.JToken)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.RequestMessage.#ctor(System.String)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.RequestMessage</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="method">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>method</parameter>
+            <parameter>M:JsonRpc.Messages.RequestMessage.#ctor(System.String)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.RequestMessage.#ctor(System.String,Newtonsoft.Json.Linq.JToken)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.RequestMessage</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="method">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>method</parameter>
+            <parameter>M:JsonRpc.Messages.RequestMessage.#ctor(System.String,Newtonsoft.Json.Linq.JToken)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="parameters">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>parameters</parameter>
+            <parameter>M:JsonRpc.Messages.RequestMessage.#ctor(System.String,Newtonsoft.Json.Linq.JToken)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Messages.RequestMessage.Id">
+      <summary>
+            A unique ID given to the request/response session. The request creator is responsible for assigning this value.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Messages.RequestMessage.IsNotification">
+      <summary>
+            Determines whether this Request object is a Notification.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Messages.RequestMessage.Method">
+      <summary>
+            The method to invoke on the receiver.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Messages.RequestMessage.Parameters">
+      <summary>
+            A <see cref="T:Newtonsoft.Json.Linq.JObject" /> representing parameters for the method.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Messages.ResponseError">
+      <summary>
+            JSON RPC Error contract object.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseError.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.ResponseError</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseError.#ctor(JsonRpc.Messages.JsonRpcErrorCode,System.String)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.ResponseError</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="code">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>code</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseError.#ctor(JsonRpc.Messages.JsonRpcErrorCode,System.String)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseError.#ctor(JsonRpc.Messages.JsonRpcErrorCode,System.String)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseError.#ctor(JsonRpc.Messages.JsonRpcErrorCode,System.String,System.Object)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.ResponseError</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="code">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>code</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseError.#ctor(JsonRpc.Messages.JsonRpcErrorCode,System.String,System.Object)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseError.#ctor(JsonRpc.Messages.JsonRpcErrorCode,System.String,System.Object)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="data">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>data</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseError.#ctor(JsonRpc.Messages.JsonRpcErrorCode,System.String,System.Object)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseError.#ctor(System.Int32,System.String)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.ResponseError</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="code">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>code</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseError.#ctor(System.Int32,System.String)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseError.#ctor(System.Int32,System.String)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseError.#ctor(System.Int32,System.String,System.Object)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Messages.ResponseError</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="code">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>code</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseError.#ctor(System.Int32,System.String,System.Object)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseError.#ctor(System.Int32,System.String,System.Object)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="data">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>data</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseError.#ctor(System.Int32,System.String,System.Object)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Messages.ResponseError.Code">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Messages.ResponseError.Code</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Messages.ResponseError.Data">
+      <summary>
+            A <see cref="T:Newtonsoft.Json.Linq.JToken" /> representing parameters for the method.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseError.FromException(JsonRpc.Messages.ClrExceptionErrorData)">
+      <summary>
+            Instantiates a new <see cref="T:JsonRpc.Messages.ResponseError" /> from an existing <see cref="T:JsonRpc.Messages.ClrExceptionErrorData" />.
+            </summary>
+      <param name="errorData">The error information.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="errorData" /> is <c>null</c>.</exception>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseError.FromException(System.Exception)">
+      <summary>
+            Instantiates a new <see cref="T:JsonRpc.Messages.ResponseError" /> from an existing <see cref="T:System.Exception" />.
+            </summary>
+      <param name="ex">The exception containing the error information.</param>
+      <param name="includesStackTrace">Whether to include <see cref="P:System.Exception.StackTrace" /> from the given exception. Note that the stack trace may contain sensitive information.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="ex" /> is <c>null</c>.</exception>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseError.FromException(System.Exception,System.Boolean)">
+      <summary>
+            Instantiates a new <see cref="T:JsonRpc.Messages.ResponseError" /> from an existing <see cref="T:System.Exception" />.
+            </summary>
+      <param name="ex">The exception containing the error information.</param>
+      <param name="includesStackTrace">Whether to include <see cref="P:System.Exception.StackTrace" /> from the given exception. Note that the stack trace may contain sensitive information.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="ex" /> is <c>null</c>.</exception>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseError.GetData``1">
+      <summary>
+            Deserializes <see cref="P:JsonRpc.Messages.ResponseError.Data" /> into the object of specified type.
+            </summary>
+      <typeparam name="T">The target type of JSON deserialization.</typeparam>
+      <returns>The deserialized data object.</returns>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseError.GetData(System.Type)">
+      <summary>
+            Deserializes <see cref="P:JsonRpc.Messages.ResponseError.Data" /> into the object of specified type.
+            </summary>
+      <param name="dataType">The target type of JSON deserialization.</param>
+      <returns>The deserialized data object.</returns>
+    </member>
+    <member name="P:JsonRpc.Messages.ResponseError.Message">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>P:JsonRpc.Messages.ResponseError.Message</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseError.SetData(System.Object)">
+      <summary>
+            Serializes the specified object into JSON <see cref="P:JsonRpc.Messages.ResponseError.Data" />.
+            </summary>
+      <param name="newData">The source value for JSON serialization.</param>
+    </member>
+    <member name="T:JsonRpc.Messages.ResponseMessage">
+      <summary>
+            An <see cref="T:JsonRpc.Messages.Message" /> implementation representing a JSON-RPC response.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseMessage.#ctor">
+      <summary>
+            Creates a new <see cref="T:JsonRpc.Messages.ResponseMessage" /> instance.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseMessage.#ctor(JsonRpc.Messages.MessageId)">
+      <summary>
+            Creates a new <see cref="T:JsonRpc.Messages.ResponseMessage" /> instance.
+            </summary>
+      <param name="id">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>id</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseMessage.#ctor(JsonRpc.Messages.MessageId)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseMessage.#ctor(JsonRpc.Messages.MessageId,JsonRpc.Messages.ResponseError)">
+      <summary>
+            Creates a new <see cref="T:JsonRpc.Messages.ResponseMessage" /> instance that indicates error.
+            </summary>
+      <param name="id">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>id</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseMessage.#ctor(JsonRpc.Messages.MessageId,JsonRpc.Messages.ResponseError)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="error">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>error</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseMessage.#ctor(JsonRpc.Messages.MessageId,JsonRpc.Messages.ResponseError)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseMessage.#ctor(JsonRpc.Messages.MessageId,Newtonsoft.Json.Linq.JToken)">
+      <summary>
+            Creates a new <see cref="T:JsonRpc.Messages.ResponseMessage" /> instance that indicates success.
+            </summary>
+      <param name="id">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>id</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseMessage.#ctor(JsonRpc.Messages.MessageId,Newtonsoft.Json.Linq.JToken)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="result">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>result</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseMessage.#ctor(JsonRpc.Messages.MessageId,Newtonsoft.Json.Linq.JToken)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Messages.ResponseMessage.#ctor(JsonRpc.Messages.MessageId,Newtonsoft.Json.Linq.JToken,JsonRpc.Messages.ResponseError)">
+      <summary>
+            Creates a new <see cref="T:JsonRpc.Messages.ResponseMessage" /> instance.
+            </summary>
+      <param name="id">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>id</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseMessage.#ctor(JsonRpc.Messages.MessageId,Newtonsoft.Json.Linq.JToken,JsonRpc.Messages.ResponseError)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="result">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>result</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseMessage.#ctor(JsonRpc.Messages.MessageId,Newtonsoft.Json.Linq.JToken,JsonRpc.Messages.ResponseError)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="error">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>error</parameter>
+            <parameter>M:JsonRpc.Messages.ResponseMessage.#ctor(JsonRpc.Messages.MessageId,Newtonsoft.Json.Linq.JToken,JsonRpc.Messages.ResponseError)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Messages.ResponseMessage.Error">
+      <summary>
+            The error that occurred while processing the request.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Messages.ResponseMessage.Id">
+      <summary>
+            A unique ID assigned to the request/response session. The request creator is responsible for this value.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Messages.ResponseMessage.Result">
+      <summary>
+            An object representing the result of processing the request.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Server.DefaultServiceFactory">
+      <summary>
+            Provides a default implementation of <see cref="T:JsonRpc.Server.IServiceFactory" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Server.DefaultServiceFactory.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.DefaultServiceFactory</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Server.DefaultServiceFactory.CreateService(System.Type,JsonRpc.Server.RequestContext)">
+      <summary>
+            Creates the specified JSON RPC service instance.
+            </summary>
+      <param name="serviceType">The desired service type.</param>
+      <param name="context">The request context.</param>
+      <returns>A service instance.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="serviceType" /> is <c>null</c>.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="serviceType" /> is not a derived type of <see cref="T:JsonRpc.Server.IJsonRpcService" />.</exception>
+    </member>
+    <member name="M:JsonRpc.Server.DefaultServiceFactory.ReleaseService(JsonRpc.Server.IJsonRpcService)">
+      <summary>
+            Releases the specified service instance.
+            </summary>
+      <param name="service">The service instance to be released.</param>
+    </member>
+    <member name="T:JsonRpc.Server.FeatureCollection">
+      <summary>
+            A collection of features.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Server.FeatureCollection.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.FeatureCollection</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Server.FeatureCollection.#ctor(JsonRpc.Server.IFeatureCollection)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.FeatureCollection</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="baseCollection">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>baseCollection</parameter>
+            <parameter>M:JsonRpc.Server.FeatureCollection.#ctor(JsonRpc.Server.IFeatureCollection)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Server.FeatureCollection.Get(System.Type)">
+      <summary>
+            Gets the feature of the specified type.
+            </summary>
+      <param name="featureType">Feature type. Usually an interface type.</param>
+      <returns>The requested feature instance, or <c>null</c> if not applicable.</returns>
+    </member>
+    <member name="M:JsonRpc.Server.FeatureCollection.Set(System.Type,System.Object)">
+      <summary>
+            Puts the specified feature instance into the dictionary.
+            </summary>
+      <param name="featureType">Feature type. Usually an interface type.</param>
+      <param name="instance">Feature instance, or <c>null</c> to set an existing feature to its default.</param>
+    </member>
+    <member name="T:JsonRpc.Server.FeatureCollectionExtensions">
+      <summary>
+            Extension methods for <see cref="T:JsonRpc.Server.IFeatureCollection" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Server.FeatureCollectionExtensions.Get``1(JsonRpc.Server.IFeatureCollection)">
+      <summary>
+            Gets the feature of the specified type.
+            </summary>
+      <param name="featureCollection">The target feature collection.</param>
+      <typeparam name="TFeature">Feature type. Usually an interface type.</typeparam>
+      <returns>The requested feature instance, or <c>null</c> if not applicable.</returns>
+    </member>
+    <member name="M:JsonRpc.Server.FeatureCollectionExtensions.Set``1(JsonRpc.Server.IFeatureCollection,``0)">
+      <summary>
+            Puts the specified feature instance into the feature collection.
+            </summary>
+      <param name="featureCollection">The target feature collection.</param>
+      <param name="instance">Feature instance, or <c>null</c> to remove an existing feature.</param>
+      <typeparam name="TFeature">Feature type. Usually an interface type.</typeparam>
+    </member>
+    <member name="T:JsonRpc.Server.IFeatureCollection">
+      <summary>
+            Manages a collection of features.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Server.IFeatureCollection.Get(System.Type)">
+      <summary>
+            Gets the feature of the specified type.
+            </summary>
+      <param name="featureType">Feature type. Usually an interface type.</param>
+      <returns>The requested feature instance, or <c>null</c> if not applicable.</returns>
+    </member>
+    <member name="M:JsonRpc.Server.IFeatureCollection.Set(System.Type,System.Object)">
+      <summary>
+            Puts the specified feature instance into the dictionary.
+            </summary>
+      <param name="featureType">Feature type. Usually an interface type.</param>
+      <param name="instance">Feature instance, or <c>null</c> to set an existing feature to its default.</param>
+    </member>
+    <member name="T:JsonRpc.Server.IJsonRpcService">
+      <summary>
+        <markup>
+          <include item="SMCMissingTag">
+            <parameter>summary</parameter>
+            <parameter>T:JsonRpc.Server.IJsonRpcService</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Server.IJsonRpcService.RequestContext">
+      <summary>
+            Gets or sets the <see cref="P:JsonRpc.Server.IJsonRpcService.RequestContext" /> of current request.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Server.IJsonRpcServiceHost">
+      <summary>
+            Provides methods to dispatch and invoke the specified JSON RPC methods.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Server.IJsonRpcServiceHost.InvokeAsync(JsonRpc.Messages.RequestMessage,JsonRpc.Server.IFeatureCollection,System.Threading.CancellationToken)">
+      <summary>
+            Invokes the JSON RPC method.
+            </summary>
+      <param name="request">The JSON RPC request.</param>
+      <param name="features">The features provided along with the request. Use <c>null</c> to indicate default features set.</param>
+      <param name="cancellationToken">The token used to cancel the request.</param>
+      <returns>JSON RPC response, or <c>null</c> for JSON RPC notifications.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="request" /> is <c>null</c>.</exception>
+    </member>
+    <member name="T:JsonRpc.Server.IRequestCancellationFeature">
+      <summary>
+            Provides methods to cancel an arbitrary impending request.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Server.IRequestCancellationFeature.TryCancel(JsonRpc.Messages.MessageId)">
+      <summary>
+            Tries to cancel the request with specified request id.
+            </summary>
+      <param name="id">The message id to cancel.</param>
+      <returns>
+        <c>true</c>, if the request has been successfully cancelled; <c>false</c> otherwise.</returns>
+    </member>
+    <member name="T:JsonRpc.Server.IServiceFactory">
+      <summary>
+            A factory that creates the specified JSON RPC service instance.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Server.IServiceFactory.CreateService(System.Type,JsonRpc.Server.RequestContext)">
+      <summary>
+            Creates the specified JSON RPC service instance.
+            </summary>
+      <param name="serviceType">The desired service type.</param>
+      <param name="context">The request context.</param>
+      <returns>A service instance.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="serviceType" /> is <c>null</c>.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="serviceType" /> is not a derived type of <see cref="T:JsonRpc.Server.IJsonRpcService" />.</exception>
+    </member>
+    <member name="M:JsonRpc.Server.IServiceFactory.ReleaseService(JsonRpc.Server.IJsonRpcService)">
+      <summary>
+            Releases the specified service instance.
+            </summary>
+      <param name="service">The service instance to be released.</param>
+    </member>
+    <member name="T:JsonRpc.Server.JsonRpcException">
+      <summary>
+            An exception that is thrown by <see cref="T:JsonRpc.Server.JsonRpcService" /> implementations
+            to indicate an general JSON RPC error.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcException.#ctor(JsonRpc.Messages.ResponseError)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.JsonRpcException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="error">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>error</parameter>
+            <parameter>M:JsonRpc.Server.JsonRpcException.#ctor(JsonRpc.Messages.ResponseError)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcException.#ctor(System.String)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.JsonRpcException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Server.JsonRpcException.#ctor(System.String)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcException.#ctor(System.String,JsonRpc.Messages.ResponseError)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.JsonRpcException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Server.JsonRpcException.#ctor(System.String,JsonRpc.Messages.ResponseError)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="error">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>error</parameter>
+            <parameter>M:JsonRpc.Server.JsonRpcException.#ctor(System.String,JsonRpc.Messages.ResponseError)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcException.#ctor(System.String,JsonRpc.Messages.ResponseError,System.Exception)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.JsonRpcException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Server.JsonRpcException.#ctor(System.String,JsonRpc.Messages.ResponseError,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="error">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>error</parameter>
+            <parameter>M:JsonRpc.Server.JsonRpcException.#ctor(System.String,JsonRpc.Messages.ResponseError,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="innerException">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>innerException</parameter>
+            <parameter>M:JsonRpc.Server.JsonRpcException.#ctor(System.String,JsonRpc.Messages.ResponseError,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcException.#ctor(System.String,System.Exception)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.JsonRpcException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Server.JsonRpcException.#ctor(System.String,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="innerException">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>innerException</parameter>
+            <parameter>M:JsonRpc.Server.JsonRpcException.#ctor(System.String,System.Exception)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Server.JsonRpcException.Error">
+      <summary>
+            JSON RPC error object.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Server.JsonRpcServerHandler">
+      <summary>
+            Abstract class for receiving request from somewhere,
+            and invoking <see cref="T:JsonRpc.Server.IJsonRpcServiceHost" /> with appropriate information.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcServerHandler.#ctor(JsonRpc.Server.IJsonRpcServiceHost)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.JsonRpcServerHandler</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="serviceHost">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>serviceHost</parameter>
+            <parameter>M:JsonRpc.Server.JsonRpcServerHandler.#ctor(JsonRpc.Server.IJsonRpcServiceHost)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Server.JsonRpcServerHandler.DefaultFeatures">
+      <summary>
+            Gets/sets the default features applied to the <see cref="T:JsonRpc.Server.RequestContext" />.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Server.JsonRpcServerHandler.ServiceHost">
+      <summary>
+            Gets the underlying <see cref="T:JsonRpc.Server.IJsonRpcServiceHost" />.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Server.JsonRpcService">
+      <summary>
+            Base class for providing JSON RPC service.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcService.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.JsonRpcService</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="P:JsonRpc.Server.JsonRpcService.RequestContext">
+      <summary>
+            Gets or sets the <see cref="P:JsonRpc.Server.JsonRpcService.RequestContext" /> of current request.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Server.JsonRpcServiceHostBuilder">
+      <summary>
+            A builder for <see cref="T:JsonRpc.Server.IJsonRpcServiceHost" />.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcServiceHostBuilder.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.JsonRpcServiceHostBuilder</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcServiceHostBuilder.Build">
+      <summary>
+            Builds an instance that implements <see cref="T:JsonRpc.Server.IJsonRpcServiceHost" />.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Server.JsonRpcServiceHostBuilder.ContractResolver">
+      <summary>
+            Contract resolver that maps the JSON RPC methods to CLR service methods.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcServiceHostBuilder.Intercept(System.Func{JsonRpc.Server.RequestHandler,JsonRpc.Server.RequestHandler})">
+      <summary>
+            Adds a middleware to intercept the JSON RPC requests.
+            </summary>
+      <param name="middleware">The middleware to be added.</param>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcServiceHostBuilder.Intercept(System.Func{JsonRpc.Server.RequestContext,System.Func{System.Threading.Tasks.Task},System.Threading.Tasks.Task})">
+      <summary>
+            Adds a handler to intercept the JSON RPC requests.
+            </summary>
+      <param name="handler">The handler to be added.</param>
+    </member>
+    <member name="P:JsonRpc.Server.JsonRpcServiceHostBuilder.LoggerFactory">
+      <summary>
+            The logger factory used to get a logger for the service host.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Server.JsonRpcServiceHostBuilder.MethodBinder">
+      <summary>
+            The binder that chooses the best match among a set of RPC methods.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcServiceHostBuilder.Register``1">
+      <summary>
+            Registers all the exposed JSON PRC methods in the specified service object type.
+            </summary>
+      <typeparam name="TService">A subtype of <see cref="T:JsonRpc.Server.JsonRpcService" />.</typeparam>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcServiceHostBuilder.Register(System.Reflection.Assembly)">
+      <summary>
+            Registers all the exposed JSON PRC methods in the public service object types contained in the specified assembly.
+            </summary>
+      <param name="assembly">An assembly.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="assembly" /> is <c>null</c>.</exception>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcServiceHostBuilder.Register(System.Type)">
+      <summary>
+            Registers all the exposed JSON PRC methods in the specified service object type.
+            </summary>
+      <param name="serviceType">A subtype of <see cref="T:JsonRpc.Server.JsonRpcService" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="serviceType" /> is <c>null</c>.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="serviceType" /> is not a derived type from <see cref="T:JsonRpc.Server.JsonRpcService" />.</exception>
+    </member>
+    <member name="P:JsonRpc.Server.JsonRpcServiceHostBuilder.ServiceFactory">
+      <summary>
+            The factory that creates the JSON RPC service instances to handle the requests.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Server.RequestContext">
+      <summary>
+            Provides the context per JSON RPC request.
+            </summary>
+    </member>
+    <member name="M:JsonRpc.Server.RequestContext.#ctor(JsonRpc.Server.IJsonRpcServiceHost,JsonRpc.Server.IServiceFactory,JsonRpc.Server.IFeatureCollection,JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.RequestContext</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="serviceHost">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>serviceHost</parameter>
+            <parameter>M:JsonRpc.Server.RequestContext.#ctor(JsonRpc.Server.IJsonRpcServiceHost,JsonRpc.Server.IServiceFactory,JsonRpc.Server.IFeatureCollection,JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="serviceFactory">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>serviceFactory</parameter>
+            <parameter>M:JsonRpc.Server.RequestContext.#ctor(JsonRpc.Server.IJsonRpcServiceHost,JsonRpc.Server.IServiceFactory,JsonRpc.Server.IFeatureCollection,JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="features">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>features</parameter>
+            <parameter>M:JsonRpc.Server.RequestContext.#ctor(JsonRpc.Server.IJsonRpcServiceHost,JsonRpc.Server.IServiceFactory,JsonRpc.Server.IFeatureCollection,JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="request">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>request</parameter>
+            <parameter>M:JsonRpc.Server.RequestContext.#ctor(JsonRpc.Server.IJsonRpcServiceHost,JsonRpc.Server.IServiceFactory,JsonRpc.Server.IFeatureCollection,JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="cancellationToken">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>cancellationToken</parameter>
+            <parameter>M:JsonRpc.Server.RequestContext.#ctor(JsonRpc.Server.IJsonRpcServiceHost,JsonRpc.Server.IServiceFactory,JsonRpc.Server.IFeatureCollection,JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="P:JsonRpc.Server.RequestContext.CancellationToken">
+      <summary>
+            The <see cref="P:JsonRpc.Server.RequestContext.CancellationToken" /> used to cancel this request. This token may be
+            checked in the RPC method.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Server.RequestContext.Features">
+      <summary>
+            The features provided with the request.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Server.RequestContext.Request">
+      <summary>
+            Gets the request message.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Server.RequestContext.Response">
+      <summary>
+            The response message to be sent. If this property is not <c>null</c>,
+            it will take precedence to the return value of the invoked CLR method.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Server.RequestContext.ServiceFactory">
+      <summary>
+            The factory that creates the JSON RPC service instances to handle the requests.
+            </summary>
+    </member>
+    <member name="P:JsonRpc.Server.RequestContext.ServiceHost">
+      <summary>
+            Gets the service host that initiates this request.
+            </summary>
+    </member>
+    <member name="T:JsonRpc.Server.RequestHandler">
+      <summary>
+            The handler function that intercepts the client JSON RPC request.
+            </summary>
+      <param name="context">Current request context.</param>
+      <returns>A task.</returns>
+    </member>
+    <member name="T:JsonRpc.Server.SingleFeatureCollection`1">
+      <summary>
+            A feature collection that owns only 1 feature instance.
+            </summary>
+      <typeparam name="TFeature">Feature type.</typeparam>
+    </member>
+    <member name="M:JsonRpc.Server.SingleFeatureCollection`1.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.SingleFeatureCollection`1</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Server.SingleFeatureCollection`1.#ctor(JsonRpc.Server.IFeatureCollection)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.SingleFeatureCollection`1</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="baseCollection">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>baseCollection</parameter>
+            <parameter>M:JsonRpc.Server.SingleFeatureCollection`1.#ctor(JsonRpc.Server.IFeatureCollection)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Server.SingleFeatureCollection`1.#ctor(JsonRpc.Server.IFeatureCollection,`0)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.SingleFeatureCollection`1</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="baseCollection">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>baseCollection</parameter>
+            <parameter>M:JsonRpc.Server.SingleFeatureCollection`1.#ctor(JsonRpc.Server.IFeatureCollection,`0)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="feature">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>feature</parameter>
+            <parameter>M:JsonRpc.Server.SingleFeatureCollection`1.#ctor(JsonRpc.Server.IFeatureCollection,`0)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Server.SingleFeatureCollection`1.#ctor(`0)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.SingleFeatureCollection`1</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="feature">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>feature</parameter>
+            <parameter>M:JsonRpc.Server.SingleFeatureCollection`1.#ctor(`0)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Server.SingleFeatureCollection`1.Get(System.Type)">
+      <summary>
+            Gets the feature of the specified type.
+            </summary>
+      <param name="featureType">Feature type. Usually an interface type.</param>
+      <returns>The requested feature instance, or <c>null</c> if not applicable.</returns>
+    </member>
+    <member name="M:JsonRpc.Server.SingleFeatureCollection`1.Set(System.Type,System.Object)">
+      <summary>
+            Puts the specified feature instance into the dictionary.
+            </summary>
+      <param name="featureType">Feature type. Usually an interface type.</param>
+      <param name="instance">Feature instance, or <c>null</c> to set an existing feature to its default.</param>
+    </member>
+  </members>
+</doc>

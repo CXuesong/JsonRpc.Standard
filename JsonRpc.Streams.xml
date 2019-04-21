@@ -153,7 +153,7 @@
             open when disposing this instance.
             </summary>
     </member>
-    <member name="M:JsonRpc.Streams.ByLineTextMessageWriter.WriteAsync(JsonRpc.Standard.Message,System.Threading.CancellationToken)">
+    <member name="M:JsonRpc.Streams.ByLineTextMessageWriter.WriteAsync(JsonRpc.Messages.Message,System.Threading.CancellationToken)">
       <summary>
             Asynchronously writes a message.
             </summary>
@@ -205,7 +205,7 @@
         </markup>
       </param>
     </member>
-    <member name="M:JsonRpc.Streams.MessageReader.ReadAsync(System.Predicate{JsonRpc.Standard.Message},System.Threading.CancellationToken)">
+    <member name="M:JsonRpc.Streams.MessageReader.ReadAsync(System.Predicate{JsonRpc.Messages.Message},System.Threading.CancellationToken)">
       <summary>
             Asynchronously reads the next message that matches the 
             </summary>
@@ -347,7 +347,7 @@
         </markup>
       </param>
     </member>
-    <member name="M:JsonRpc.Streams.MessageWriter.WriteAsync(JsonRpc.Standard.Message,System.Threading.CancellationToken)">
+    <member name="M:JsonRpc.Streams.MessageWriter.WriteAsync(JsonRpc.Messages.Message,System.Threading.CancellationToken)">
       <summary>
             Asynchronously writes a message.
             </summary>
@@ -471,7 +471,7 @@
             The underlying stream to write messages into.
             </summary>
     </member>
-    <member name="M:JsonRpc.Streams.PartwiseStreamMessageWriter.WriteAsync(JsonRpc.Standard.Message,System.Threading.CancellationToken)">
+    <member name="M:JsonRpc.Streams.PartwiseStreamMessageWriter.WriteAsync(JsonRpc.Messages.Message,System.Threading.CancellationToken)">
       <summary>
             Asynchronously writes a message.
             </summary>
@@ -511,7 +511,7 @@
         </markup>
       </param>
     </member>
-    <member name="M:JsonRpc.Streams.QueuedMessageReader.ReadAsync(System.Predicate{JsonRpc.Standard.Message},System.Threading.CancellationToken)">
+    <member name="M:JsonRpc.Streams.QueuedMessageReader.ReadAsync(System.Predicate{JsonRpc.Messages.Message},System.Threading.CancellationToken)">
       <summary>
             Asynchronously reads the next message that matches the 
             </summary>
@@ -599,12 +599,12 @@
             Client options.
             </summary>
     </member>
-    <member name="M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Standard.RequestMessage,System.Threading.CancellationToken)">
+    <member name="M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)">
       <summary>
         <markup>
           <include item="SMCMissingTag">
             <parameter>summary</parameter>
-            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Standard.RequestMessage,System.Threading.CancellationToken)</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)</parameter>
           </include>
         </markup>
       </summary>
@@ -613,7 +613,7 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>request</parameter>
-            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Standard.RequestMessage,System.Threading.CancellationToken)</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)</parameter>
           </include>
         </markup>
       </param>
@@ -622,14 +622,14 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>cancellationToken</parameter>
-            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Standard.RequestMessage,System.Threading.CancellationToken)</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)</parameter>
           </include>
         </markup>
       </param>
     </member>
     <member name="T:JsonRpc.Streams.StreamRpcClientOptions">
       <summary>
-            Provides options for <see cref="T:JsonRpc.Standard.Client.JsonRpcClient" />.
+            Provides options for <see cref="T:JsonRpc.Client.JsonRpcClient" />.
             </summary>
     </member>
     <member name="F:JsonRpc.Streams.StreamRpcClientOptions.None">
@@ -649,7 +649,7 @@
             to receive the requests, dispatch them, and send the responses.
             </summary>
     </member>
-    <member name="M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Standard.Server.IJsonRpcServiceHost)">
+    <member name="M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Server.IJsonRpcServiceHost)">
       <summary>
         <markup>
           <include item="SMCAutoDocConstructor">
@@ -662,12 +662,12 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>serviceHost</parameter>
-            <parameter>M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Standard.Server.IJsonRpcServiceHost)</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Server.IJsonRpcServiceHost)</parameter>
           </include>
         </markup>
       </param>
     </member>
-    <member name="M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Standard.Server.IJsonRpcServiceHost,JsonRpc.Streams.StreamRpcServerHandlerOptions)">
+    <member name="M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Server.IJsonRpcServiceHost,JsonRpc.Streams.StreamRpcServerHandlerOptions)">
       <summary>
         <markup>
           <include item="SMCAutoDocConstructor">
@@ -680,7 +680,7 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>serviceHost</parameter>
-            <parameter>M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Standard.Server.IJsonRpcServiceHost,JsonRpc.Streams.StreamRpcServerHandlerOptions)</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Server.IJsonRpcServiceHost,JsonRpc.Streams.StreamRpcServerHandlerOptions)</parameter>
           </include>
         </markup>
       </param>
@@ -689,7 +689,7 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>options</parameter>
-            <parameter>M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Standard.Server.IJsonRpcServiceHost,JsonRpc.Streams.StreamRpcServerHandlerOptions)</parameter>
+            <parameter>M:JsonRpc.Streams.StreamRpcServerHandler.#ctor(JsonRpc.Server.IJsonRpcServiceHost,JsonRpc.Streams.StreamRpcServerHandlerOptions)</parameter>
           </include>
         </markup>
       </param>
@@ -723,7 +723,7 @@
             Server options.
             </summary>
     </member>
-    <member name="M:JsonRpc.Streams.StreamRpcServerHandler.TryCancelRequest(JsonRpc.Standard.MessageId)">
+    <member name="M:JsonRpc.Streams.StreamRpcServerHandler.TryCancelRequest(JsonRpc.Messages.MessageId)">
       <summary>
             Tries to cancel the specified request by request id.
             </summary>
@@ -735,7 +735,7 @@
     </member>
     <member name="T:JsonRpc.Streams.StreamRpcServerHandlerOptions">
       <summary>
-            Provides options for <see cref="T:JsonRpc.Standard.Server.JsonRpcServiceHost" />.
+            Provides options for <see cref="T:JsonRpc.Server.JsonRpcServiceHost" />.
             </summary>
     </member>
     <member name="F:JsonRpc.Streams.StreamRpcServerHandlerOptions.None">
@@ -750,7 +750,7 @@
     </member>
     <member name="F:JsonRpc.Streams.StreamRpcServerHandlerOptions.SupportsRequestCancellation">
       <summary>
-            Enables request cancellation via <see cref="M:JsonRpc.Streams.StreamRpcServerHandler.TryCancelRequest(JsonRpc.Standard.MessageId)" />.
+            Enables request cancellation via <see cref="M:JsonRpc.Streams.StreamRpcServerHandler.TryCancelRequest(JsonRpc.Messages.MessageId)" />.
             </summary>
     </member>
   </members>

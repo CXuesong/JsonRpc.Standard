@@ -34,7 +34,7 @@
             Contract resolver that maps the JSON RPC methods to CLR service methods.
             </summary>
     </member>
-    <member name="M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.CreateProxy``1(JsonRpc.Standard.Client.JsonRpcClient)">
+    <member name="M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.CreateProxy``1(JsonRpc.Client.JsonRpcClient)">
       <summary>
             Creates a proxy instance that implements the given stub type with JSON RPC.
             </summary>
@@ -46,7 +46,7 @@
       <exception cref="T:System.ArgumentException">
         <typeparamref name="T" /> is not a type of interface.</exception>
     </member>
-    <member name="M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.CreateProxy(JsonRpc.Standard.Client.JsonRpcClient,System.Type)">
+    <member name="M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.CreateProxy(JsonRpc.Client.JsonRpcClient,System.Type)">
       <summary>
             Creates a proxy instance that implements the given stub type with JSON RPC.
             </summary>
@@ -97,12 +97,12 @@
         </markup>
       </param>
     </member>
-    <member name="M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ImplementProxyMethod(System.Reflection.MethodInfo,JsonRpc.Standard.Contracts.JsonRpcMethod,System.Int32,System.Reflection.Emit.MethodBuilder,System.Reflection.FieldInfo)">
+    <member name="M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ImplementProxyMethod(System.Reflection.MethodInfo,JsonRpc.Contracts.JsonRpcMethod,System.Int32,System.Reflection.Emit.MethodBuilder,System.Reflection.FieldInfo)">
       <summary>
         <markup>
           <include item="SMCMissingTag">
             <parameter>summary</parameter>
-            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ImplementProxyMethod(System.Reflection.MethodInfo,JsonRpc.Standard.Contracts.JsonRpcMethod,System.Int32,System.Reflection.Emit.MethodBuilder,System.Reflection.FieldInfo)</parameter>
+            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ImplementProxyMethod(System.Reflection.MethodInfo,JsonRpc.Contracts.JsonRpcMethod,System.Int32,System.Reflection.Emit.MethodBuilder,System.Reflection.FieldInfo)</parameter>
           </include>
         </markup>
       </summary>
@@ -111,7 +111,7 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>baseMethod</parameter>
-            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ImplementProxyMethod(System.Reflection.MethodInfo,JsonRpc.Standard.Contracts.JsonRpcMethod,System.Int32,System.Reflection.Emit.MethodBuilder,System.Reflection.FieldInfo)</parameter>
+            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ImplementProxyMethod(System.Reflection.MethodInfo,JsonRpc.Contracts.JsonRpcMethod,System.Int32,System.Reflection.Emit.MethodBuilder,System.Reflection.FieldInfo)</parameter>
           </include>
         </markup>
       </param>
@@ -120,7 +120,7 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>rpcMethod</parameter>
-            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ImplementProxyMethod(System.Reflection.MethodInfo,JsonRpc.Standard.Contracts.JsonRpcMethod,System.Int32,System.Reflection.Emit.MethodBuilder,System.Reflection.FieldInfo)</parameter>
+            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ImplementProxyMethod(System.Reflection.MethodInfo,JsonRpc.Contracts.JsonRpcMethod,System.Int32,System.Reflection.Emit.MethodBuilder,System.Reflection.FieldInfo)</parameter>
           </include>
         </markup>
       </param>
@@ -129,7 +129,7 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>methodIndex</parameter>
-            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ImplementProxyMethod(System.Reflection.MethodInfo,JsonRpc.Standard.Contracts.JsonRpcMethod,System.Int32,System.Reflection.Emit.MethodBuilder,System.Reflection.FieldInfo)</parameter>
+            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ImplementProxyMethod(System.Reflection.MethodInfo,JsonRpc.Contracts.JsonRpcMethod,System.Int32,System.Reflection.Emit.MethodBuilder,System.Reflection.FieldInfo)</parameter>
           </include>
         </markup>
       </param>
@@ -138,7 +138,7 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>implBuilder</parameter>
-            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ImplementProxyMethod(System.Reflection.MethodInfo,JsonRpc.Standard.Contracts.JsonRpcMethod,System.Int32,System.Reflection.Emit.MethodBuilder,System.Reflection.FieldInfo)</parameter>
+            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ImplementProxyMethod(System.Reflection.MethodInfo,JsonRpc.Contracts.JsonRpcMethod,System.Int32,System.Reflection.Emit.MethodBuilder,System.Reflection.FieldInfo)</parameter>
           </include>
         </markup>
       </param>
@@ -147,7 +147,7 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>realProxyField</parameter>
-            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ImplementProxyMethod(System.Reflection.MethodInfo,JsonRpc.Standard.Contracts.JsonRpcMethod,System.Int32,System.Reflection.Emit.MethodBuilder,System.Reflection.FieldInfo)</parameter>
+            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ImplementProxyMethod(System.Reflection.MethodInfo,JsonRpc.Contracts.JsonRpcMethod,System.Int32,System.Reflection.Emit.MethodBuilder,System.Reflection.FieldInfo)</parameter>
           </include>
         </markup>
       </param>
@@ -187,7 +187,7 @@
         </markup>
       </summary>
     </member>
-    <member name="M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ProxyBuilderEntry.#ctor(System.Type,System.Collections.Generic.IList{JsonRpc.Standard.Contracts.JsonRpcMethod})">
+    <member name="M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ProxyBuilderEntry.#ctor(System.Type,System.Collections.Generic.IList{JsonRpc.Contracts.JsonRpcMethod})">
       <summary>
         <markup>
           <include item="SMCAutoDocConstructor">
@@ -200,7 +200,7 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>proxyType</parameter>
-            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ProxyBuilderEntry.#ctor(System.Type,System.Collections.Generic.IList{JsonRpc.Standard.Contracts.JsonRpcMethod})</parameter>
+            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ProxyBuilderEntry.#ctor(System.Type,System.Collections.Generic.IList{JsonRpc.Contracts.JsonRpcMethod})</parameter>
           </include>
         </markup>
       </param>
@@ -209,17 +209,17 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>methodTable</parameter>
-            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ProxyBuilderEntry.#ctor(System.Type,System.Collections.Generic.IList{JsonRpc.Standard.Contracts.JsonRpcMethod})</parameter>
+            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ProxyBuilderEntry.#ctor(System.Type,System.Collections.Generic.IList{JsonRpc.Contracts.JsonRpcMethod})</parameter>
           </include>
         </markup>
       </param>
     </member>
-    <member name="M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ProxyBuilderEntry.CreateInstance(JsonRpc.Standard.Client.JsonRpcClient,JsonRpc.Standard.Contracts.IJsonRpcRequestMarshaler)">
+    <member name="M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ProxyBuilderEntry.CreateInstance(JsonRpc.Client.JsonRpcClient,JsonRpc.Contracts.IJsonRpcRequestMarshaler)">
       <summary>
         <markup>
           <include item="SMCMissingTag">
             <parameter>summary</parameter>
-            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ProxyBuilderEntry.CreateInstance(JsonRpc.Standard.Client.JsonRpcClient,JsonRpc.Standard.Contracts.IJsonRpcRequestMarshaler)</parameter>
+            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ProxyBuilderEntry.CreateInstance(JsonRpc.Client.JsonRpcClient,JsonRpc.Contracts.IJsonRpcRequestMarshaler)</parameter>
           </include>
         </markup>
       </summary>
@@ -228,7 +228,7 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>client</parameter>
-            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ProxyBuilderEntry.CreateInstance(JsonRpc.Standard.Client.JsonRpcClient,JsonRpc.Standard.Contracts.IJsonRpcRequestMarshaler)</parameter>
+            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ProxyBuilderEntry.CreateInstance(JsonRpc.Client.JsonRpcClient,JsonRpc.Contracts.IJsonRpcRequestMarshaler)</parameter>
           </include>
         </markup>
       </param>
@@ -237,7 +237,7 @@
           <include item="SMCMissingParamTag">
             <parameter>param</parameter>
             <parameter>marshaler</parameter>
-            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ProxyBuilderEntry.CreateInstance(JsonRpc.Standard.Client.JsonRpcClient,JsonRpc.Standard.Contracts.IJsonRpcRequestMarshaler)</parameter>
+            <parameter>M:JsonRpc.DynamicProxy.Client.JsonRpcProxyBuilder.ProxyBuilderEntry.CreateInstance(JsonRpc.Client.JsonRpcClient,JsonRpc.Contracts.IJsonRpcRequestMarshaler)</parameter>
           </include>
         </markup>
       </param>
@@ -332,8 +332,8 @@
       <param name="paramValues">Parameters, in the order of expected parameter order.</param>
       <typeparam name="TResult">Response type.</typeparam>
       <returns>The response.</returns>
-      <exception cref="T:JsonRpc.Standard.Client.JsonRpcRemoteException">An error has occurred on the remote-side.</exception>
-      <exception cref="T:JsonRpc.Standard.Client.JsonRpcContractException">An error has occurred when generating the request or parsing the response.</exception>
+      <exception cref="T:JsonRpc.Client.JsonRpcRemoteException">An error has occurred on the remote-side.</exception>
+      <exception cref="T:JsonRpc.Client.JsonRpcContractException">An error has occurred when generating the request or parsing the response.</exception>
       <exception cref="T:System.OperationCanceledException">The operation has been cancelled.</exception>
     </member>
   </members>
