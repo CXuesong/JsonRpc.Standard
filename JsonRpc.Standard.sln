@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28714.193
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonRpc.Standard", "JsonRpc.Standard\JsonRpc.Standard.csproj", "{F8154EF9-1CCE-4D88-88C5-0F6BE293482C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonRpc.Commons", "JsonRpc.Commons\JsonRpc.Commons.csproj", "{F8154EF9-1CCE-4D88-88C5-0F6BE293482C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{4001216A-ED6F-415A-83C8-F13328A9141C}"
 EndProject

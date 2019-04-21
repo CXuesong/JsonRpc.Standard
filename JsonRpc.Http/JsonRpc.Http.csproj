@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JsonRpc.Standard\JsonRpc.Standard.csproj" />
+    <ProjectReference Include="..\JsonRpc.Commons\JsonRpc.Commons.csproj" />
   </ItemGroup>
 
 </Project>

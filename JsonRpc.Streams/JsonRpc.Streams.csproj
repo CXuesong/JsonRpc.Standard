@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
-    <ProjectReference Include="..\JsonRpc.Standard\JsonRpc.Standard.csproj" />
+    <ProjectReference Include="..\JsonRpc.Commons\JsonRpc.Commons.csproj" />
   </ItemGroup>
 
 </Project>
