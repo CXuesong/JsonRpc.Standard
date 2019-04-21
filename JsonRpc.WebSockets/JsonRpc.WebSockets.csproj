@@ -4,9 +4,8 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.4.3</Version>
+    <Version>0.5.0</Version>
     <Authors>CXuesong</Authors>
     <Company />
     <PackageId>CXuesong.JsonRpc.WebSockets</PackageId>
@@ -20,10 +19,13 @@
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>../JsonRpc.Standard.snk</AssemblyOriginatorKeyFile>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Net.WebSockets" Version="4.3.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
