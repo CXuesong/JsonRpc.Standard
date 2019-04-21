@@ -27,12 +27,12 @@
       <Argument Key="maxVersionParts" Value="" xmlns="" />
     </TransformComponentArguments>
     <DocumentationSources>
-      <DocumentationSource sourceFile="..\JsonRpc.Standard\JsonRpc.Standard.csproj" />
       <DocumentationSource sourceFile="..\JsonRpc.Streams\JsonRpc.Streams.csproj" />
       <DocumentationSource sourceFile="..\JsonRpc.WebSockets\JsonRpc.WebSockets.csproj" />
       <DocumentationSource sourceFile="..\JsonRpc.AspNetCore\JsonRpc.AspNetCore.csproj" />
       <DocumentationSource sourceFile="..\JsonRpc.DynamicProxy\JsonRpc.DynamicProxy.csproj" />
       <DocumentationSource sourceFile="..\JsonRpc.Http\JsonRpc.Http.csproj" />
+      <DocumentationSource sourceFile="..\JsonRpc.Commons\JsonRpc.Commons.csproj" />
     </DocumentationSources>
     <HelpFileFormat>HtmlHelp1, Website</HelpFileFormat>
     <SyntaxFilters>Standard</SyntaxFilters>
