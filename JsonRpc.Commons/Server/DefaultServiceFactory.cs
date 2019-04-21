@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
-using JsonRpc.Standard.Contracts;
 
-namespace JsonRpc.Standard.Server
+namespace JsonRpc.Server
 {
     /// <summary>
     /// A factory that creates the specified JSON RPC service instance.

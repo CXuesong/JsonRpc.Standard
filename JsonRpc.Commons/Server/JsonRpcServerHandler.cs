@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using JsonRpc.Standard.Server;
 
-namespace JsonRpc.Standard.Server
+namespace JsonRpc.Server
 {
     /// <summary>
     /// Abstract class for receiving request from somewhere,

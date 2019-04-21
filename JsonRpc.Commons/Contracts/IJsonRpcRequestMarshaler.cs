@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json.Linq;
 
-namespace JsonRpc.Standard.Contracts
+namespace JsonRpc.Contracts
 {
 
     /// <summary>

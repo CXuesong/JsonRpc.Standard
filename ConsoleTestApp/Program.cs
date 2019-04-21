@@ -3,12 +3,10 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
+using JsonRpc.Client;
+using JsonRpc.Contracts;
 using JsonRpc.DynamicProxy.Client;
-using JsonRpc.Standard;
-using JsonRpc.Standard.Client;
-using JsonRpc.Standard.Contracts;
-using JsonRpc.Standard.Server;
+using JsonRpc.Server;
 using JsonRpc.Streams;
 using Nerdbank;
 
@@ -40,7 +38,7 @@ namespace ConsoleTestApp
             // simplicity, here we just use a concrete class.
             var session = new LibrarySessionFeature();
             serverHandler.DefaultFeatures.Set(session);
-            // Connect the datablocks
+            // Connect the MessageReader/Writer to the handler.
             // If we want server to stop, just stop the source
             using (var reader = new ByLineTextMessageReader(streams.Item1))
             using (var writer = new ByLineTextMessageWriter(streams.Item1))

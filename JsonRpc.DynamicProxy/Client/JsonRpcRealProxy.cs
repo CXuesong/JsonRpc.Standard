@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using JsonRpc.Standard;
-using JsonRpc.Standard.Client;
-using JsonRpc.Standard.Contracts;
+using JsonRpc.Client;
+using JsonRpc.Contracts;
+using JsonRpc.Messages;
 
 namespace JsonRpc.DynamicProxy.Client
 {

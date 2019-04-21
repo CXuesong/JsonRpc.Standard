@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json.Serialization;
+﻿using System.Collections.Generic;
 
-namespace JsonRpc.Standard.Contracts
+namespace JsonRpc.Contracts
 {
     /// <summary>
     /// Contract details used in JSON RPC calls.

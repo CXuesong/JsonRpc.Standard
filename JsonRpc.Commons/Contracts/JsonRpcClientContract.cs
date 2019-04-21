@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
-namespace JsonRpc.Standard.Contracts
+namespace JsonRpc.Contracts
 {
     /// <summary>
     /// Contract details used in JSON RPC calls.

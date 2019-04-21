@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using JsonRpc.Standard.Contracts;
-using JsonRpc.Standard.Server;
+using JsonRpc.Contracts;
+using JsonRpc.Server;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

@@ -6,8 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
-using JsonRpc.Standard.Client;
-using JsonRpc.Standard.Contracts;
+using JsonRpc.Client;
+using JsonRpc.Contracts;
 
 namespace JsonRpc.DynamicProxy.Client
 {

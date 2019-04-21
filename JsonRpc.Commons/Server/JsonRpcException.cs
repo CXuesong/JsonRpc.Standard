@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Security;
-using JsonRpc.Standard.Server;
+using JsonRpc.Messages;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 #if NET45
 using System.Runtime.Serialization;
 #endif
 
-namespace JsonRpc.Standard
+namespace JsonRpc.Server
 {
     /// <summary>
     /// An exception that is thrown by <see cref="JsonRpcService"/> implementations

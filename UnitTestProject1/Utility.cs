@@ -7,10 +7,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using JsonRpc.Standard;
-using JsonRpc.Standard.Client;
-using JsonRpc.Standard.Contracts;
-using JsonRpc.Standard.Server;
+using JsonRpc.Contracts;
+using JsonRpc.Server;
 using Newtonsoft.Json.Linq;
 
 namespace UnitTestProject1

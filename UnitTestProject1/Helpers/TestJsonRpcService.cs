@@ -3,9 +3,9 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
-using JsonRpc.Standard;
-using JsonRpc.Standard.Contracts;
-using JsonRpc.Standard.Server;
+using JsonRpc.Contracts;
+using JsonRpc.Messages;
+using JsonRpc.Server;
 
 namespace UnitTestProject1.Helpers
 {

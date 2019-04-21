@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JsonRpc.Messages;
 
-namespace JsonRpc.Standard.Client
+namespace JsonRpc.Client
 {
     /// <summary>
     /// Provides methods for transmitting the client-side JSON RPC messages.

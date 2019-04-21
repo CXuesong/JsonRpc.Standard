@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace JsonRpc.Standard
+namespace JsonRpc.Messages
 {
     /// <summary>
     /// Represents the base abstract JSON-RPC message.

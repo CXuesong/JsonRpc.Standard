@@ -1,8 +1,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using JsonRpc.Messages;
 
-namespace JsonRpc.Standard.Server
+namespace JsonRpc.Server
 {
     /// <summary>
     /// Provides methods to dispatch and invoke the specified JSON RPC methods.

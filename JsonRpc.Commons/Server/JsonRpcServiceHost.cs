@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using JsonRpc.Standard.Contracts;
+using JsonRpc.Contracts;
+using JsonRpc.Messages;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
-namespace JsonRpc.Standard.Server
+namespace JsonRpc.Server
 {
 
     internal class JsonRpcServiceHost : IJsonRpcServiceHost

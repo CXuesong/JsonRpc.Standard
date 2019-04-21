@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Newtonsoft.Json.Linq;
 
-namespace JsonRpc.Standard.Contracts
+namespace JsonRpc.Contracts
 {
 
     public struct MarshaledRequestParameters

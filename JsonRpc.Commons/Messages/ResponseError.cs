@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Text;
-using JsonRpc.Standard.Client;
+using JsonRpc.Client;
+using JsonRpc.Server;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace JsonRpc.Standard
+namespace JsonRpc.Messages
 {
     /// <summary>
     /// Error codes, including those who are defined by the JSON-RPC 2.0 specification.

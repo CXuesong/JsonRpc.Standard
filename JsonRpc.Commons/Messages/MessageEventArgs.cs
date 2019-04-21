@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace JsonRpc.Standard
+namespace JsonRpc.Messages
 {
     /// <summary>
     /// Contains event arguments for <see cref="Message"/> related events.

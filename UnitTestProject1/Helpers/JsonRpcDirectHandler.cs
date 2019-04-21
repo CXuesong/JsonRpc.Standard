@@ -1,9 +1,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using JsonRpc.Standard;
-using JsonRpc.Standard.Client;
-using JsonRpc.Standard.Server;
+using JsonRpc.Client;
+using JsonRpc.Messages;
+using JsonRpc.Server;
 
 namespace UnitTestProject1.Helpers
 {

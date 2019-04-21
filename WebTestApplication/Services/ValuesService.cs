@@ -1,10 +1,10 @@
-﻿using JsonRpc.Standard.Server;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using JsonRpc.AspNetCore;
-using JsonRpc.Standard.Contracts;
+using JsonRpc.Contracts;
+using JsonRpc.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 

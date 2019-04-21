@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using JsonRpc.Standard.Contracts;
-using JsonRpc.Standard.Server;
+using JsonRpc.Messages;
 using Newtonsoft.Json.Linq;
 
-namespace JsonRpc.Standard.Client
+namespace JsonRpc.Client
 {
 
     /// <summary>

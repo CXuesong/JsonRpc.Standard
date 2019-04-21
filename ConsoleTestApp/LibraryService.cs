@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using JsonRpc.Standard;
-using JsonRpc.Standard.Contracts;
-using JsonRpc.Standard.Server;
+using JsonRpc.Contracts;
+using JsonRpc.Messages;
+using JsonRpc.Server;
 
 namespace ConsoleTestApp
 {

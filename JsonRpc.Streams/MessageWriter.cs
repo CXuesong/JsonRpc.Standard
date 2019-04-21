@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using JsonRpc.Standard;
+using JsonRpc.Messages;
 
 namespace JsonRpc.Streams
 {

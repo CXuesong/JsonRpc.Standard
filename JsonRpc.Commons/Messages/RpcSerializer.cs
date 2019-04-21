@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
-namespace JsonRpc.Standard
+namespace JsonRpc.Messages
 {
     internal static class RpcSerializer
     {

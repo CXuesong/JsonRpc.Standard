@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.ExceptionServices;
 using System.Security;
 using System.Text;
+using JsonRpc.Messages;
 using Newtonsoft.Json;
 #if NET45
 using System.Runtime.Serialization;
 #endif
 
-namespace JsonRpc.Standard.Client
+namespace JsonRpc.Client
 {
     /// <summary>
     /// The base exception class that indicates the general error of JSON RPC client.

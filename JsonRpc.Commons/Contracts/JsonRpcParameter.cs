@@ -2,9 +2,10 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Threading;
+using JsonRpc.Messages;
 using Newtonsoft.Json.Linq;
 
-namespace JsonRpc.Standard.Contracts
+namespace JsonRpc.Contracts
 {
     /// <summary>
     /// Provides information to map an argument in JSON RPC method to a CLR method argument.

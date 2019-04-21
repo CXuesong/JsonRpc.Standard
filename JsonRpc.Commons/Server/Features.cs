@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using JsonRpc.Messages;
 
-namespace JsonRpc.Standard.Server
+namespace JsonRpc.Server
 {
     /// <summary>
     /// Provides methods to cancel an arbitrary impending request.

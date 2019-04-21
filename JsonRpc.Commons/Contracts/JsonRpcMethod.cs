@@ -1,13 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
-namespace JsonRpc.Standard.Contracts
+namespace JsonRpc.Contracts
 {
     /// <summary>
     /// Provides information to map a JSON RPC method to a CLR method.

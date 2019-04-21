@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace JsonRpc.Standard.Contracts
+namespace JsonRpc.Contracts
 {
     /// <summary>
     /// Declares a JSON RPC method scope. Defines some common traits of the methods in the scope.

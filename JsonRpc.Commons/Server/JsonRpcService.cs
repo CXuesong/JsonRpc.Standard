@@ -1,6 +1,4 @@
-﻿using JsonRpc.Standard.Contracts;
-
-namespace JsonRpc.Standard.Server
+﻿namespace JsonRpc.Server
 {
     public interface IJsonRpcService
     {

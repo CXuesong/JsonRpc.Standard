@@ -4,12 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using JsonRpc.Standard.Server;
-using Newtonsoft.Json;
+using JsonRpc.Server;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 
-namespace JsonRpc.Standard.Contracts
+namespace JsonRpc.Contracts
 {
     /// <summary>
     /// Defines method to choose the best match among a set of RPC methods according to the JSON RPC request.

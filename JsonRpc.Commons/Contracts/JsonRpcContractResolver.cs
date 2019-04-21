@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
-using JsonRpc.Standard.Server;
+using JsonRpc.Server;
 
-namespace JsonRpc.Standard.Contracts
+namespace JsonRpc.Contracts
 {
     /// <summary>
     /// Provides methods that can build <see cref="JsonRpcServerContract"/> for service and client.

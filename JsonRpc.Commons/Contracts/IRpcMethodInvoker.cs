@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
-using System.Threading;
 using System.Threading.Tasks;
-using JsonRpc.Standard.Server;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using JsonRpc.Server;
 
-namespace JsonRpc.Standard.Contracts
+namespace JsonRpc.Contracts
 {
     /// <summary>
     /// Defines method to invoke the specified JSON RPC method.

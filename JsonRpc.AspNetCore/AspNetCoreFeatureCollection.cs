@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using JsonRpc.Standard.Server;
+using JsonRpc.Server;
 using Microsoft.AspNetCore.Http;
 
 namespace JsonRpc.AspNetCore

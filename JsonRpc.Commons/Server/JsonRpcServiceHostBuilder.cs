@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using JsonRpc.Standard.Contracts;
+using JsonRpc.Contracts;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace JsonRpc.Standard.Server
+namespace JsonRpc.Server
 {
     /// <summary>
     /// A builder for <see cref="IJsonRpcServiceHost"/>.

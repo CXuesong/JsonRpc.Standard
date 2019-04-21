@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using JsonRpc.AspNetCore;
-using JsonRpc.Standard.Server;
+using JsonRpc.Server;
 using JsonRpc.Streams;
 using JsonRpc.WebSockets;
 using Microsoft.AspNetCore.Mvc;
