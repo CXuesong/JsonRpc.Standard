@@ -20,12 +20,7 @@
             Initialize a message reader from <see cref="T:System.IO.Stream" />.
             </summary>
       <param name="stream">The underlying stream. A <see cref="T:System.IO.TextReader" /> with UTF-8 encoding will be created based on it.</param>
-      <param name="delimiter">
-            The indicator for the end of a message.
-            If the reader reads a line that is the same as this parameter, the current message is finished.
-            Use <c>null</c> to indicate that each line, as long as it is not empty,
-            should be treated a message.
-            </param>
+      <param name="delimiter">The delimiter between the messages.</param>
     </member>
     <member name="M:JsonRpc.Streams.ByLineTextMessageReader.#ctor(System.IO.TextReader)">
       <summary>
@@ -38,12 +33,7 @@
             Initialize a message reader from <see cref="T:System.IO.TextReader" />.
             </summary>
       <param name="reader">The underlying text reader.</param>
-      <param name="delimiter">
-            The indicator for the end of a message.
-            If the reader reads a line that is the same as this parameter, the current message is finished.
-            Use <c>null</c> to indicate that each line, as long as it is not empty,
-            should be treated a message.
-            </param>
+      <param name="delimiter">The delimiter between the messages.</param>
     </member>
     <member name="P:JsonRpc.Streams.ByLineTextMessageReader.Delimiter">
       <summary>
