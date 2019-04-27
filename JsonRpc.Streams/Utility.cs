@@ -36,6 +36,27 @@ namespace JsonRpc.Streams
             return -1;
         }
 
+        public static int IndexOf(this StringBuilder source, IList<char> match, int startAt)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (match == null) throw new ArgumentNullException(nameof(match));
+            int iub = source.Length - match.Count + 1;
+            // Brute force
+            for (int i = startAt; i < iub; i++)
+            {
+                for (int j = 0; j < match.Count; j++)
+                {
+                    // This is rather dirty.
+                    // TODO we need a StringBuilder with a proper IndexOf!
+                    if (!source[i + j].Equals(match[j])) goto NEXT;
+                }
+                return i;
+            NEXT:
+                ;
+            }
+            return -1;
+        }
+
         // IDisposable: TextReader, TextWriter, or Stream
         public static bool TryDispose(IDisposable disposable, object source)
         {
