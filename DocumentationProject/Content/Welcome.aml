@@ -27,7 +27,10 @@
     </section>
 
     <relatedTopics>
-      <link xlink:href="d8421648-a900-4f76-98bd-75bceebcce56" />
+      <externalLink>
+        <linkText>JsonRpc.Standard on GitHub</linkText>
+        <linkUri>https://github.com/CXuesong/JsonRpc.Standard</linkUri>
+      </externalLink>
     </relatedTopics>
   </developerConceptualDocument>
 </topic>
