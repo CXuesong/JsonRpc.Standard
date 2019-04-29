@@ -141,7 +141,7 @@ namespace JsonRpc.Contracts
                 throw new NotSupportedException("Argument with out, ref, or of pointer type is not supported.");
             // parameter.Name == null for return parameter
             var taskResultType = Utility.GetTaskResultType(parameter.ParameterType);
-            if (parameter.Name != null && taskResultType != null)
+            if (String.IsNullOrWhiteSpace(parameter.Name) != true && taskResultType != null)
                 throw new NotSupportedException("Argument with type of System.Threading.Task is not supported.");
             var attr = parameter.GetCustomAttribute<JsonRpcParameterAttribute>();
             var inst = new JsonRpcParameter
