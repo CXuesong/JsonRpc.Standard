@@ -259,9 +259,24 @@ namespace UnitTestProject1
                         using (var server = new ServerTestHelper(this, serverReader, serverWriter,
                             StreamRpcServerHandlerOptions.None))
                         using (var client = new ClientTestHelper(clientReader, clientWriter))
+                        using (var server1 = new ServerTestHelper(this, clientReader, clientWriter,
+                            StreamRpcServerHandlerOptions.None))
+                        using (var client1 = new ClientTestHelper(serverReader, serverWriter))
                         {
-                            await TestRoutines.TestStubAsync(client.ClientStub);
-                            await TestRoutines.TestStubAsync(client.ClientExceptionStub);
+                            async Task ClientTestAsync()
+                            {
+                                await Task.Yield();
+                                await TestRoutines.TestStubAsync(client.ClientStub);
+                                await TestRoutines.TestStubAsync(client.ClientExceptionStub);
+                            }
+                            async Task Client1TestAsync()
+                            {
+                                await Task.Yield();
+                                await TestRoutines.TestStubAsync(client1.ClientStub);
+                                await TestRoutines.TestStubAsync(client1.ClientExceptionStub);
+                            }
+
+                            await Task.WhenAll(ClientTestAsync(), Client1TestAsync());
                         }
                     }
                 }
