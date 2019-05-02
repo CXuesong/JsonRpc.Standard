@@ -23,7 +23,7 @@ namespace JsonRpc.Streams
         /// Initialize a line-by-line message reader from <see cref="TextReader" />.
         /// </summary>
         /// <param name="reader">The underlying text reader.</param>
-        public ByLineTextMessageReader(TextReader reader) : this(reader, null)
+        public ByLineTextMessageReader(TextReader reader) : this(reader, "\n")
         {
         }
 

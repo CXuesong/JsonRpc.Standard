@@ -23,7 +23,7 @@ namespace JsonRpc.Streams
         /// Initialize a line-by-line message writer to <see cref="TextWriter" />.
         /// </summary>
         /// <param name="writer">The underlying text writer.</param>
-        public ByLineTextMessageWriter(TextWriter writer) : this(writer, null)
+        public ByLineTextMessageWriter(TextWriter writer) : this(writer, "\n")
         {
         }
 
@@ -40,15 +40,16 @@ namespace JsonRpc.Streams
         public ByLineTextMessageWriter(TextWriter writer, string delimiter)
         {
             if (writer == null) throw new ArgumentNullException(nameof(writer));
+            if (string.IsNullOrEmpty(delimiter)) throw new ArgumentException("delimiter cannot be null or empty.", nameof(delimiter));
             Writer = writer;
             Delimiter = delimiter;
         }
 
         /// <summary>
-        /// Initialize a message writer to <see cref="Stream" />.
+        /// Initialize a line-by-line message writer to <see cref="Stream" />.
         /// </summary>
         /// <param name="stream">The underlying stream. A <see cref="TextWriter"/> with UTF-8 encoding will be created based on it.</param>
-        public ByLineTextMessageWriter(Stream stream) : this(stream, null)
+        public ByLineTextMessageWriter(Stream stream) : this(stream, "\n")
         {
         }
 
@@ -56,12 +57,7 @@ namespace JsonRpc.Streams
         /// Initialize a message writer to <see cref="Stream" />.
         /// </summary>
         /// <param name="stream">The underlying stream. A <see cref="TextWriter"/> with UTF-8 encoding will be created based on it.</param>
-        /// <param name="delimiter">
-        /// The indicator for the end of a message.
-        /// If the writer writes a line that is the same as this parameter, the current message is finished.
-        /// Use <c>null</c> to indicate that each line, as long as it is not empty,
-        /// should be treated a message.
-        /// </param>
+        /// <param name="delimiter">The delimiter between the messages.</param>
         public ByLineTextMessageWriter(Stream stream, string delimiter)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
@@ -110,14 +106,16 @@ namespace JsonRpc.Streams
             await writerSemaphore.WaitAsync(linkedToken);
             try
             {
-                await Writer.WriteLineAsync(content);
-                linkedToken.ThrowIfCancellationRequested();
-                if (Delimiter != null)
-                {
-                    await Writer.WriteLineAsync(Delimiter);
-                    linkedToken.ThrowIfCancellationRequested();
-                }
+#if NETCOREAPP2_1
+                await Writer.WriteAsync(content.AsMemory(), linkedToken);
+                await Writer.WriteAsync(Delimiter.AsMemory(), linkedToken);
 
+#else
+                await Writer.WriteAsync(content);
+                linkedToken.ThrowIfCancellationRequested();
+                await Writer.WriteAsync(Delimiter);
+#endif
+                linkedToken.ThrowIfCancellationRequested();
                 await Writer.FlushAsync();
             }
             catch (ObjectDisposedException)
