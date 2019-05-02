@@ -143,7 +143,7 @@ namespace JsonRpc.Contracts
             var taskResultType = Utility.GetTaskResultType(parameter.ParameterType);
             if (String.IsNullOrWhiteSpace(parameter.Name) != true && taskResultType != null)
                 throw new NotSupportedException("Argument with type of System.Threading.Task is not supported.");
-            var attr = parameter.GetCustomAttribute<JsonRpcParameterAttribute>();
+            var attr = parameter.IsRetval==false ? parameter.GetCustomAttribute<JsonRpcParameterAttribute>() : null;
             var inst = new JsonRpcParameter
             {
                 IsOptional = attr?.IsOptional ?? parameter.IsOptional,
