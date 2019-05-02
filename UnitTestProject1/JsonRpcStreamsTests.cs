@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -230,6 +232,43 @@ namespace UnitTestProject1
             using (var client = new ClientTestHelper(clientReader, clientWriter))
             {
                 await TestRoutines.TestCancellationAsync(client.ClientCancellationStub);
+            }
+        }
+
+        private const int TcpLocalTestPort = 28370;
+
+        [Fact]
+        public async Task ByLineMessagesOverSocketsTest()
+        {
+            var serverListener = new TcpListener(IPAddress.Loopback, TcpLocalTestPort);
+            serverListener.Start();
+            try
+            {
+                using (var tcpClient = new TcpClient())
+                {
+                    var serverAsync = serverListener.AcceptTcpClientAsync();
+                    await tcpClient.ConnectAsync(IPAddress.Loopback, TcpLocalTestPort);
+                    using (var tcpServer = await serverAsync)
+                    using (var ss = tcpServer.GetStream())
+                    using (var cs = tcpClient.GetStream())
+                    {
+                        using (var clientReader = new ByLineTextMessageReader(cs))
+                        using (var clientWriter = new ByLineTextMessageWriter(cs))
+                        using (var serverReader = new ByLineTextMessageReader(ss))
+                        using (var serverWriter = new ByLineTextMessageWriter(ss))
+                        using (var server = new ServerTestHelper(this, serverReader, serverWriter,
+                            StreamRpcServerHandlerOptions.None))
+                        using (var client = new ClientTestHelper(clientReader, clientWriter))
+                        {
+                            await TestRoutines.TestStubAsync(client.ClientStub);
+                            await TestRoutines.TestStubAsync(client.ClientExceptionStub);
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                serverListener.Stop();
             }
         }
 
