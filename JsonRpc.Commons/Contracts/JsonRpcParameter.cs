@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using JsonRpc.Messages;
 using Newtonsoft.Json.Linq;
 
@@ -10,13 +11,21 @@ namespace JsonRpc.Contracts
     /// <summary>
     /// Provides information to map an argument in JSON RPC method to a CLR method argument.
     /// </summary>
+    /// <remarks>
+    /// The "parameter" means either an input parameter of the method, or the function return value.
+    /// </remarks>
     public sealed class JsonRpcParameter
     {
+
         private IJsonValueConverter _Converter = JsonValueConverter.Default;
 
         /// <summary>
         /// The parameter name used in JSON.
         /// </summary>
+        /// <remarks>
+        /// If this parameter represents the return value of the function,
+        /// property value should be <c>null</c>.
+        /// </remarks>
         public string ParameterName { get; set; }
 
         /// <summary>
@@ -34,7 +43,7 @@ namespace JsonRpc.Contracts
         public object DefaultValue { get; set; }
 
         /// <summary>
-        /// Whether the parameter is a Task or Task&lt;ParameterType&gt; instead of ParameterType itself.
+        /// Whether the parameter is a <see cref="Task"/> or <c>Task&lt;ParameterType&gt;</c> instead of ParameterType itself.
         /// </summary>
         public bool IsTask { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -106,12 +107,12 @@ namespace JsonRpc.Contracts
                 .Where(m => m.GetCustomAttribute<JsonRpcMethodAttribute>() != null)
                 .Select(m => new KeyValuePair<MethodInfo, JsonRpcMethod>(m, CreateMethod(serviceType, m, scope)));
         }
-        
+
         protected virtual JsonRpcMethod CreateMethod(Type serviceType, MethodInfo method, JsonRpcScopeAttribute scopeAttribute)
         {
             if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
             if (method == null) throw new ArgumentNullException(nameof(method));
-            var inst = new JsonRpcMethod {ServiceType = serviceType};
+            var inst = new JsonRpcMethod { ServiceType = serviceType };
             var attr = method.GetCustomAttribute<JsonRpcMethodAttribute>();
             inst.MethodName = attr?.MethodName;
             if (attr?.MethodName == null)
@@ -123,15 +124,23 @@ namespace JsonRpc.Contracts
             inst.IsNotification = attr?.IsNotification ?? false;
             inst.AllowExtensionData = attr?.AllowExtensionData ?? false;
             inst.ReturnParameter = CreateParameter(serviceType, method.ReturnParameter, attr, scopeAttribute);
+            // Even void-type method has its ReturnParameter.
+            Debug.Assert(inst.ReturnParameter != null, "CreateParameter should not return null.");
             inst.Parameters = method.GetParameters()
                 .Select(p => CreateParameter(serviceType, p, attr, scopeAttribute))
                 .ToList();
-            //inst.Cancellable = attr?.Cancellable
-            //                   ?? inst.Parameters.Any(p => p.ParameterType == typeof(CancellationToken));
+            Debug.Assert(inst.Parameters.IndexOf(null) < 0, "CreateParameter should not return null.");
             inst.Invoker = new ReflectionJsonRpcMethodInvoker(serviceType, method);
             return inst;
         }
 
+        /// <summary>
+        /// Creates the <see cref="JsonRpcParameter"/> contract with the specified CLR parameter info.
+        /// </summary>
+        /// <param name="serviceType">Type of the JSON RPC service object.</param>
+        /// <param name="parameter">CLR parameter object.</param>
+        /// <param name="methodAttribute">Custom attribute applied to the CLR method, or <c>null</c> if none applied.</param>
+        /// <param name="scopeAttribute">Custom attribute applied to the JSON RPC scope, or <c>null</c> if none applied.</param>
         protected virtual JsonRpcParameter CreateParameter(Type serviceType, ParameterInfo parameter,
             JsonRpcMethodAttribute methodAttribute, JsonRpcScopeAttribute scopeAttribute)
         {
@@ -140,10 +149,14 @@ namespace JsonRpc.Contracts
             if (parameter.IsOut || parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer)
                 throw new NotSupportedException("Argument with out, ref, or of pointer type is not supported.");
             // parameter.Name == null for return parameter
+            // Mono has a bug where parameter.Name == "" instead of null.
+            // See https://github.com/CXuesong/JsonRpc.Standard/pull/9
+            var isReturnParam = string.IsNullOrEmpty(parameter.Name);
             var taskResultType = Utility.GetTaskResultType(parameter.ParameterType);
-            if (String.IsNullOrWhiteSpace(parameter.Name) != true && taskResultType != null)
+            if (!isReturnParam && taskResultType != null)
                 throw new NotSupportedException("Argument with type of System.Threading.Task is not supported.");
-            var attr = parameter.IsRetval==false ? parameter.GetCustomAttribute<JsonRpcParameterAttribute>() : null;
+            // TODO bypass return value attribute check ONLY on Mono with FrameworkDescription check.
+            var attr = isReturnParam ? null : parameter.GetCustomAttribute<JsonRpcParameterAttribute>();
             var inst = new JsonRpcParameter
             {
                 IsOptional = attr?.IsOptional ?? parameter.IsOptional,
