@@ -3,7 +3,7 @@ using System.Security;
 using System.Text;
 using JsonRpc.Messages;
 using Newtonsoft.Json;
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
 using System.Runtime.Serialization;
 #endif
 
@@ -12,7 +12,7 @@ namespace JsonRpc.Client
     /// <summary>
     /// The base exception class that indicates the general error of JSON RPC client.
     /// </summary>
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
     [Serializable]
 #endif
     public class JsonRpcClientException : Exception
@@ -27,7 +27,7 @@ namespace JsonRpc.Client
         {
         }
 
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
         [SecuritySafeCritical]
         protected JsonRpcClientException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
@@ -38,7 +38,7 @@ namespace JsonRpc.Client
     /// <summary>
     /// The exception that indicates the violation of a server/client-side RPC contract.
     /// </summary>
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
     [Serializable]
 #endif
     public class JsonRpcContractException : JsonRpcClientException
@@ -59,7 +59,7 @@ namespace JsonRpc.Client
             RpcMessage = rpcMessage;
         }
 
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
         [SecuritySafeCritical]
         protected JsonRpcContractException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
@@ -72,7 +72,7 @@ namespace JsonRpc.Client
         /// </summary>
         public Message RpcMessage { get; }
 
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
         /// <inheritdoc />
         [SecurityCritical]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -86,7 +86,7 @@ namespace JsonRpc.Client
     /// <summary>
     /// The exception that indicates an error from remote RPC endpoint.
     /// </summary>
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
     [Serializable]
 #endif
     public class JsonRpcRemoteException : JsonRpcClientException
@@ -109,7 +109,7 @@ namespace JsonRpc.Client
             Initialize();
         }
 
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
         [SecuritySafeCritical]
         protected JsonRpcRemoteException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
@@ -136,7 +136,7 @@ namespace JsonRpc.Client
         /// </summary>
         public ClrExceptionErrorData RemoteException { get; private set; }
 
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
         /// <inheritdoc />
         [SecurityCritical]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)

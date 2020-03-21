@@ -106,7 +106,7 @@ namespace JsonRpc.Streams
             await writerSemaphore.WaitAsync(linkedToken);
             try
             {
-#if NETCOREAPP2_1
+#if BCL_FEATURE_READER_WRITER_CANCEL
                 await Writer.WriteAsync(content.AsMemory(), linkedToken);
                 await Writer.WriteAsync(Delimiter.AsMemory(), linkedToken);
 

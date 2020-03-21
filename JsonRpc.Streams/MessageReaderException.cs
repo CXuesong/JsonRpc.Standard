@@ -10,7 +10,7 @@ namespace JsonRpc.Streams
     /// <summary>
     /// An exception that indicates the wrong message reader status.
     /// </summary>
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
     [Serializable]
 #endif
     public class MessageReaderException : Exception
@@ -27,7 +27,7 @@ namespace JsonRpc.Streams
         {
         }
 
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
         protected MessageReaderException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }

@@ -2,7 +2,7 @@
 using System.Security;
 using JsonRpc.Messages;
 using Newtonsoft.Json;
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
 using System.Runtime.Serialization;
 #endif
 
@@ -12,7 +12,7 @@ namespace JsonRpc.Server
     /// An exception that is thrown by <see cref="JsonRpcService"/> implementations
     /// to indicate an general JSON RPC error.
     /// </summary>
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
     [Serializable]
 #endif
     public class JsonRpcException : Exception
@@ -58,7 +58,7 @@ namespace JsonRpc.Server
             Error = error;
         }
 
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
         [SecuritySafeCritical]
         protected JsonRpcException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
@@ -71,7 +71,7 @@ namespace JsonRpc.Server
         /// </summary>
         public ResponseError Error { get; }
 
-#if NET45
+#if BCL_FEATURE_SERIALIZATION
         /// <inheritdoc />
         [SecurityCritical]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)

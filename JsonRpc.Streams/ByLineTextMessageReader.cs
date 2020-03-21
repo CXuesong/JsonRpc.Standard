@@ -166,7 +166,7 @@ namespace JsonRpc.Streams
             base.Dispose(disposing);
             if (Reader == null) return;
             // Reader.ReadAsync may block without cancellation support on v2.0 and below.
-#if NETCOREAPP2_1
+#if BCL_FEATURE_READER_WRITER_CANCEL
             // Give ReadDirectAsync some time to complete the operation gracefully.
             // Hold the semaphore before disposal.
             var readerSemaphoreVacant = readerSemaphore.Wait(1000);
