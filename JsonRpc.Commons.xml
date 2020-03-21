@@ -101,6 +101,15 @@
             The base exception class that indicates the general error of JSON RPC client.
             </summary>
     </member>
+    <member name="M:JsonRpc.Client.JsonRpcClientException.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcClientException</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
     <member name="M:JsonRpc.Client.JsonRpcClientException.#ctor(System.String)">
       <summary>
         <markup>
@@ -215,6 +224,33 @@
             The exception that indicates the violation of a server/client-side RPC contract.
             </summary>
     </member>
+    <member name="M:JsonRpc.Client.JsonRpcContractException.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcContractException</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcContractException.#ctor(System.String)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcContractException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcContractException.#ctor(System.String)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
     <member name="M:JsonRpc.Client.JsonRpcContractException.#ctor(System.String,JsonRpc.Messages.Message)">
       <summary>
         <markup>
@@ -315,6 +351,15 @@
             The exception that indicates an error from remote RPC endpoint.
             </summary>
     </member>
+    <member name="M:JsonRpc.Client.JsonRpcRemoteException.#ctor">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcRemoteException</parameter>
+          </include>
+        </markup>
+      </summary>
+    </member>
     <member name="M:JsonRpc.Client.JsonRpcRemoteException.#ctor(JsonRpc.Messages.ResponseError)">
       <summary>
         <markup>
@@ -329,6 +374,24 @@
             <parameter>param</parameter>
             <parameter>error</parameter>
             <parameter>M:JsonRpc.Client.JsonRpcRemoteException.#ctor(JsonRpc.Messages.ResponseError)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcRemoteException.#ctor(System.String)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcRemoteException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="message">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>message</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcRemoteException.#ctor(System.String)</parameter>
           </include>
         </markup>
       </param>
@@ -718,49 +781,12 @@
     </member>
     <member name="M:JsonRpc.Contracts.JsonRpcContractResolver.CreateParameter(System.Type,System.Reflection.ParameterInfo,JsonRpc.Contracts.JsonRpcMethodAttribute,JsonRpc.Contracts.JsonRpcScopeAttribute)">
       <summary>
-        <markup>
-          <include item="SMCMissingTag">
-            <parameter>summary</parameter>
-            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateParameter(System.Type,System.Reflection.ParameterInfo,JsonRpc.Contracts.JsonRpcMethodAttribute,JsonRpc.Contracts.JsonRpcScopeAttribute)</parameter>
-          </include>
-        </markup>
-      </summary>
-      <param name="serviceType">
-        <markup>
-          <include item="SMCMissingParamTag">
-            <parameter>param</parameter>
-            <parameter>serviceType</parameter>
-            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateParameter(System.Type,System.Reflection.ParameterInfo,JsonRpc.Contracts.JsonRpcMethodAttribute,JsonRpc.Contracts.JsonRpcScopeAttribute)</parameter>
-          </include>
-        </markup>
-      </param>
-      <param name="parameter">
-        <markup>
-          <include item="SMCMissingParamTag">
-            <parameter>param</parameter>
-            <parameter>parameter</parameter>
-            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateParameter(System.Type,System.Reflection.ParameterInfo,JsonRpc.Contracts.JsonRpcMethodAttribute,JsonRpc.Contracts.JsonRpcScopeAttribute)</parameter>
-          </include>
-        </markup>
-      </param>
-      <param name="methodAttribute">
-        <markup>
-          <include item="SMCMissingParamTag">
-            <parameter>param</parameter>
-            <parameter>methodAttribute</parameter>
-            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateParameter(System.Type,System.Reflection.ParameterInfo,JsonRpc.Contracts.JsonRpcMethodAttribute,JsonRpc.Contracts.JsonRpcScopeAttribute)</parameter>
-          </include>
-        </markup>
-      </param>
-      <param name="scopeAttribute">
-        <markup>
-          <include item="SMCMissingParamTag">
-            <parameter>param</parameter>
-            <parameter>scopeAttribute</parameter>
-            <parameter>M:JsonRpc.Contracts.JsonRpcContractResolver.CreateParameter(System.Type,System.Reflection.ParameterInfo,JsonRpc.Contracts.JsonRpcMethodAttribute,JsonRpc.Contracts.JsonRpcScopeAttribute)</parameter>
-          </include>
-        </markup>
-      </param>
+            Creates the <see cref="T:JsonRpc.Contracts.JsonRpcParameter" /> contract with the specified CLR parameter info.
+            </summary>
+      <param name="serviceType">Type of the JSON RPC service object.</param>
+      <param name="parameter">CLR parameter object.</param>
+      <param name="methodAttribute">Custom attribute applied to the CLR method, or <c>null</c> if none applied.</param>
+      <param name="scopeAttribute">Custom attribute applied to the JSON RPC scope, or <c>null</c> if none applied.</param>
     </member>
     <member name="M:JsonRpc.Contracts.JsonRpcContractResolver.CreateServerContract(System.Collections.Generic.IEnumerable{System.Type})">
       <summary>
@@ -997,7 +1023,7 @@
     </member>
     <member name="P:JsonRpc.Contracts.JsonRpcParameter.IsTask">
       <summary>
-            Whether the parameter is a Task or Task&lt;ParameterType&gt; instead of ParameterType itself.
+            Whether the parameter is a <see cref="T:System.Threading.Tasks.Task" /> or <c>Task&lt;ParameterType&gt;</c> instead of ParameterType itself.
             </summary>
     </member>
     <member name="P:JsonRpc.Contracts.JsonRpcParameter.ParameterName">

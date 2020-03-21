@@ -82,7 +82,7 @@
     </member>
     <member name="M:JsonRpc.Streams.ByLineTextMessageWriter.#ctor(System.IO.Stream)">
       <summary>
-            Initialize a message writer to <see cref="T:System.IO.Stream" />.
+            Initialize a line-by-line message writer to <see cref="T:System.IO.Stream" />.
             </summary>
       <param name="stream">The underlying stream. A <see cref="T:System.IO.TextWriter" /> with UTF-8 encoding will be created based on it.</param>
     </member>
@@ -91,12 +91,7 @@
             Initialize a message writer to <see cref="T:System.IO.Stream" />.
             </summary>
       <param name="stream">The underlying stream. A <see cref="T:System.IO.TextWriter" /> with UTF-8 encoding will be created based on it.</param>
-      <param name="delimiter">
-            The indicator for the end of a message.
-            If the writer writes a line that is the same as this parameter, the current message is finished.
-            Use <c>null</c> to indicate that each line, as long as it is not empty,
-            should be treated a message.
-            </param>
+      <param name="delimiter">The delimiter between the messages.</param>
     </member>
     <member name="M:JsonRpc.Streams.ByLineTextMessageWriter.#ctor(System.IO.TextWriter)">
       <summary>
@@ -591,31 +586,15 @@
     </member>
     <member name="M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)">
       <summary>
-        <markup>
-          <include item="SMCMissingTag">
-            <parameter>summary</parameter>
-            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)</parameter>
-          </include>
-        </markup>
-      </summary>
-      <param name="request">
-        <markup>
-          <include item="SMCMissingParamTag">
-            <parameter>param</parameter>
-            <parameter>request</parameter>
-            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)</parameter>
-          </include>
-        </markup>
-      </param>
-      <param name="cancellationToken">
-        <markup>
-          <include item="SMCMissingParamTag">
-            <parameter>param</parameter>
-            <parameter>cancellationToken</parameter>
-            <parameter>M:JsonRpc.Streams.StreamRpcClientHandler.SendAsync(JsonRpc.Messages.RequestMessage,System.Threading.CancellationToken)</parameter>
-          </include>
-        </markup>
-      </param>
+            Asynchronously sends a JSON RPC Request message, and wait for the Response (if the Request is not a Notification).
+            </summary>
+      <param name="request">The request message to be sent.</param>
+      <param name="cancellationToken">A token used to cancel the transmitting request, or to stop waiting for the Response.</param>
+      <returns>A task that returns JSON RPC response, or <c>null</c> if the Request is a Notification.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="request" /> is <c>null</c>.</exception>
+      <exception cref="T:JsonRpc.Client.JsonRpcClientException">An exception has occurred while transmitting the request.
+            Note that a JSON RPC Response with Error will be returned and no exception should be thrown.</exception>
     </member>
     <member name="T:JsonRpc.Streams.StreamRpcClientOptions">
       <summary>

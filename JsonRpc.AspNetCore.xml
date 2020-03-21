@@ -117,31 +117,15 @@
     </member>
     <member name="M:JsonRpc.AspNetCore.HttpContextServiceFactory.CreateService(System.Type,JsonRpc.Server.RequestContext)">
       <summary>
-        <markup>
-          <include item="SMCMissingTag">
-            <parameter>summary</parameter>
-            <parameter>M:JsonRpc.AspNetCore.HttpContextServiceFactory.CreateService(System.Type,JsonRpc.Server.RequestContext)</parameter>
-          </include>
-        </markup>
-      </summary>
-      <param name="serviceType">
-        <markup>
-          <include item="SMCMissingParamTag">
-            <parameter>param</parameter>
-            <parameter>serviceType</parameter>
-            <parameter>M:JsonRpc.AspNetCore.HttpContextServiceFactory.CreateService(System.Type,JsonRpc.Server.RequestContext)</parameter>
-          </include>
-        </markup>
-      </param>
-      <param name="context">
-        <markup>
-          <include item="SMCMissingParamTag">
-            <parameter>param</parameter>
-            <parameter>context</parameter>
-            <parameter>M:JsonRpc.AspNetCore.HttpContextServiceFactory.CreateService(System.Type,JsonRpc.Server.RequestContext)</parameter>
-          </include>
-        </markup>
-      </param>
+            Creates the specified JSON RPC service instance.
+            </summary>
+      <param name="serviceType">The desired service type.</param>
+      <param name="context">The request context.</param>
+      <returns>A service instance.</returns>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="serviceType" /> is <c>null</c>.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="serviceType" /> is not a derived type of <see cref="T:JsonRpc.Server.IJsonRpcService" />.</exception>
     </member>
     <member name="F:JsonRpc.AspNetCore.HttpContextServiceFactory.Default">
       <summary>

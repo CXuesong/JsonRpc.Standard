@@ -44,22 +44,11 @@
     </member>
     <member name="M:JsonRpc.WebSockets.WebSocketMessageReader.ReadDirectAsync(System.Threading.CancellationToken)">
       <summary>
-        <markup>
-          <include item="SMCMissingTag">
-            <parameter>summary</parameter>
-            <parameter>M:JsonRpc.WebSockets.WebSocketMessageReader.ReadDirectAsync(System.Threading.CancellationToken)</parameter>
-          </include>
-        </markup>
-      </summary>
-      <param name="cancellationToken">
-        <markup>
-          <include item="SMCMissingParamTag">
-            <parameter>param</parameter>
-            <parameter>cancellationToken</parameter>
-            <parameter>M:JsonRpc.WebSockets.WebSocketMessageReader.ReadDirectAsync(System.Threading.CancellationToken)</parameter>
-          </include>
-        </markup>
-      </param>
+            When overridden in the derived class, directly asynchronously reads the next message.
+            </summary>
+      <param name="cancellationToken">A token that cancels the operation OR indicates the current instance has just been disposed.</param>
+      <returns>The message just read, or <c>null</c> if EOF has reached.</returns>
+      <exception cref="T:System.OperationCanceledException">The operation has been canceled.</exception>
     </member>
     <member name="P:JsonRpc.WebSockets.WebSocketMessageReader.WebSocket">
       <summary>
@@ -104,31 +93,12 @@
     </member>
     <member name="M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Messages.Message,System.Threading.CancellationToken)">
       <summary>
-        <markup>
-          <include item="SMCMissingTag">
-            <parameter>summary</parameter>
-            <parameter>M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Messages.Message,System.Threading.CancellationToken)</parameter>
-          </include>
-        </markup>
-      </summary>
-      <param name="message">
-        <markup>
-          <include item="SMCMissingParamTag">
-            <parameter>param</parameter>
-            <parameter>message</parameter>
-            <parameter>M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Messages.Message,System.Threading.CancellationToken)</parameter>
-          </include>
-        </markup>
-      </param>
-      <param name="cancellationToken">
-        <markup>
-          <include item="SMCMissingParamTag">
-            <parameter>param</parameter>
-            <parameter>cancellationToken</parameter>
-            <parameter>M:JsonRpc.WebSockets.WebSocketMessageWriter.WriteAsync(JsonRpc.Messages.Message,System.Threading.CancellationToken)</parameter>
-          </include>
-        </markup>
-      </param>
+            Asynchronously writes a message.
+            </summary>
+      <param name="message">The message to write.</param>
+      <param name="cancellationToken">A token that cancels the operation.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="message" /> is <c>null</c>.</exception>
     </member>
   </members>
 </doc>

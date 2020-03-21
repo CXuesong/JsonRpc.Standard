@@ -944,7 +944,7 @@
     <HelpKINode Title="ByLineTextMessageReader.ReadDirectAsync Method " Url="html/964d3bae-4c6b-3303-e296-acde0edcddd8.htm" />
     <HelpKINode Title="PartwiseStreamMessageReader.ReadDirectAsync Method " Url="html/e3b51eee-626f-dd71-857b-b706d039343c.htm" />
     <HelpKINode Title="QueuedMessageReader.ReadDirectAsync Method " Url="html/3c551474-0973-656c-4f9c-7c4caa5f5e9c.htm" />
-    <HelpKINode Title="WebSocketMessageReader.ReadDirectAsync Method " Url="html/f3b1096e-6da9-e78c-7a0c-1c46b9904d50.htm" />
+    <HelpKINode Title="WebSocketMessageReader.ReadDirectAsync Method " Url="html/6b332964-3131-8c3c-67b3-902ab2f3f7a9.htm" />
   </HelpKINode>
   <HelpKINode Title="Reader property" Url="html/2590cf5d-ffa7-4211-110b-e71d1b66f4b5.htm" />
   <HelpKINode Title="ReadJson method" Url="html/57ba395b-83d2-aa74-71f2-2e766d5c3a72.htm" />
@@ -1036,7 +1036,7 @@
     <HelpKINode Title="IJsonRpcClientHandler.SendAsync Method " Url="html/f6c506f4-a522-dabf-f3e9-45dc4d6ba7ae.htm" />
     <HelpKINode Title="JsonRpcClient.SendAsync Method " Url="html/89e006d3-fbc4-34b8-9aa9-9f72df680185.htm" />
     <HelpKINode Title="JsonRpcClientHandler.SendAsync Method " Url="html/fdd274c2-61d0-a6aa-8460-7a438344e0f2.htm" />
-    <HelpKINode Title="StreamRpcClientHandler.SendAsync Method " Url="html/c3b05480-a4d6-5219-77cf-ed35343fc1da.htm" />
+    <HelpKINode Title="StreamRpcClientHandler.SendAsync Method " Url="html/5851cb8f-83a7-74e9-946f-05a1d42ec96b.htm" />
   </HelpKINode>
   <HelpKINode Title="SendAsync(Of TResult) method" Url="html/049b327a-24fb-b9e0-683e-ac5f4e775c3b.htm" />
   <HelpKINode Title="SendAsync&lt;TResult&gt; method" Url="html/049b327a-24fb-b9e0-683e-ac5f4e775c3b.htm" />
@@ -1091,7 +1091,7 @@
   <HelpKINode Title="StreamRpcClientHandler.Attach method" Url="html/fa044340-4f01-a143-4128-5d3d71d7299d.htm" />
   <HelpKINode Title="StreamRpcClientHandler.ImpendingRequestCount property" Url="html/5b97ff27-6c86-7706-4537-2c682e2d18b9.htm" />
   <HelpKINode Title="StreamRpcClientHandler.Options property" Url="html/fdb04f6f-ad0d-e187-119b-bc8ff55a72c5.htm" />
-  <HelpKINode Title="StreamRpcClientHandler.SendAsync method" Url="html/c3b05480-a4d6-5219-77cf-ed35343fc1da.htm" />
+  <HelpKINode Title="StreamRpcClientHandler.SendAsync method" Url="html/5851cb8f-83a7-74e9-946f-05a1d42ec96b.htm" />
   <HelpKINode Title="StreamRpcClientHandler.StreamRpcClientHandler constructor" Url="html/28d455d2-f5b1-0b43-226a-14c4cc9ca179.htm" />
   <HelpKINode Title="StreamRpcClientOptions enumeration" Url="html/bfe7ef5f-2aa6-c317-a5be-222689288e0f.htm" />
   <HelpKINode Title="StreamRpcServerHandler class">
@@ -1150,7 +1150,7 @@
     <HelpKINode Title="properties" Url="html/c18f1ebf-b641-27e4-9c97-4ee1874ed2ac.htm" />
   </HelpKINode>
   <HelpKINode Title="WebSocketMessageReader.DeserializeMessage method" Url="html/d862f19f-32da-3c30-2347-f910353fb683.htm" />
-  <HelpKINode Title="WebSocketMessageReader.ReadDirectAsync method" Url="html/f3b1096e-6da9-e78c-7a0c-1c46b9904d50.htm" />
+  <HelpKINode Title="WebSocketMessageReader.ReadDirectAsync method" Url="html/6b332964-3131-8c3c-67b3-902ab2f3f7a9.htm" />
   <HelpKINode Title="WebSocketMessageReader.WebSocket property" Url="html/30f2c94c-96ac-6d22-b2d7-8ad25a0c4a35.htm" />
   <HelpKINode Title="WebSocketMessageReader.WebSocketClose property" Url="html/7f9d08e6-d9a8-3182-dad2-f7011b2a143c.htm" />
   <HelpKINode Title="WebSocketMessageReader.WebSocketMessageReader constructor" Url="html/0e93a626-4231-5412-50d9-e068e2cfb779.htm" />
@@ -1163,13 +1163,13 @@
   <HelpKINode Title="WebSocketMessageWriter.DeserializeMessage method" Url="html/e2e6d79b-755c-5bd9-e879-ccfa1fcede7a.htm" />
   <HelpKINode Title="WebSocketMessageWriter.WebSocket property" Url="html/bc421eea-f0d8-cd69-5760-4e705980028c.htm" />
   <HelpKINode Title="WebSocketMessageWriter.WebSocketMessageWriter constructor" Url="html/ecdf0854-ea3d-321e-eb13-93993ca80385.htm" />
-  <HelpKINode Title="WebSocketMessageWriter.WriteAsync method" Url="html/9154bcde-8de8-56a4-545a-cc55a013669e.htm" />
+  <HelpKINode Title="WebSocketMessageWriter.WriteAsync method" Url="html/f575362a-e017-b0fc-75aa-de977c890dcc.htm" />
   <HelpKINode Title="Welcome" Url="html/7836b300-e8f3-40ae-bf6e-9bc1dc4883d7.htm" />
   <HelpKINode Title="WriteAsync method">
     <HelpKINode Title="ByLineTextMessageWriter.WriteAsync Method " Url="html/60638dd2-999a-8048-6ae3-cc47768dd7a1.htm" />
     <HelpKINode Title="MessageWriter.WriteAsync Method " Url="html/df44b848-6ccb-c779-94e1-ac0e5272542e.htm" />
     <HelpKINode Title="PartwiseStreamMessageWriter.WriteAsync Method " Url="html/eda02000-eacb-5ef0-03b0-12875a21adcf.htm" />
-    <HelpKINode Title="WebSocketMessageWriter.WriteAsync Method " Url="html/9154bcde-8de8-56a4-545a-cc55a013669e.htm" />
+    <HelpKINode Title="WebSocketMessageWriter.WriteAsync Method " Url="html/f575362a-e017-b0fc-75aa-de977c890dcc.htm" />
   </HelpKINode>
   <HelpKINode Title="WriteJson method">
     <HelpKINode Title="Message.WriteJson Method " Url="html/0e546498-5165-118a-5433-404272e84dcb.htm" />
