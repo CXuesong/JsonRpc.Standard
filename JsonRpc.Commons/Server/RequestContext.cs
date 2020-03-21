@@ -12,11 +12,9 @@ namespace JsonRpc.Server
         public RequestContext(IJsonRpcServiceHost serviceHost, IServiceFactory serviceFactory,
             IFeatureCollection features, RequestMessage request, CancellationToken cancellationToken)
         {
-            if (serviceHost == null) throw new ArgumentNullException(nameof(serviceHost));
-            if (request == null) throw new ArgumentNullException(nameof(request));
-            ServiceHost = serviceHost;
+            ServiceHost = serviceHost ?? throw new ArgumentNullException(nameof(serviceHost));
             ServiceFactory = serviceFactory;
-            Request = request;
+            Request = request ?? throw new ArgumentNullException(nameof(request));
             Features = features;
             if (!request.IsNotification)
                 Response = new ResponseMessage(request.Id);

@@ -17,6 +17,11 @@ namespace JsonRpc.Client
 #endif
     public class JsonRpcClientException : Exception
     {
+        public JsonRpcClientException()
+            : this(null, null)
+        {
+        }
+
         public JsonRpcClientException(string message)
             : this(message, null)
         {
@@ -43,6 +48,16 @@ namespace JsonRpc.Client
 #endif
     public class JsonRpcContractException : JsonRpcClientException
     {
+        public JsonRpcContractException()
+            : this(null, null, null)
+        {
+        }
+
+        public JsonRpcContractException(string message)
+            : this(message, null, null)
+        {
+        }
+
         public JsonRpcContractException(string message, Exception innerException)
             : this(message, null, innerException)
         {
@@ -91,6 +106,16 @@ namespace JsonRpc.Client
 #endif
     public class JsonRpcRemoteException : JsonRpcClientException
     {
+        public JsonRpcRemoteException()
+            : this(null, null, null)
+        {
+        }
+
+        public JsonRpcRemoteException(string message)
+            : this(message, null, null)
+        {
+        }
+
         public JsonRpcRemoteException(string message, Exception innerException)
             : this(message, null, innerException)
         {

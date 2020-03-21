@@ -17,8 +17,7 @@ namespace JsonRpc.Server
 
         internal JsonRpcServiceHost(JsonRpcServerContract contract)
         {
-            if (contract == null) throw new ArgumentNullException(nameof(contract));
-            Contract = contract;
+            Contract = contract ?? throw new ArgumentNullException(nameof(contract));
         }
 
         internal JsonRpcServerContract Contract { get; }

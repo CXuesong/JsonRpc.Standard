@@ -9,8 +9,7 @@ namespace UnitTestProject1.Helpers
 
         public TestLoggerProvider(ITestOutputHelper outputHelper)
         {
-            if (outputHelper == null) throw new ArgumentNullException(nameof(outputHelper));
-            OutputHelper = outputHelper;
+            OutputHelper = outputHelper ?? throw new ArgumentNullException(nameof(outputHelper));
         }
 
         public ITestOutputHelper OutputHelper { get; }
@@ -33,8 +32,7 @@ namespace UnitTestProject1.Helpers
 
         public TestLogger(ITestOutputHelper outputHelper, string name)
         {
-            if (outputHelper == null) throw new ArgumentNullException(nameof(outputHelper));
-            OutputHelper = outputHelper;
+            OutputHelper = outputHelper ?? throw new ArgumentNullException(nameof(outputHelper));
             Name = name;
         }
 

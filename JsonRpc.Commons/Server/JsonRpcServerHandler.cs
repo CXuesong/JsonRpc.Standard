@@ -12,8 +12,7 @@ namespace JsonRpc.Server
 
         public JsonRpcServerHandler(IJsonRpcServiceHost serviceHost)
         {
-            if (serviceHost == null) throw new ArgumentNullException(nameof(serviceHost));
-            ServiceHost = serviceHost;
+            ServiceHost = serviceHost ?? throw new ArgumentNullException(nameof(serviceHost));
         }
 
         /// <summary>

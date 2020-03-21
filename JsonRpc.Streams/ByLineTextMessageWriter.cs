@@ -39,9 +39,8 @@ namespace JsonRpc.Streams
         /// </param>
         public ByLineTextMessageWriter(TextWriter writer, string delimiter)
         {
-            if (writer == null) throw new ArgumentNullException(nameof(writer));
             if (string.IsNullOrEmpty(delimiter)) throw new ArgumentException("delimiter cannot be null or empty.", nameof(delimiter));
-            Writer = writer;
+            Writer = writer ?? throw new ArgumentNullException(nameof(writer));
             Delimiter = delimiter;
         }
 
@@ -60,8 +59,7 @@ namespace JsonRpc.Streams
         /// <param name="delimiter">The delimiter between the messages.</param>
         public ByLineTextMessageWriter(Stream stream, string delimiter)
         {
-            if (stream == null) throw new ArgumentNullException(nameof(stream));
-            underlyingStream = stream;
+            underlyingStream = stream ?? throw new ArgumentNullException(nameof(stream));
             Writer = new StreamWriter(stream);
             Delimiter = delimiter;
         }

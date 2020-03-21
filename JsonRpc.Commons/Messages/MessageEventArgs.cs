@@ -14,8 +14,7 @@ namespace JsonRpc.Messages
 
         public MessageEventArgs(Message message)
         {
-            if (message == null) throw new ArgumentNullException(nameof(message));
-            Message = message;
+            Message = message ?? throw new ArgumentNullException(nameof(message));
         }
     }
 }

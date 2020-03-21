@@ -28,8 +28,7 @@ namespace JsonRpc.Client
         /// <param name="handler">Handler used to transmit the messages.</param>
         public JsonRpcClient(IJsonRpcClientHandler handler)
         {
-            if (handler == null) throw new ArgumentNullException(nameof(handler));
-            Handler = handler;
+            Handler = handler ?? throw new ArgumentNullException(nameof(handler));
             requestIdPrefix = RuntimeHelpers.GetHashCode(this) + "#";
         }
 

@@ -46,8 +46,7 @@ namespace JsonRpc.AspNetCore
         public JsonRpcBuilder(JsonRpcOptions options, IServiceCollection serviceCollection)
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
-            if (serviceCollection == null) throw new ArgumentNullException(nameof(serviceCollection));
-            this.serviceCollection = serviceCollection;
+            this.serviceCollection = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
             injectServices = options.InjectServiceTypes;
             serviceHostBuilder = new JsonRpcServiceHostBuilder
             {

@@ -35,9 +35,8 @@ namespace JsonRpc.Streams
         /// <remarks>Empty messages separated by <paramref name="delimiter"/> will be ignored.</remarks>
         public ByLineTextMessageReader(TextReader reader, string delimiter)
         {
-            if (reader == null) throw new ArgumentNullException(nameof(reader));
             if (string.IsNullOrEmpty(delimiter)) throw new ArgumentException("delimiter cannot be null or empty.", nameof(delimiter));
-            Reader = reader;
+            Reader = reader ?? throw new ArgumentNullException(nameof(reader));
             Delimiter = delimiter;
             delimiterArray = delimiter.ToCharArray();
         }
@@ -58,9 +57,8 @@ namespace JsonRpc.Streams
         /// <remarks>Empty messages separated by <paramref name="delimiter"/> will be ignored.</remarks>
         public ByLineTextMessageReader(Stream stream, string delimiter)
         {
-            if (stream == null) throw new ArgumentNullException(nameof(stream));
             if (string.IsNullOrEmpty(delimiter)) throw new ArgumentException("delimiter cannot be null or empty.", nameof(delimiter));
-            underlyingStream = stream;
+            underlyingStream = stream ?? throw new ArgumentNullException(nameof(stream));
             Reader = new StreamReader(stream, Utility.UTF8NoBom, false, 1024, true);
             Delimiter = delimiter;
             delimiterArray = delimiter.ToCharArray();

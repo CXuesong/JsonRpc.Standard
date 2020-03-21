@@ -13,9 +13,8 @@ namespace JsonRpc.AspNetCore
 
         public AspNetCoreFeatureCollection(IFeatureCollection baseCollection, HttpContext context)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
             BaseCollection = baseCollection;
-            Context = context;
+            Context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public IFeatureCollection BaseCollection { get; }

@@ -37,8 +37,7 @@ namespace JsonRpc.Contracts
 
         public JsonValueConverter(JsonSerializer serializer)
         {
-            if (serializer == null) throw new ArgumentNullException(nameof(serializer));
-            this.serializer = serializer;
+            this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
         /// <inheritdoc />

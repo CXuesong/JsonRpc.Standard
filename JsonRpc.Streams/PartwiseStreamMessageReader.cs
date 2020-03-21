@@ -30,8 +30,7 @@ namespace JsonRpc.Streams
         /// <param name="stream">The stream to read messages from.</param>
         public PartwiseStreamMessageReader(Stream stream)
         {
-            if (stream == null) throw new ArgumentNullException(nameof(stream));
-            Stream = stream;
+            Stream = stream ?? throw new ArgumentNullException(nameof(stream));
         }
 
         /// <summary>

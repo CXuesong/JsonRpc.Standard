@@ -15,8 +15,7 @@ namespace UnitTestProject1.Helpers
 
         public JsonRpcHttpMessageDirectHandler(IJsonRpcServiceHost serviceHost)
         {
-            if (serviceHost == null) throw new ArgumentNullException(nameof(serviceHost));
-            ServiceHost = serviceHost;
+            ServiceHost = serviceHost ?? throw new ArgumentNullException(nameof(serviceHost));
         }
 
         public IJsonRpcServiceHost ServiceHost { get; }

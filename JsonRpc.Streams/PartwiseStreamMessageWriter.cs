@@ -24,8 +24,7 @@ namespace JsonRpc.Streams
         /// <param name="stream">The stream to write messages to.</param>
         public PartwiseStreamMessageWriter(Stream stream)
         {
-            if (stream == null) throw new ArgumentNullException(nameof(stream));
-            Stream = stream;
+            Stream = stream ?? throw new ArgumentNullException(nameof(stream));
         }
 
         /// <summary>
