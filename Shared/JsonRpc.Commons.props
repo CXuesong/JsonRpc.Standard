@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup Condition=" '$(TargetFramework)'=='netcoreapp2.1' OR '$(TargetFramework)'=='netstandard2.1' " >
+    <DefineConstants>$(DefineConstants);BCL_FEATURE_READER_WRITER_CANCEL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'netcoreapp3.0' ">
+    <DefineConstants>$(DefineConstants);BCL_FEATURE_ASYNC_ENUMERABLE</DefineConstants>
+  </PropertyGroup>
+</Project>

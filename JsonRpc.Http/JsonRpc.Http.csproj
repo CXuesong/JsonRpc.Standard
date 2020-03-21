@@ -1,31 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../Shared/JsonRpc.Packages.props" />
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;net45</TargetFrameworks>
-    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.5.0</Version>
-    <Authors>CXuesong</Authors>
-    <Company />
     <PackageId>CXuesong.JsonRpc.Http</PackageId>
     <Description>HttpClient-based JsonRpcClientHandler for CXuesong.JsonRpc.Standard.</Description>
     <PackageTags>json rpc json-rpc json-rpc-client http</PackageTags>
-    <PackageProjectUrl>https://github.com/CXuesong/JsonRpc.Standard</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/CXuesong/JsonRpc.Standard</RepositoryUrl>
-    <NeutralLanguage>en-us</NeutralLanguage>
-    <PackageReleaseNotes>See https://github.com/CXuesong/JsonRpc.Standard/releases .</PackageReleaseNotes>
-    <Copyright>Copyright 2017 CXuesong</Copyright>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>../JsonRpc.Standard.snk</AssemblyOriginatorKeyFile>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\JsonRpc.Commons\JsonRpc.Commons.csproj" />

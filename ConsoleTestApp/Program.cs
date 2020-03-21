@@ -8,7 +8,7 @@ using JsonRpc.Contracts;
 using JsonRpc.DynamicProxy.Client;
 using JsonRpc.Server;
 using JsonRpc.Streams;
-using Nerdbank;
+using Nerdbank.Streams;
 
 namespace ConsoleTestApp
 {
@@ -27,7 +27,7 @@ namespace ConsoleTestApp
             Console.OutputEncoding = Encoding.UTF8;
             // Here we use two connected streams to simulate the console I/O
             // Content written to streams.Item1 will be read from streams.Item2, vice versa.
-            var streams = FullDuplexStream.CreateStreams();
+            var streams = FullDuplexStream.CreatePair();
             // Let's start the test client first.
             var clientTask = RunClientAsync(streams.Item2);
             // Configure & build service host

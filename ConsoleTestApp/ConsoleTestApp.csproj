@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Nerdbank.FullDuplexStream" Version="1.0.9" />
+    <PackageReference Include="Nerdbank.Streams" Version="2.4.60" />
   </ItemGroup>
 
   <ItemGroup>

@@ -116,7 +116,7 @@ namespace JsonRpc.Streams
                     }
                     endOfMessageIndexLowerEstimation = Math.Max(0, readerBuffer.Length - delimiterArray.Length + 1);
                     // Read more content.
-#if NETCOREAPP2_1
+#if FEATURES_READER_WRITER_CANCEL
                     var count = await Reader.ReadAsync(new Memory<char>(buffer), cancellationToken).ConfigureAwait(false);
 #else
                     var count = await Reader.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false);

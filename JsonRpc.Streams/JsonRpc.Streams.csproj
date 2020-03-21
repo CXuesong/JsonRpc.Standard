@@ -1,28 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../Shared/JsonRpc.Packages.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard1.1;netcoreapp2.1</TargetFrameworks>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.5.2</Version>
-    <Authors>CXuesong</Authors>
-    <Company />
+    <TargetFrameworks>net45;netstandard1.1;netcoreapp2.1;netstandard2.1</TargetFrameworks>
     <PackageId>CXuesong.JsonRpc.Streams</PackageId>
     <Description>Stream-based server and client handler for CXuesong.JsonRpc.Standard.</Description>
     <PackageTags>json rpc json-rpc json-rpc-server json-rpc-client stream</PackageTags>
-    <PackageProjectUrl>https://github.com/CXuesong/JsonRpc.Standard</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/CXuesong/JsonRpc.Standard</RepositoryUrl>
-    <NeutralLanguage>en-us</NeutralLanguage>
-    <PackageReleaseNotes>See https://github.com/CXuesong/JsonRpc.Standard/releases .</PackageReleaseNotes>
-    <Copyright>Copyright 2019 CXuesong</Copyright>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>../JsonRpc.Standard.snk</AssemblyOriginatorKeyFile>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' != 'netcoreapp2.1' ">
-    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
