@@ -2,8 +2,7 @@
   <Import Project="../Shared/JsonRpc.Packages.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.1;net45;netstandard2.1</TargetFrameworks>
-    <Version>0.5.3</Version>
+    <TargetFrameworks>net45;netstandard1.1;netstandard2.1</TargetFrameworks>
     <PackageId>CXuesong.JsonRpc.Commons</PackageId>
     <Description>An asynchronous JSON RPC server &amp; client library.</Description>
     <PackageTags>json rpc json-rpc json-rpc-server json-rpc-client</PackageTags>

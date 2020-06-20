@@ -11,23 +11,23 @@ function JsonRpcClient(/**@type string*/ endpointUrl) {
         /**@type JsonRpcClient */
         var _this = this;
         this._ws.addEventListener("message",
-	        function(e) {
-		        if (typeof (e.data) === "string") {
-			        var data = JSON.parse(e.data);
-			        if (data.jsonrpc !== "2.0" || data.id == null) {
-				        console.warn("Ignored invalid JSON-RPC message from server.", data);
-			        }
-			        var d = _this._impendingResponses[data.id];
-			        delete _this._impendingResponses[data.id];
-			        if (data.error) {
-				        d.reject(data.error);
-			        } else {
-				        d.resolve(data.result);
-			        }
-		        } else {
-			        console.warn("Received non-JSON-RPC message from server.", e.data);
-		        }
-	        });
+            function(e) {
+                if (typeof (e.data) === "string") {
+                    var data = JSON.parse(e.data);
+                    if (data.jsonrpc !== "2.0" || data.id == null) {
+                        console.warn("Ignored invalid JSON-RPC message from server.", data);
+                    }
+                    var d = _this._impendingResponses[data.id];
+                    delete _this._impendingResponses[data.id];
+                    if (data.error) {
+                        d.reject(data.error);
+                    } else {
+                        d.resolve(data.result);
+                    }
+                } else {
+                    console.warn("Received non-JSON-RPC message from server.", e.data);
+                }
+            });
     }
 }
 
@@ -52,13 +52,17 @@ JsonRpcClient.prototype.send = function (methodName, parameters, id) {
 	        d.resolve();
         this._ws.send(JSON.stringify(body));
     } else {
-        $.post(this._endpointUrl, JSON.stringify(body)).done(function (response, status, xhr) {
+        $.post({
+            url: this._endpointUrl,
+            contentType: "application/json",
+            data: JSON.stringify(body),
+        }).done(function(response, status, xhr) {
             if (response.error) {
                 d.reject(response.error, xhr.status);
             } else {
                 d.resolve(response.result, xhr.status);
             }
-        }).fail(function (xhr, status, error) {
+        }).fail(function(xhr, status, error) {
             var response = xhr.responseJSON;
             d.reject(response.error, xhr.status);
         });

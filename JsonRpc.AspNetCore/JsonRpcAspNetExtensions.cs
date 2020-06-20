@@ -5,6 +5,9 @@ using JsonRpc.Server;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+#if NETCOREAPP
+using Microsoft.AspNetCore.Routing;
+#endif
 
 namespace JsonRpc.AspNetCore
 {
@@ -32,6 +35,15 @@ namespace JsonRpc.AspNetCore
             return builder;
         }
 
+        // TODO support IEndpointRouteBuilder when we can add conditional FrameworkReference without breaking the whole project.
+#if NETCOREAPP
+        public static IApplicationBuilder MapJsonRpc(this IEndpointRouteBuilder builder, string requestPath,
+            Func<HttpContext, AspNetCoreRpcServerHandler> serverHandlerFactory)
+        {
+
+        }
+#endif
+
         /// <summary>
         /// Uses <see cref="AspNetCoreRpcServerHandler"/> to handle the JSON RPC requests on certain URL.
         /// </summary>
@@ -49,7 +61,7 @@ namespace JsonRpc.AspNetCore
             {
                 if (context.Request.Path.Value == requestPath)
                 {
-                    if (context.Request.Method != "POST")
+                    if (!HttpMethods.IsPost(context.Request.Method))
                     {
                         context.Response.StatusCode = 405;
                         context.Response.ContentType = "text/plain;charset=utf-8";
@@ -101,5 +113,6 @@ namespace JsonRpc.AspNetCore
             if (requestContext == null) throw new ArgumentNullException(nameof(requestContext));
             return requestContext.Features.Get<IAspNetCoreFeature>()?.HttpContext;
         }
+
     }
 }

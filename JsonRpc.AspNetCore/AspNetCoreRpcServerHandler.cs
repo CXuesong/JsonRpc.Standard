@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -104,51 +105,94 @@ namespace JsonRpc.AspNetCore
             if (context == null) throw new ArgumentNullException(nameof(context));
             if (!HttpMethods.IsPost(context.Request.Method) && !HttpMethods.IsGet(context.Request.Method))
             {
-                await WriteResponseWithStatusCodeHintAsync(context.Response,
-                    new ResponseMessage(MessageId.Empty, new ResponseError(JsonRpcErrorCode.InvalidRequest, "The request method is not allowed.", StatusCodes.Status405MethodNotAllowed)));
-                return;
-            }
-            if (!context.Request.ContentType.StartsWith("application/json", StringComparison.OrdinalIgnoreCase))
-            {
-                await WriteResponseWithStatusCodeHintAsync(context.Response,
-                    new ResponseMessage(MessageId.Empty, new ResponseError(JsonRpcErrorCode.InvalidRequest, "The request payload type is not supported.", StatusCodes.Status415UnsupportedMediaType)));
+                await WriteResponseWithStatusCodeHintAsync(context,
+                    new ResponseError(JsonRpcErrorCode.InvalidRequest, "The request method is not allowed."), StatusCodes.Status405MethodNotAllowed);
                 return;
             }
             // {"method":""}        // 13 characters
             if (context.Request.ContentLength < 12)
             {
-                await WriteResponseWithStatusCodeHintAsync(context.Response,
-                    new ResponseMessage(MessageId.Empty, new ResponseError(JsonRpcErrorCode.InvalidRequest, "The request body is too short.")));
+                await WriteResponseWithStatusCodeHintAsync(context, 
+                    new ResponseError(JsonRpcErrorCode.InvalidRequest, "The request body is too short."), 0);
+                return;
+            }
+            if (context.Request.ContentType == null || !MediaTypeHeaderValue.TryParse(context.Request.ContentType, out var contentType))
+            {
+                await WriteResponseWithStatusCodeHintAsync(context,
+                    new ResponseError(JsonRpcErrorCode.InvalidRequest, "The request payload type cannot not be parsed."),
+                    StatusCodes.Status415UnsupportedMediaType);
+                return;
+            }
+            if (!contentType.MediaType.StartsWith("application/json", StringComparison.OrdinalIgnoreCase))
+            {
+                await WriteResponseWithStatusCodeHintAsync(context,
+                    new ResponseError(JsonRpcErrorCode.InvalidRequest, "The request payload type is not supported."),
+                    StatusCodes.Status415UnsupportedMediaType);
+                return;
+            }
+            Encoding encoding;
+            try
+            {
+                encoding = string.IsNullOrEmpty(contentType.CharSet) ? Encoding.UTF8 : Encoding.GetEncoding(contentType.CharSet);
+            }
+            catch (ArgumentException)
+            {
+                await WriteResponseWithStatusCodeHintAsync(context,
+                    new ResponseError(JsonRpcErrorCode.InvalidRequest, "The request content charset is not supported."),
+                    StatusCodes.Status415UnsupportedMediaType);
                 return;
             }
             RequestMessage message;
             try
             {
-                using (var reader = new StreamReader(context.Request.Body))
-                    message = (RequestMessage) Message.LoadJson(reader);
+                var ms = Interlocked.Exchange(ref cachedMemoryStream, null) ?? new MemoryStream(4096);
+                try
+                {
+                    // Since Newtonsoft.Json does not support async object deserialization, we need to buffer it first.
+#if BCL_FEATURE_ASYNC_DISPOSABLE
+                    await
+#endif
+                        using (context.Request.Body)
+                        await context.Request.Body.CopyToAsync(ms, 4096, context.RequestAborted);
+
+                    // Then do deserialization synchronously.
+                    ms.Position = 0;
+                    using (var reader = new StreamReader(ms, encoding, false, 4096, true))
+                        message = (RequestMessage) Message.LoadJson(reader);
+                }
+                finally
+                {
+                    ms.Position = 0;
+                    ms.SetLength(0);
+                    if (Interlocked.CompareExchange(ref cachedMemoryStream, ms, null) != null)
+                        ms.Dispose();
+                }
             }
             catch (JsonReaderException ex)
             {
-                await WriteResponseWithStatusCodeHintAsync(context.Response,
-                    new ResponseMessage(MessageId.Empty, new ResponseError(JsonRpcErrorCode.InvalidRequest, ex.Message)));
+                await WriteResponseWithStatusCodeHintAsync(context,
+                    new ResponseError(JsonRpcErrorCode.InvalidRequest, ex.Message), 0);
                 return;
             }
             catch (Exception ex)
             {
-                await WriteResponseWithStatusCodeHintAsync(context.Response,
-                    new ResponseMessage(MessageId.Empty, ResponseError.FromException(ex, false)));
+                await WriteResponseWithStatusCodeHintAsync(context,
+                    new ResponseMessage(MessageId.Empty, ResponseError.FromException(ex, false)), 0);
                 return;
             }
             context.RequestAborted.ThrowIfCancellationRequested();
             var response = await ProcessRequestAsync(message, context, false);
-            await WriteResponseWithStatusCodeHintAsync(context.Response, response);
+            await WriteResponseWithStatusCodeHintAsync(context, response, 0);
         }
 
-        private Task WriteResponseWithStatusCodeHintAsync(HttpResponse httpResponse, ResponseMessage response, int statusCodeHint = 0)
+        private Task WriteResponseWithStatusCodeHintAsync(HttpContext httpContext, ResponseError error, int statusCodeHint)
+            => WriteResponseWithStatusCodeHintAsync(httpContext, new ResponseMessage(MessageId.Empty, error), statusCodeHint);
+
+        private Task WriteResponseWithStatusCodeHintAsync(HttpContext httpContext, ResponseMessage response, int statusCodeHint)
         {
             if (statusCodeHint == 0)
                 statusCodeHint = response == null ? StatusCodes.Status204NoContent : StatusCodes.Status200OK;
-            return WriteResponseAsync(httpResponse, response, GetStatusCodeFromResponse(response, statusCodeHint));
+            return WriteResponseAsync(httpContext.Response, response, GetStatusCodeFromResponse(response, statusCodeHint), httpContext.RequestAborted);
         }
 
         /// <summary>
@@ -157,36 +201,46 @@ namespace JsonRpc.AspNetCore
         /// <param name="httpResponse">HTTP response object.</param>
         /// <param name="response">JSON-RPC response, or <c>null</c> if the response is empty.</param>
         /// <param name="statusCode">the HTTP status code.</param>
-        protected async Task WriteResponseAsync(HttpResponse httpResponse, ResponseMessage response, int statusCode)
+        /// <param name="cancellationToken">a token used to cancel the operation.</param>
+        protected async Task WriteResponseAsync(HttpResponse httpResponse, ResponseMessage response, 
+            int statusCode, CancellationToken cancellationToken)
         {
             if (httpResponse == null) throw new ArgumentNullException(nameof(httpResponse));
+            cancellationToken.ThrowIfCancellationRequested();
 
             httpResponse.StatusCode = statusCode;
             if (response == null) return;
 
             if (fullContentType != null)
                 httpResponse.ContentType = fullContentType;
-            
+
             // For notification, we don't wait for the task.
             // Buffer content synchronously.
             var ms = Interlocked.Exchange(ref cachedMemoryStream, null) ?? new MemoryStream(1024);
-            Debug.Assert(ms.Position == 0);
-            using (var writer = new StreamWriter(ms, Encoding, 4096, true))
-                response.WriteJson(writer);
-            httpResponse.ContentLength = ms.Length;
-            
-            // Write content asynchronously.
-            ms.Position = 0;
-#if BCL_FEATURE_ASYNC_DISPOSABLE
-            await
-#endif
-            using (httpResponse.Body)
+            try
             {
-                await ms.CopyToAsync(httpResponse.Body, 4096);
+                Debug.Assert(ms.Position == 0);
+                using (var writer = new StreamWriter(ms, Encoding, 4096, true))
+                    response.WriteJson(writer);
+                httpResponse.ContentLength = ms.Length;
+
+                // Write content asynchronously.
+                ms.Position = 0;
+#if BCL_FEATURE_ASYNC_DISPOSABLE
+                await
+#endif
+                    using (httpResponse.Body)
+                {
+                    await ms.CopyToAsync(httpResponse.Body, 4096, cancellationToken);
+                }
             }
-            ms.Position = 0;
-            ms.SetLength(0);
-            Interlocked.CompareExchange(ref cachedMemoryStream, ms, null);
+            finally
+            {
+                ms.Position = 0;
+                ms.SetLength(0);
+                if (Interlocked.CompareExchange(ref cachedMemoryStream, ms, null) != null)
+                    ms.Dispose();
+            }
         }
 
         /// <summary>
