@@ -110,6 +110,33 @@
         </markup>
       </summary>
     </member>
+    <member name="M:JsonRpc.Client.JsonRpcClientException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcClientException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="info">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>info</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcClientException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="context">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>context</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcClientException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
     <member name="M:JsonRpc.Client.JsonRpcClientException.#ctor(System.String)">
       <summary>
         <markup>
@@ -233,6 +260,33 @@
         </markup>
       </summary>
     </member>
+    <member name="M:JsonRpc.Client.JsonRpcContractException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcContractException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="info">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>info</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcContractException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="context">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>context</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcContractException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
     <member name="M:JsonRpc.Client.JsonRpcContractException.#ctor(System.String)">
       <summary>
         <markup>
@@ -341,6 +395,13 @@
         </markup>
       </param>
     </member>
+    <member name="M:JsonRpc.Client.JsonRpcContractException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>When overridden in a derived class, sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with information about the exception.</summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination. </param>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="info" /> parameter is a null reference (<see langword="Nothing" /> in Visual Basic). </exception>
+      <exception cref="T:System.Security.SecurityException">The caller does not have the required permission. </exception>
+    </member>
     <member name="P:JsonRpc.Client.JsonRpcContractException.RpcMessage">
       <summary>
             Gets the JSON RPC message that caused this exception.
@@ -374,6 +435,33 @@
             <parameter>param</parameter>
             <parameter>error</parameter>
             <parameter>M:JsonRpc.Client.JsonRpcRemoteException.#ctor(JsonRpc.Messages.ResponseError)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcRemoteException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Client.JsonRpcRemoteException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="info">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>info</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcRemoteException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="context">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>context</parameter>
+            <parameter>M:JsonRpc.Client.JsonRpcRemoteException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)</parameter>
           </include>
         </markup>
       </param>
@@ -463,6 +551,13 @@
       <summary>
             The JSON RPC Error object that raises the exception.
             </summary>
+    </member>
+    <member name="M:JsonRpc.Client.JsonRpcRemoteException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>When overridden in a derived class, sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with information about the exception.</summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination. </param>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="info" /> parameter is a null reference (<see langword="Nothing" /> in Visual Basic). </exception>
+      <exception cref="T:System.Security.SecurityException">The caller does not have the required permission. </exception>
     </member>
     <member name="P:JsonRpc.Client.JsonRpcRemoteException.RemoteException">
       <summary>
@@ -2537,6 +2632,33 @@
         </markup>
       </param>
     </member>
+    <member name="M:JsonRpc.Server.JsonRpcException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>
+        <markup>
+          <include item="SMCAutoDocConstructor">
+            <parameter>JsonRpc.Server.JsonRpcException</parameter>
+          </include>
+        </markup>
+      </summary>
+      <param name="info">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>info</parameter>
+            <parameter>M:JsonRpc.Server.JsonRpcException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)</parameter>
+          </include>
+        </markup>
+      </param>
+      <param name="context">
+        <markup>
+          <include item="SMCMissingParamTag">
+            <parameter>param</parameter>
+            <parameter>context</parameter>
+            <parameter>M:JsonRpc.Server.JsonRpcException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)</parameter>
+          </include>
+        </markup>
+      </param>
+    </member>
     <member name="M:JsonRpc.Server.JsonRpcException.#ctor(System.String)">
       <summary>
         <markup>
@@ -2649,6 +2771,13 @@
       <summary>
             JSON RPC error object.
             </summary>
+    </member>
+    <member name="M:JsonRpc.Server.JsonRpcException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>When overridden in a derived class, sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with information about the exception.</summary>
+      <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
+      <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination. </param>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="info" /> parameter is a null reference (<see langword="Nothing" /> in Visual Basic). </exception>
+      <exception cref="T:System.Security.SecurityException">The caller does not have the required permission. </exception>
     </member>
     <member name="T:JsonRpc.Server.JsonRpcServerHandler">
       <summary>

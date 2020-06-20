@@ -67,6 +67,17 @@
             Encoding of the emitted messages.
             </summary>
     </member>
+    <member name="M:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler.GetStatusCodeFromResponse(JsonRpc.Messages.ResponseMessage,System.Int32)">
+      <summary>
+            Gets corresponding HTTP status code from a specific JSON-RPC response.
+            </summary>
+      <param name="response">JSON-RPC response, or <c>null</c> if there is no response available (e.g. notifications).</param>
+      <param name="statusCodeHint">
+            suggested status code offered by the caller;
+            usually this is 200 for JSON RPC response and 204 for notification (no response).
+            </param>
+      <returns>HTTP status code.</returns>
+    </member>
     <member name="M:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler.ProcessRequestAsync(JsonRpc.Messages.RequestMessage,Microsoft.AspNetCore.Http.HttpContext)">
       <summary>
             Processes the specified JSON-RPC request with certain <see cref="T:Microsoft.AspNetCore.Http.HttpContext" />, and returns the response.
@@ -82,7 +93,7 @@
             </summary>
       <param name="message">The message to be processed.</param>
       <param name="context">The HTTP request context.</param>
-      <param name="waitForNotification">Either to wait for the handler for the notification request to finish before completing the task.</param>
+      <param name="waitForNotification">Whether to wait for the handler for the notification request to finish before completing the task.</param>
       <returns>The JSON-RPC response, or <c>null</c> if there's no such response.</returns>
       <exception cref="T:System.ArgumentNullException">Either <paramref name="message" /> or <paramref name="context" /> is <c>null</c>.</exception>
     </member>
@@ -99,6 +110,15 @@
       <summary>
             Content-Type header value of the emitted messages.
             </summary>
+    </member>
+    <member name="M:JsonRpc.AspNetCore.AspNetCoreRpcServerHandler.WriteResponseAsync(Microsoft.AspNetCore.Http.HttpResponse,JsonRpc.Messages.ResponseMessage,System.Int32,System.Threading.CancellationToken)">
+      <summary>
+            Asynchronously writes JSON-RPC response to the HTTP response.
+            </summary>
+      <param name="httpResponse">HTTP response object.</param>
+      <param name="response">JSON-RPC response, or <c>null</c> if the response is empty.</param>
+      <param name="statusCode">the HTTP status code.</param>
+      <param name="cancellationToken">a token used to cancel the operation.</param>
     </member>
     <member name="T:JsonRpc.AspNetCore.HttpContextServiceFactory">
       <summary>

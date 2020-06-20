@@ -21,8 +21,10 @@
   <HelpKINode Title="AspNetCoreRpcServerHandler.AspNetCoreRpcServerHandler constructor" Url="html/71bfca4e-c6af-f41f-e7a6-50af2a5294a2.htm" />
   <HelpKINode Title="AspNetCoreRpcServerHandler.EmitContentCharset property" Url="html/492a5bb6-02ae-cd54-74be-2cfcb5c8872a.htm" />
   <HelpKINode Title="AspNetCoreRpcServerHandler.Encoding property" Url="html/605fc2eb-a270-4ceb-903d-142eeb9520a4.htm" />
+  <HelpKINode Title="AspNetCoreRpcServerHandler.GetStatusCodeFromResponse method" Url="html/ad4ba6cb-0583-96bb-ee95-56124380ceb4.htm" />
   <HelpKINode Title="AspNetCoreRpcServerHandler.ProcessRequestAsync method" Url="html/58a463b0-59cb-410f-19ba-058f5f2e500e.htm" />
   <HelpKINode Title="AspNetCoreRpcServerHandler.ResponseContentType property" Url="html/5f3a8ed7-8f64-7df3-4913-381fbf342657.htm" />
+  <HelpKINode Title="AspNetCoreRpcServerHandler.WriteResponseAsync method" Url="html/d29ec114-a358-4f25-c83f-5fbd383ac976.htm" />
   <HelpKINode Title="AssemblyBuilder property" Url="html/b7e10129-050c-6fb5-4f99-0d3788506201.htm" />
   <HelpKINode Title="Attach method">
     <HelpKINode Title="StreamRpcClientHandler.Attach Method " Url="html/fa044340-4f01-a143-4128-5d3d71d7299d.htm" />
@@ -213,6 +215,11 @@
   <HelpKINode Title="GetHashCode method" Url="html/e9807b6c-87af-baa2-aa5a-baea2311737e.htm" />
   <HelpKINode Title="GetHttpContext method" Url="html/98352b9b-c1b0-630b-04d1-234f29aa9405.htm" />
   <HelpKINode Title="GetHttpRequestMessage method" Url="html/5b1acadb-59f0-2496-95a7-9e0d4acafe1c.htm" />
+  <HelpKINode Title="GetObjectData method">
+    <HelpKINode Title="JsonRpcContractException.GetObjectData Method " Url="html/ca7c6a7c-1904-479a-e9ec-e8703ad76eda.htm" />
+    <HelpKINode Title="JsonRpcException.GetObjectData Method " Url="html/d05662e8-209c-95e1-29cb-4722627fb0a0.htm" />
+    <HelpKINode Title="JsonRpcRemoteException.GetObjectData Method " Url="html/b5707020-ef70-6611-b6a6-bf6650e599a8.htm" />
+  </HelpKINode>
   <HelpKINode Title="GetRpcMethodName method">
     <HelpKINode Title="CamelCaseJsonRpcNamingStrategy.GetRpcMethodName Method " Url="html/03508f0b-6323-1ab4-2954-4d6db9cf8d78.htm" />
     <HelpKINode Title="JsonRpcNamingStrategy.GetRpcMethodName Method " Url="html/6c156bee-bbfb-bf46-0ae4-e6a0f42c8dd3.htm" />
@@ -221,6 +228,7 @@
     <HelpKINode Title="CamelCaseJsonRpcNamingStrategy.GetRpcParameterName Method " Url="html/f8e9aae1-0a90-2e74-168d-5cb7f2dfa104.htm" />
     <HelpKINode Title="JsonRpcNamingStrategy.GetRpcParameterName Method " Url="html/6056954c-9aa5-ca40-f28f-19a59a2eb507.htm" />
   </HelpKINode>
+  <HelpKINode Title="GetStatusCodeFromResponse method" Url="html/ad4ba6cb-0583-96bb-ee95-56124380ceb4.htm" />
   <HelpKINode Title="Handler property" Url="html/f2af4165-1de4-f055-4385-09808e9c979f.htm" />
   <HelpKINode Title="HelpLink property" Url="html/ea011161-f410-67c9-61f8-b0c8f0e91eca.htm" />
   <HelpKINode Title="HResult property" Url="html/c076805b-97a5-f418-6b54-bf6f3c67a105.htm" />
@@ -516,6 +524,7 @@
     <HelpKINode Title="methods" Url="html/b3e641e6-e1a0-ba07-5d82-bd5fa19c4c3a.htm" />
     <HelpKINode Title="properties" Url="html/f26faf46-ed99-6d7b-42b6-93f09a0fce43.htm" />
   </HelpKINode>
+  <HelpKINode Title="JsonRpcContractException.GetObjectData method" Url="html/ca7c6a7c-1904-479a-e9ec-e8703ad76eda.htm" />
   <HelpKINode Title="JsonRpcContractException.JsonRpcContractException constructor" Url="html/8234f389-75a0-0d5e-4e47-a508e1585700.htm" />
   <HelpKINode Title="JsonRpcContractException.RpcMessage property" Url="html/a79e9a83-11c8-a061-a730-980d230747ac.htm" />
   <HelpKINode Title="JsonRpcContractResolver class">
@@ -541,6 +550,7 @@
     <HelpKINode Title="properties" Url="html/9db61bf2-971b-7af9-9c93-aa8c58623d8f.htm" />
   </HelpKINode>
   <HelpKINode Title="JsonRpcException.Error property" Url="html/44336c49-523a-f92a-e7b1-ed107c28410a.htm" />
+  <HelpKINode Title="JsonRpcException.GetObjectData method" Url="html/d05662e8-209c-95e1-29cb-4722627fb0a0.htm" />
   <HelpKINode Title="JsonRpcException.JsonRpcException constructor" Url="html/6df88a0a-5489-c5d4-8db1-9d1ea1799edd.htm" />
   <HelpKINode Title="JsonRpcMethod class">
     <HelpKINode Title="JsonRpcMethod Class" Url="html/891e2ba7-ad40-1485-d5c7-11be46393ef3.htm" />
@@ -662,6 +672,7 @@
     <HelpKINode Title="properties" Url="html/db743b84-f825-413d-d960-cdd7b0068e15.htm" />
   </HelpKINode>
   <HelpKINode Title="JsonRpcRemoteException.Error property" Url="html/750c90f1-9a6e-938b-56a9-1515de17fe10.htm" />
+  <HelpKINode Title="JsonRpcRemoteException.GetObjectData method" Url="html/b5707020-ef70-6611-b6a6-bf6650e599a8.htm" />
   <HelpKINode Title="JsonRpcRemoteException.JsonRpcRemoteException constructor" Url="html/ebde26ac-cec4-a511-fbd9-c229c6fe0534.htm" />
   <HelpKINode Title="JsonRpcRemoteException.RemoteException property" Url="html/d2d794fa-150b-effd-5539-2eb6a6efe9ce.htm" />
   <HelpKINode Title="JsonRpcRemoteException.ToString method" Url="html/caa0094c-ce1d-496a-6569-7eddf2fc3698.htm" />
@@ -1176,4 +1187,5 @@
     <HelpKINode Title="MessageIdJsonConverter.WriteJson Method " Url="html/661e5348-40d9-133e-9168-756d6ca7ba49.htm" />
   </HelpKINode>
   <HelpKINode Title="Writer property" Url="html/3bf1781a-623c-6c8f-2689-060ae7009076.htm" />
+  <HelpKINode Title="WriteResponseAsync method" Url="html/d29ec114-a358-4f25-c83f-5fbd383ac976.htm" />
 </HelpKI>
