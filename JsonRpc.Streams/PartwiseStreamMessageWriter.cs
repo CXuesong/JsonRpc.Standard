@@ -72,12 +72,18 @@ namespace JsonRpc.Streams
             {
                 try
                 {
-                    using (var writer = new StreamWriter(ms, Encoding, 4096, true)) message.WriteJson(writer);
+#if BCL_FEATURE_ASYNC_DISPOSABLE
+                    await
+#endif
+                        using (var writer = new StreamWriter(ms, Encoding, 4096, true)) message.WriteJson(writer);
                     linkedTokenSource.Token.ThrowIfCancellationRequested();
                     await streamSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
                     try
                     {
-                        using (var writer = new StreamWriter(Stream, Encoding, 4096, true))
+#if BCL_FEATURE_ASYNC_DISPOSABLE
+                        await
+#endif
+                            using (var writer = new StreamWriter(Stream, Encoding, 4096, true))
                         {
                             await writer.WriteAsync("Content-Length: ").ConfigureAwait(false);
                             await writer.WriteAsync(ms.Length.ToString()).ConfigureAwait(false);

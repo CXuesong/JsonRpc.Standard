@@ -2,7 +2,7 @@
   <Import Project="$(MSBuildThisFileDirectory)/JsonRpc.Commons.props" />
 
   <PropertyGroup>
-    <Version>0.5.3</Version>
+    <Version>0.5.4</Version>
     <Authors>CXuesong</Authors>
     <Company />
     <Copyright>Copyright (C) CXuesong 2020</Copyright>

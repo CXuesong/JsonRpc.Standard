@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace JsonRpc.AspNetCore
 {
-    
+
     /// <summary>
     /// A <see cref="JsonRpcServerHandler"/> that transfers the requests from either a middleware
     /// or in the MVC controller.
@@ -70,7 +70,7 @@ namespace JsonRpc.AspNetCore
             try
             {
                 using (var reader = new StreamReader(context.Request.Body))
-                    message = (RequestMessage)Message.LoadJson(reader);
+                    message = (RequestMessage) Message.LoadJson(reader);
             }
             catch (JsonReaderException ex)
             {
@@ -98,10 +98,10 @@ namespace JsonRpc.AspNetCore
             {
                 switch (response.Error.Code)
                 {
-                    case (int)JsonRpcErrorCode.MethodNotFound:
+                    case (int) JsonRpcErrorCode.MethodNotFound:
                         context.Response.StatusCode = 404;
                         break;
-                    case (int)JsonRpcErrorCode.InvalidRequest:
+                    case (int) JsonRpcErrorCode.InvalidRequest:
                         context.Response.StatusCode = 400;
                         break;
                     default:
@@ -109,7 +109,10 @@ namespace JsonRpc.AspNetCore
                         break;
                 }
             }
-            using (var writer = new StreamWriter(context.Response.Body))
+#if BCL_FEATURE_ASYNC_DISPOSABLE
+            await
+#endif
+                using (var writer = new StreamWriter(context.Response.Body))
             {
                 await writer.WriteAsync(responseContent);
             }
@@ -154,4 +157,5 @@ namespace JsonRpc.AspNetCore
             return null;
         }
     }
+
 }

@@ -8,7 +8,7 @@
   </PropertyGroup> 
 
   <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(TargetFramework), `^netcoreapp(2.1|3.\d|5.\d)|netstandard2.[1-9]$`)) ">
-    <DefineConstants>$(DefineConstants);BCL_FEATURE_ASYNC_DISPOSABLES</DefineConstants>
+    <DefineConstants>$(DefineConstants);BCL_FEATURE_ASYNC_DISPOSABLE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(TargetFramework), `^netcoreapp(2.0|2.1|3.0|3.1|5.0)|netstandard(2.\d)|net\d+$`)) ">

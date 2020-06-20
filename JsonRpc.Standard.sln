@@ -18,6 +18,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonRpc.Http", "JsonRpc.Http\JsonRpc.Http.csproj", "{A2C5CFCF-A140-434A-86A6-A88E39F7A44B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFiles", "SolutionFiles", "{99877F6F-F25F-4CB6-AC28-0DBE8CC41365}"
+	ProjectSection(SolutionItems) = preProject
+		Shared\JsonRpc.Commons.props = Shared\JsonRpc.Commons.props
+		Shared\JsonRpc.Packages.props = Shared\JsonRpc.Packages.props
+		Shared\JsonRpc.Standard.snk = Shared\JsonRpc.Standard.snk
+		Shared\Packaging.ps1 = Shared\Packaging.ps1
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JsonRpc.DynamicProxy", "JsonRpc.DynamicProxy\JsonRpc.DynamicProxy.csproj", "{2CFA9A4E-4A39-4CEA-B142-3359C67086E3}"
 EndProject
