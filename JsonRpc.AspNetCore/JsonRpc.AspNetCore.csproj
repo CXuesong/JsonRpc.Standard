@@ -6,7 +6,15 @@
     <PackageId>CXuesong.JsonRpc.AspNetCore</PackageId>
     <Description>ASP.NET Core support for CXuesong.JsonRpc.Standard.</Description>
     <PackageTags>json rpc json-rpc json-rpc-server asp.net asp.net-core</PackageTags>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.2" />
