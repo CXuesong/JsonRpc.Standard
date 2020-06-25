@@ -6,7 +6,15 @@
     <PackageId>CXuesong.JsonRpc.DynamicProxy</PackageId>
     <Description>Runtime dynamic client-side proxy builder for CXuesong.JsonRpc.Standard.</Description>
     <PackageTags>json rpc json-rpc json-rpc-server json-rpc-client</PackageTags>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="1.1.2" />
