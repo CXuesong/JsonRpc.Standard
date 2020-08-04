@@ -102,9 +102,9 @@ namespace JsonRpc.Contracts
         protected virtual IEnumerable<KeyValuePair<MethodInfo, JsonRpcMethod>> MethodsFromType(Type serviceType)
         {
             if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
-            var scope = serviceType.GetTypeInfo().GetCustomAttribute<JsonRpcScopeAttribute>();
+            var scope = serviceType.GetTypeInfo().GetCustomAttribute<JsonRpcScopeAttribute>(true);
             return serviceType.GetRuntimeMethods()
-                .Where(m => m.GetCustomAttribute<JsonRpcMethodAttribute>() != null)
+                .Where(m => m.GetCustomAttribute<JsonRpcMethodAttribute>(true) != null)
                 .Select(m => new KeyValuePair<MethodInfo, JsonRpcMethod>(m, CreateMethod(serviceType, m, scope)));
         }
 
@@ -113,7 +113,7 @@ namespace JsonRpc.Contracts
             if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
             if (method == null) throw new ArgumentNullException(nameof(method));
             var inst = new JsonRpcMethod { ServiceType = serviceType };
-            var attr = method.GetCustomAttribute<JsonRpcMethodAttribute>();
+            var attr = method.GetCustomAttribute<JsonRpcMethodAttribute>(true);
             inst.MethodName = attr?.MethodName;
             if (attr?.MethodName == null)
                 inst.MethodName = NamingStrategy.GetRpcMethodName(method.Name, false);
@@ -156,7 +156,7 @@ namespace JsonRpc.Contracts
             if (!isReturnParam && taskResultType != null)
                 throw new NotSupportedException("Argument with type of System.Threading.Task is not supported.");
             // TODO bypass return value attribute check ONLY on Mono with FrameworkDescription check.
-            var attr = isReturnParam ? null : parameter.GetCustomAttribute<JsonRpcParameterAttribute>();
+            var attr = isReturnParam ? null : parameter.GetCustomAttribute<JsonRpcParameterAttribute>(true);
             var inst = new JsonRpcParameter
             {
                 IsOptional = attr?.IsOptional ?? parameter.IsOptional,
