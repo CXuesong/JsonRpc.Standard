@@ -107,7 +107,17 @@ namespace UnitTestProject1.Helpers
 
     }
 
-    public class TestJsonRpcService : JsonRpcService
+    // For testing deriving [JsonRpcMethod] from implementing interface in TestJsonRpcService.
+    public interface ITestJsonRpcServiceAddPartial
+    {
+        [JsonRpcMethod]
+        int Add(int x, int y, CancellationToken ct);
+
+        [JsonRpcMethod("add")]
+        Task<string> AddAsync(string a, string b);
+    }
+
+    public class TestJsonRpcService : JsonRpcService, ITestJsonRpcServiceAddPartial
     {
         [JsonRpcMethod]
         public int One()
@@ -133,13 +143,11 @@ namespace UnitTestProject1.Helpers
             return values.Sum();
         }
 
-        [JsonRpcMethod]
         public int Add(int x, int y, CancellationToken ct)
         {
             return x + y;
         }
 
-        [JsonRpcMethod("add")]
         public async Task<string> AddAsync(string a, string b)
         {
             // do some work asynchronously…

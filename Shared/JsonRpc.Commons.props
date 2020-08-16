@@ -1,17 +1,13 @@
 <Project>
   <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(TargetFramework), `^netcoreapp(2.1|3.0|3.1|5.0)|netstandard2.[1-9]$`)) " >
-    <DefineConstants>$(DefineConstants);BCL_FEATURE_READER_WRITER_CANCEL</DefineConstants>
+    <DefineConstants>$(DefineConstants);BCL_FEATURE_READER_WRITER_CANCEL;BCL_FEATURE_ASYNC_ENUMERABLE;BCL_FEATURE_CWT_ADD_OR_UPDATE</DefineConstants>
   </PropertyGroup>
-
-  <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(TargetFramework), `^netcoreapp(2.1|3.0|3.1|5.0)|netstandard2.[1-9]$`)) ">
-    <DefineConstants>$(DefineConstants);BCL_FEATURE_ASYNC_ENUMERABLE</DefineConstants>
-  </PropertyGroup> 
 
   <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(TargetFramework), `^netcoreapp(3.\d|5.\d)|netstandard2.[1-9]$`)) ">
     <DefineConstants>$(DefineConstants);BCL_FEATURE_ASYNC_DISPOSABLE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(TargetFramework), `^netcoreapp(2.0|2.1|3.0|3.1|5.0)|netstandard(2.\d)|net\d+$`)) ">
-    <DefineConstants>$(DefineConstants);BCL_FEATURE_SERIALIZATION</DefineConstants>
+    <DefineConstants>$(DefineConstants);BCL_FEATURE_SERIALIZATION;BCL_FEATURE_TYPE_IS_MEMBER_INFO</DefineConstants>
   </PropertyGroup>
 </Project>
