@@ -66,6 +66,12 @@ namespace JsonRpc.Http
         /// <value>Content-Type header value, or <c>null</c> to suppress Content-Type header.</value>
         public string ContentType { get; set; } = "application/json-rpc";
 
+        /// <summary>
+        /// Authentication token header value.
+        /// </summary>
+        /// <value>Bearer Authentication token header value.</value>
+        public string AuthToken { get; set; }
+
         // Looking for EmitContentCharset? No, StringContent will automatically append charset to the
         // end of the Content-Type of the requests.
 
@@ -95,6 +101,11 @@ namespace JsonRpc.Http
             };
             if (!string.IsNullOrEmpty(UserAgent)) req.Headers.UserAgent.ParseAdd(UserAgent);
             req.Headers.UserAgent.Add(new ProductInfoHeaderValue("JsonRpc.Http", "0.3"));
+            if (!string.IsNullOrEmpty(AuthToken))
+            {
+                req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AuthToken);
+            }
+
             return req;
         }
 
